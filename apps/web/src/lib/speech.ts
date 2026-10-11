@@ -29,6 +29,8 @@ export interface SpeechOutput {
   readonly available: boolean;
   speak(text: string, options?: Partial<SpeakOptions>): void;
   stop(): void;
+  /** True while something is being said. */
+  readonly speaking: boolean;
   /** The device's voices, ranked for a language (default: the device's language). */
   voices(lang?: string): VoiceInfo[];
   /** Calls back when the browser's voice list changes; returns an unsubscribe. */
@@ -153,6 +155,10 @@ class WebSpeech implements SpeechOutput {
     speechSynthesis.cancel();
   }
 
+  get speaking() {
+    return speechSynthesis.speaking === true;
+  }
+
   voices(lang = this.lang): VoiceInfo[] {
     return rankVoices(speechSynthesis.getVoices(), lang);
   }
@@ -167,6 +173,7 @@ const silent: SpeechOutput = {
   available: false,
   speak() {},
   stop() {},
+  speaking: false,
   voices: () => [],
   onVoicesChanged: () => () => {},
 };

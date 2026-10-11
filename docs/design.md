@@ -76,6 +76,18 @@ Holding Edit for a second opens edit mode, laid out as in the approved mockup: a
 - **Printing:** Print (in the edit toolbar) prints the board on screen or every board, one per page, in colour, in the language in use, with a line crediting the symbol sets as their licence asks. Phone layouts print portrait. Saving as PDF is the browser's own option.
 - **Symbols:** the library is the whole Mulberry set (3,436 symbols), built from the pinned release by `apps/web/scripts/symbol-library.mjs` and served as static files. The service worker doesn't precache it; symbols are cached as they're seen, and a chosen symbol is copied into the boards, so boards stay complete offline and in exports. Search covers names, categories and tags; Spanish search only finds the starter words for now. Photos are shrunk to 512 px on the device.
 
+## Switch scanning
+
+Settings → Switch scanning, laid out as in the approved scanning mockup: a thick outline (blue on Light, yellow on Dark and High contrast) around the highlighted row or word, with everything else dimmed (or an outline only, or outline and fill).
+
+- **Methods:** _by itself_ (the highlight moves; any switch chooses), _two switches_ (switch 1 moves, switch 2 chooses), and _while held_ (hold switch 1 to move; let go and the item is chosen after one step unless the switch is pressed again).
+- **Order:** rows then words (default), columns then words, or one at a time. After the board come the message bar and the navigation buttons, as groups; Edit is never scanned. When the Forms dialog is open, its choices are scanned instead.
+- **Timing:** time per item, extra time on the first item of a group, loops before going back up (and stopping at the top), starting again after each choice, and ignoring repeat presses.
+- **Switches:** keys (Space or 1 is switch 1, Enter or 2 switch 2: what most switch interfaces send), game controllers (A and B), a tap anywhere, or mouse buttons. With taps as switches, holding the screen for 3 seconds opens edit mode, so a caregiver can always get out; holding Edit works otherwise.
+- **Auditory scanning:** optionally, each item is said as it's highlighted, using the device voice, and never over the message being spoken.
+
+The timing logic (`apps/web/src/lib/access/scan.ts`) is pure and tested with a fake clock; `scanning.svelte.ts` builds what to scan from the page, so anything added to the board, message bar or navigation is scanned without extra work. If the screen changes mid-scan, the highlight keeps its place when it can.
+
 ## Quick phrases
 
 The Phrases button (on the rail, beside Forms; it can be turned off) opens a board marked with `ext_openaac_phrases`. Its buttons are whole phrases, said at once without joining the message. Because it's an ordinary board, phrases are added, changed, printed, exported and backed up like any other words; in edit mode, a new button on the phrases board starts with the current message filled in. Boards from before phrases existed get the starter phrases the first time Phrases is opened.

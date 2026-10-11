@@ -23,6 +23,9 @@
   /* Outlines the chosen option of a segmented control where fills alone don't show it. */
   --on-ring: transparent;
   --label-scale: 1;
+  /* Switch scanning highlight (from the approved design). */
+  --scan: #1d5bd6;
+  --scan-fill: rgb(29 91 214 / 0.12);
   --radius: 14px;
   --gap: clamp(6px, 1.2vmin, 12px);
 
@@ -53,6 +56,8 @@
   --hold: rgb(47 111 228 / 0.35);
   --symbol-card: #f4f6f8;
   --on-ring: #2f6fe4;
+  --scan: #ffe14d;
+  --scan-fill: rgb(255 225 77 / 0.16);
 }
 
 :root[data-theme='contrast'] {
@@ -77,6 +82,14 @@
   --hold: rgb(255 225 77 / 0.4);
   --symbol-card: #ffffff;
   --on-ring: #ffe14d;
+  --scan: #ffe14d;
+  --scan-fill: rgb(255 225 77 / 0.18);
+}
+
+/* While scanning with "dim others", everything but the highlight fades. */
+:root[data-scan='dim']
+  :is([data-scan-board] > button, [data-scan-group] button):not([data-scan-focus]) {
+  opacity: 0.32;
 }
 
 input:not([type='range'], [type='checkbox'], [type='radio'], [type='file']),

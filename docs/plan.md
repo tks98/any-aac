@@ -79,14 +79,14 @@ Phases are defined in §6. **P1** is the MVP.
 
 - [P1] Touch accommodations: hold-to-select time, select on release, debounce repeats, adjustable cell gap and padding for keyguards, and a choice of visual and audio feedback.
 - [P1] Keyboard navigation for the whole app.
-- [P2] **Switch scanning:**
+- [P2] **Switch scanning:** _Started:_ auto, two-switch step and hold-to-move scanning; rows, columns or one at a time; speed, first-item delay, loops, auto-restart, the message bar and buttons, three highlight styles; keys, game controllers, tap anywhere and mouse buttons. See [design.md](design.md#switch-scanning). Still to do: block scanning, scanning settings and edit mode, switch-press timing beyond repeat filtering, and testing with switch users.
   - 1 or 2 switches
   - Auto, step, or inverse (hold-to-move) scanning
   - Linear, row/column, column/row, and block scan patterns
   - Speed, initial delay, number of loops, skip empty cells, auto-restart, scanning the message bar
   - Highlight styles
   - Input from keyboard keys, mouse buttons, the Gamepad API, or touch-anywhere
-- [P2] **Auditory scanning:** prompts spoken in the cue voice, with grouped prompts.
+- [P2] **Auditory scanning:** prompts spoken in the cue voice, with grouped prompts. _Started:_ each item can be said as it's highlighted (device voice, skipped while the message is being spoken). Separate cue voice and headphone routing still to do.
 - [P2] **Dwell selection** with any pointer (head mouse, eye tracker in mouse mode, webcam tracking). Shows dwell progress, with adjustable time and a lock-on radius.
 - [P2] **Webcam head pointer** with MediaPipe Face Landmarker (WASM), plus facial gestures (eyebrow raise, mouth open, blink) as switches.
 - [P4] Experimental webcam eye gaze with very large targets and easy recalibration.

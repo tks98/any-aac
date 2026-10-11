@@ -48,7 +48,7 @@
   });
 </script>
 
-<div class="bar">
+<div class="bar" role="group" aria-label={app.t.messageTools} data-scan-group="message">
   <button
     bind:this={strip}
     class="message"

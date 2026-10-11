@@ -43,7 +43,7 @@
   }
 </script>
 
-<nav class="rail" aria-label={app.t.boardNavigation}>
+<nav class="rail" aria-label={app.t.boardNavigation} data-scan-group="nav">
   <button class:current={app.atHome} onclick={() => app.home()}>
     <Icon path={ICONS.home} />
     {app.t.home}
@@ -85,6 +85,7 @@
   </button>
   <button
     class="edit"
+    data-scan-skip
     class:holding
     style:--hold-ms="{HOLD_MS}ms"
     aria-label={app.t.editHold}

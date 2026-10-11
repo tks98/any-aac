@@ -21,6 +21,7 @@
     { id: 'speech', name: t.sectionSpeech, icon: ICONS.speak },
     { id: 'language', name: t.sectionLanguage, icon: ICONS.language },
     { id: 'touch', name: t.sectionTouch, icon: ICONS.touch },
+    { id: 'scanning', name: t.sectionScanning, icon: ICONS.switch },
     { id: 'display', name: t.sectionDisplay, icon: ICONS.display },
     { id: 'boards', name: t.sectionBoards, icon: ICONS.boards },
     { id: 'about', name: t.sectionAbout, icon: ICONS.about },
@@ -551,6 +552,141 @@
           )}
         </div>
         <p class="intro">{t.draftWords}</p>
+      {:else if section === 'scanning'}
+        <h3>{t.sectionScanning}</h3>
+        <p class="intro">{t.scanIntro}</p>
+        <div class="card">
+          {@render toggle(
+            t.scanOn,
+            t.scanOnHelp,
+            s.scan.enabled,
+            (on) => (app.settings.scan.enabled = on),
+          )}
+          {@render choice(
+            t.scanMethod,
+            t.scanMethodHelp,
+            [
+              { value: 'auto', name: t.methodAuto },
+              { value: 'step', name: t.methodStep },
+              { value: 'inverse', name: t.methodInverse },
+            ],
+            s.scan.method,
+            (method) =>
+              (app.settings.scan.method =
+                method === 'step' || method === 'inverse' ? method : 'auto'),
+          )}
+          {@render choice(
+            t.scanPattern,
+            '',
+            [
+              { value: 'rows', name: t.patternRows },
+              { value: 'columns', name: t.patternColumns },
+              { value: 'linear', name: t.patternLinear },
+            ],
+            s.scan.pattern,
+            (pattern) =>
+              (app.settings.scan.pattern =
+                pattern === 'columns' || pattern === 'linear' ? pattern : 'rows'),
+          )}
+          {@render slider(
+            t.scanSpeed,
+            '',
+            s.scan.speedMs,
+            300,
+            6000,
+            100,
+            t.seconds(s.scan.speedMs),
+            (v) => (app.settings.scan.speedMs = v),
+          )}
+          {@render slider(
+            t.scanFirstDelay,
+            '',
+            s.scan.firstDelayMs,
+            0,
+            5000,
+            100,
+            t.seconds(s.scan.firstDelayMs),
+            (v) => (app.settings.scan.firstDelayMs = v),
+          )}
+          {@render slider(
+            t.scanLoops,
+            '',
+            s.scan.loops,
+            1,
+            10,
+            1,
+            t.loopsValue(s.scan.loops),
+            (v) => (app.settings.scan.loops = v),
+          )}
+          {@render toggle(
+            t.scanAutoRestart,
+            t.scanAutoRestartHelp,
+            s.scan.autoRestart,
+            (on) => (app.settings.scan.autoRestart = on),
+          )}
+          {@render toggle(
+            t.scanBars,
+            '',
+            s.scan.includeBars,
+            (on) => (app.settings.scan.includeBars = on),
+          )}
+          {@render toggle(
+            t.scanCues,
+            t.scanCuesHelp,
+            s.scan.cues,
+            (on) => (app.settings.scan.cues = on),
+          )}
+          {@render choice(
+            t.scanHighlight,
+            '',
+            [
+              { value: 'dim', name: t.highlightDim },
+              { value: 'outline', name: t.highlightOutline },
+              { value: 'fill', name: t.highlightFill },
+            ],
+            s.scan.highlight,
+            (style) =>
+              (app.settings.scan.highlight =
+                style === 'outline' || style === 'fill' ? style : 'dim'),
+          )}
+        </div>
+        <h4 class="subhead">{t.scanInputs}</h4>
+        <div class="card">
+          {@render toggle(
+            t.inputKeys,
+            t.inputKeysHelp,
+            s.scan.keyboard,
+            (on) => (app.settings.scan.keyboard = on),
+          )}
+          {@render toggle(
+            t.inputGamepad,
+            t.inputGamepadHelp,
+            s.scan.gamepad,
+            (on) => (app.settings.scan.gamepad = on),
+          )}
+          {@render toggle(
+            t.inputTouch,
+            t.inputTouchHelp,
+            s.scan.touch,
+            (on) => (app.settings.scan.touch = on),
+          )}
+          {@render toggle(
+            t.inputMouse,
+            t.inputMouseHelp,
+            s.scan.mouse,
+            (on) => (app.settings.scan.mouse = on),
+          )}
+          {@render slider(
+            t.ignoreRepeats,
+            t.ignoreRepeatsHelp,
+            s.scan.ignoreRepeatMs,
+            0,
+            2000,
+            100,
+            t.seconds(s.scan.ignoreRepeatMs),
+            (v) => (app.settings.scan.ignoreRepeatMs = v),
+          )}
+        </div>
       {:else if section === 'touch'}
         <h3>{t.sectionTouch}</h3>
         <p class="intro">{t.touchIntro}</p>
@@ -919,6 +1055,11 @@
   .intro {
     margin: -4px 0 16px;
     color: var(--muted);
+  }
+
+  .subhead {
+    margin: 0 0 8px;
+    font-size: 1.15rem;
   }
 
   .card {

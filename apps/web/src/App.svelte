@@ -6,6 +6,9 @@
   import MessageBar from './lib/components/MessageBar.svelte';
   import NavRail from './lib/components/NavRail.svelte';
   import PrintView from './lib/components/PrintView.svelte';
+  import ScanLayer from './lib/components/ScanLayer.svelte';
+  import { scanning } from './lib/access/scanning.svelte';
+  import { listenForSwitches } from './lib/access/switches';
   import SettingsPanel from './lib/components/SettingsPanel.svelte';
   import { editor } from './lib/editor.svelte';
   import { install } from './lib/install.svelte';
@@ -43,6 +46,38 @@
   // Screen readers read the buttons and menus in this language.
   $effect(() => {
     document.documentElement.lang = app.appLanguage;
+  });
+
+  // Switch scanning follows the screen: a new board, a dialog, changed settings.
+  $effect(() => {
+    void app.view;
+    void $state.snapshot(app.settings.scan);
+    void app.settings.display.showWordForms;
+    void app.settings.display.showPhrases;
+    void scanning.active;
+    requestAnimationFrame(() => scanning.refresh());
+  });
+
+  $effect(() => {
+    if (!scanning.active) return;
+    const stop = listenForSwitches();
+    // Dialogs opening and closing, and other changes made outside Svelte state.
+    let pending = 0;
+    const observer = new MutationObserver(() => {
+      cancelAnimationFrame(pending);
+      pending = requestAnimationFrame(() => scanning.refresh());
+    });
+    observer.observe(document.body, {
+      subtree: true,
+      childList: true,
+      attributes: true,
+      attributeFilter: ['open', 'disabled'],
+    });
+    return () => {
+      stop();
+      observer.disconnect();
+      scanning.stop();
+    };
   });
 
   // The theme and label size apply to everything, dialogs included.
@@ -157,6 +192,8 @@
 
   <SettingsPanel bind:open={settingsOpen} />
 </div>
+
+<ScanLayer />
 
 {#if printing}
   <PrintView boards={printing} ondone={() => (printing = null)} />

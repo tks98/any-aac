@@ -1,5 +1,6 @@
 import type { Pronunciation } from '@open-aac/core';
 import type { TouchSettings } from './access/touch';
+import type { ScanMethod } from './access/scan';
 import type { ColorStyle, Theme } from './theme';
 import { isAppLanguage, type AppLanguage } from './i18n';
 
@@ -49,11 +50,34 @@ export interface DisplaySettings {
   showPhrases: boolean;
 }
 
+export interface ScanSettings {
+  enabled: boolean;
+  method: ScanMethod;
+  /** Rows then words, columns then words, or one by one. */
+  pattern: 'rows' | 'columns' | 'linear';
+  speedMs: number;
+  firstDelayMs: number;
+  loops: number;
+  autoRestart: boolean;
+  /** Also scan the message bar and navigation (as groups after the board). */
+  includeBars: boolean;
+  /** Say each item as it's highlighted (auditory scanning). */
+  cues: boolean;
+  highlight: 'dim' | 'outline' | 'fill';
+  /** Switch inputs: keys, a game controller, a tap anywhere, mouse buttons. */
+  keyboard: boolean;
+  gamepad: boolean;
+  touch: boolean;
+  mouse: boolean;
+  ignoreRepeatMs: number;
+}
+
 export interface Settings {
   language: LanguageSettings;
   speech: SpeechSettings;
   touch: TouchSettings;
   display: DisplaySettings;
+  scan: ScanSettings;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -79,6 +103,23 @@ export const DEFAULT_SETTINGS: Settings = {
     showWordForms: true,
     showShare: false,
     showPhrases: true,
+  },
+  scan: {
+    enabled: false,
+    method: 'auto',
+    pattern: 'rows',
+    speedMs: 1500,
+    firstDelayMs: 1000,
+    loops: 3,
+    autoRestart: true,
+    includeBars: true,
+    cues: false,
+    highlight: 'dim',
+    keyboard: true,
+    gamepad: true,
+    touch: false,
+    mouse: false,
+    ignoreRepeatMs: 300,
   },
 };
 
@@ -123,6 +164,7 @@ export function withDefaults(saved: unknown): Settings {
   const touch = isRecord(root.touch) ? root.touch : {};
   const display = isRecord(root.display) ? root.display : {};
   const language = isRecord(root.language) ? root.language : {};
+  const scan = isRecord(root.scan) ? root.scan : {};
 
   // Settings saved before voices were chosen per language had one of each.
   const deviceVoices = voiceMap(speech.deviceVoices);
@@ -181,6 +223,23 @@ export function withDefaults(saved: unknown): Settings {
       showWordForms: bool(display.showWordForms, d.display.showWordForms),
       showShare: bool(display.showShare, d.display.showShare),
       showPhrases: bool(display.showPhrases, d.display.showPhrases),
+    },
+    scan: {
+      enabled: bool(scan.enabled, d.scan.enabled),
+      method: oneOf(scan.method, ['auto', 'step', 'inverse'] as const, d.scan.method),
+      pattern: oneOf(scan.pattern, ['rows', 'columns', 'linear'] as const, d.scan.pattern),
+      speedMs: num(scan.speedMs, d.scan.speedMs, 300, 6000),
+      firstDelayMs: num(scan.firstDelayMs, d.scan.firstDelayMs, 0, 5000),
+      loops: num(scan.loops, d.scan.loops, 1, 10),
+      autoRestart: bool(scan.autoRestart, d.scan.autoRestart),
+      includeBars: bool(scan.includeBars, d.scan.includeBars),
+      cues: bool(scan.cues, d.scan.cues),
+      highlight: oneOf(scan.highlight, ['dim', 'outline', 'fill'] as const, d.scan.highlight),
+      keyboard: bool(scan.keyboard, d.scan.keyboard),
+      gamepad: bool(scan.gamepad, d.scan.gamepad),
+      touch: bool(scan.touch, d.scan.touch),
+      mouse: bool(scan.mouse, d.scan.mouse),
+      ignoreRepeatMs: num(scan.ignoreRepeatMs, d.scan.ignoreRepeatMs, 0, 2000),
     },
   };
 }

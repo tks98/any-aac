@@ -161,8 +161,16 @@ export class VoiceEngine {
     const gain = context.createGain();
     gain.gain.value = volume;
     source.connect(gain).connect(context.destination);
+    source.onended = () => {
+      if (this.playing === source) this.playing = null;
+    };
     source.start();
     this.playing = source;
+  }
+
+  /** True while a phrase is playing. */
+  get speaking(): boolean {
+    return this.playing !== null;
   }
 
   stop() {

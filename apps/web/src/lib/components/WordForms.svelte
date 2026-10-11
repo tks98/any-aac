@@ -18,7 +18,7 @@
   }
 </script>
 
-<dialog bind:this={dialog} aria-labelledby="forms-title" onclose={() => onclose()}>
+<dialog bind:this={dialog} aria-labelledby="forms-title" data-scan onclose={() => onclose()}>
   <header>
     <h2 id="forms-title">{last ? t.formsOf(last.label) : t.wordForms}</h2>
     <button class="close" onclick={() => dialog.close()}>{t.cancel}</button>

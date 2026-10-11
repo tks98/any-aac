@@ -34,6 +34,7 @@ export const ICONS = {
   folder: 'M3 6h6l2 2h10v11H3z',
   share: 'M12 15V3M8 7l4-4 4 4M5 11v9h14v-9',
   phrases: 'M4 5h16v11H9l-5 4zM8 9h8M8 12h5',
+  switch: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z',
   print: 'M7 9V3h10v6M7 17H4V9h16v8h-3M7 14h10v7H7z',
   forms: 'M3 12h5M8 12c4 0 4-6 8-6h5M8 12c4 0 4 6 8 6h5M8 12h13',
 } as const;
