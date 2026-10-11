@@ -16,6 +16,14 @@ export const EXT_PLACEHOLDER = 'ext_openaac_placeholder';
  */
 export const EXT_COMPACT_BOARD = 'ext_openaac_compact_board';
 
+/**
+ * On a board: its buttons are whole phrases ("I need a break"), spoken at once
+ * rather than added to the message.
+ */
+export const EXT_PHRASES = 'ext_openaac_phrases';
+
+export const isPhrasesBoard = (board: ObfBoard) => board[EXT_PHRASES] === true;
+
 export function compactBoardId(board: ObfBoard): string | undefined {
   const value = board[EXT_COMPACT_BOARD];
   return typeof value === 'string' && value !== '' ? value : undefined;

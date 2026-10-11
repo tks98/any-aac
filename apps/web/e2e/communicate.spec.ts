@@ -62,7 +62,7 @@ test('exports boards and imports them back', async ({ page }) => {
 
   page.once('dialog', (dialog) => dialog.accept());
   await page.getByLabel('Import boards').setInputFiles(await download.path());
-  await expect(page.getByRole('dialog').getByRole('status')).toHaveText('Imported 14 boards.');
+  await expect(page.getByRole('dialog').getByRole('status')).toHaveText('Imported 15 boards.');
 
   await closeSettings(page);
   await word(page, 'go').click();
@@ -465,6 +465,31 @@ test.describe('Open AAC voice', () => {
       )
       .toBe('openaac');
   });
+});
+
+test('quick phrases are said at once, and new ones start from the message', async ({ page }) => {
+  await word(page, 'I').click();
+  await page.getByRole('button', { name: 'Phrases', exact: true }).click();
+  await word(page, 'I need a break').click();
+  expect((await spoken(page)).at(-1)).toBe('I need a break');
+  // Phrases don't join the message.
+  await expect(messageBar(page)).toHaveAccessibleName('Message: I. Tap to speak it.');
+
+  // Saving a new phrase: the message so far is filled in.
+  await page.getByRole('button', { name: 'Home', exact: true }).click();
+  await word(page, 'want').click();
+  await word(page, 'more').click();
+  await page.getByRole('button', { name: 'Phrases', exact: true }).click();
+  await openEditor(page);
+  await page
+    .getByRole('button', { name: /^Empty cell/ })
+    .first()
+    .click();
+  await expect(page.getByLabel('Label in English')).toHaveValue('I want more');
+  await page.getByRole('button', { name: 'Add a button' }).click();
+  await page.getByRole('button', { name: 'Done', exact: true }).click();
+  await word(page, 'I want more').click();
+  expect((await spoken(page)).at(-1)).toBe('I want more');
 });
 
 test.describe('word forms', () => {

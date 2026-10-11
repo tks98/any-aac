@@ -69,6 +69,15 @@
       {app.t.forms}
     </button>
   {/if}
+  {#if app.settings.display.showPhrases}
+    <button
+      class:current={app.view !== null && app.view === app.phrases}
+      onclick={() => app.openPhrases()}
+    >
+      <Icon path={ICONS.phrases} />
+      {app.t.phrases}
+    </button>
+  {/if}
   <span class="spacer"></span>
   <button class="help" onclick={() => app.askForHelp()}>
     <Icon path={ICONS.help} />

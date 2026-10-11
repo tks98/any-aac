@@ -191,11 +191,11 @@ test('prints this board or all boards, one per page', async ({ page }) => {
   await page.reload();
   await openEditor(page);
   await page.getByRole('button', { name: 'Print' }).click();
-  await page.getByRole('button', { name: 'All boards (7)' }).click();
+  await page.getByRole('button', { name: 'All boards (8)' }).click();
   await page.waitForFunction(() => (window as unknown as { printed?: boolean }).printed);
   await page.emulateMedia({ media: 'print' });
   const pages = page.locator('.print .page');
-  await expect(pages).toHaveCount(7);
+  await expect(pages).toHaveCount(8);
   await expect(pages.first().getByRole('heading')).toHaveText('Core words');
   await expect(page.locator('.screen > *').first()).toBeHidden();
   // Printing ends when the print window closes.
@@ -230,7 +230,7 @@ test('backs up boards and settings, reminds when due, and restores both', async 
   page.on('dialog', (dialog) => dialog.accept());
   await page.getByLabel('Import boards or a backup').setInputFiles(await backup.path());
   await expect(page.getByRole('dialog').getByRole('status')).toHaveText(
-    'Imported 14 boards. Settings restored.',
+    'Imported 15 boards. Settings restored.',
   );
   await page.getByRole('button', { name: 'Speech & voice' }).click();
   await expect(page.getByRole('switch', { name: 'Speak each word when tapped' })).toBeChecked();

@@ -7,6 +7,7 @@ import {
   behaviorOf,
   boardName,
   compactBoardId,
+  isPhrasesBoard,
   messageText,
   replaceLastWord,
   setLanguages,
@@ -18,6 +19,8 @@ import {
 import { MESSAGES, pickAppLanguage } from './i18n';
 import { DEFAULT_SETTINGS, type Settings } from './settings';
 import { phrase } from './phrases';
+import { saveBoards } from './storage';
+import { starterPhrases } from './starter';
 import { preferPlaybackAudio, speech } from './speech';
 import { openaacVoice } from './voice/voice.svelte';
 
@@ -39,6 +42,8 @@ class AppState {
     return this.boardById(compactBoardId(this.board)) ?? this.board;
   });
   atHome = $derived(this.set !== null && this.boardId === this.set.rootId);
+  /** The board of quick phrases, if the set has one. */
+  phrases = $derived(this.set?.boards.find(isPhrasesBoard));
   /** The language the boards are written in (base code, e.g. "en"). */
   boardsLanguage = $derived(
     baseLanguage(this.set?.boards.find((b) => b.id === this.set?.rootId)?.locale ?? 'en'),
@@ -113,10 +118,25 @@ class AppState {
         this.message = appendText(this.message, behavior.text);
         return;
       case 'word':
+        // Quick phrases are said at once; they don't join the message.
+        if (this.view && isPhrasesBoard(this.view)) {
+          this.say(spokenText(button, this.language));
+          return;
+        }
         this.message = addWord(this.message, button, this.view?.id, this.language);
         if (this.settings.speech.speakEachWord) this.say(spokenText(button, this.language));
         return;
     }
+  }
+
+  /** Opens the quick phrases, adding the starter ones to boards that have none. */
+  openPhrases() {
+    if (!this.set) return;
+    if (!this.phrases) {
+      this.set = { ...this.set, boards: [...this.set.boards, starterPhrases()] };
+      void saveBoards(this.set).catch(() => undefined);
+    }
+    if (this.phrases) this.open(this.phrases.id);
   }
 
   home() {

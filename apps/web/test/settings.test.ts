@@ -65,6 +65,7 @@ describe('withDefaults', () => {
       buttonGap: 0,
       showWordForms: true,
       showShare: false,
+      showPhrases: true,
     });
   });
 

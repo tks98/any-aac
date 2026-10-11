@@ -45,6 +45,8 @@ export interface DisplaySettings {
   showWordForms: boolean;
   /** A Share button on the message bar, to send the message as text. */
   showShare: boolean;
+  /** A Phrases button for quick phrases, spoken at once. */
+  showPhrases: boolean;
 }
 
 export interface Settings {
@@ -76,6 +78,7 @@ export const DEFAULT_SETTINGS: Settings = {
     buttonGap: 10,
     showWordForms: true,
     showShare: false,
+    showPhrases: true,
   },
 };
 
@@ -177,6 +180,7 @@ export function withDefaults(saved: unknown): Settings {
       buttonGap: num(display.buttonGap, d.display.buttonGap, 0, 32),
       showWordForms: bool(display.showWordForms, d.display.showWordForms),
       showShare: bool(display.showShare, d.display.showShare),
+      showPhrases: bool(display.showPhrases, d.display.showPhrases),
     },
   };
 }

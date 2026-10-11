@@ -47,7 +47,7 @@ Phases are defined in §6. **P1** is the MVP.
 - [P1] Grid boards with configurable rows and columns, linked boards (folders), and Home and Back.
 - [P1] Message bar: words build a sentence, and the user taps the bar to speak it. Choose whether each button speaks immediately or only adds to the message. Backspace, clear, copy, and share (Web Share API). _Done:_ Share is an optional button (Display settings); it copies where the device can't share.
 - [P1] Buttons show a symbol, a label, or both. The spoken text can differ from the label. Background colour comes from the part of speech plus a colour theme (Modified Fitzgerald by default, configurable).
-- [P1] Quick phrases and an always-visible "help" or attention button.
+- [P1] Quick phrases and an always-visible "help" or attention button. _Done:_ a Phrases button opens a board of phrases that are said at once (they don't join the message); they're edited like any board.
 - [P2] A keyboard page (QWERTY or ABC) with word prediction.
 - [P2] A partner display: large text shown to the partner, rotatable, or mirrored to a second screen.
 - [P3] Visual scene displays (a photo with hotspots), plus just-in-time creation from the camera.

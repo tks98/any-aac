@@ -247,6 +247,9 @@ const en = {
   chooseWordFirst: 'Choose a word first. Forms changes the last word in the message.',
   noForms: (word: string) => `“${word}” has no other forms.`,
   noFormsHelp: 'Words get forms from their word type, which can be set in edit mode.',
+  phrases: 'Phrases',
+  showPhrases: 'Phrases button',
+  showPhrasesHelp: 'Quick phrases like “I need a break”, said at once. Change them in edit mode.',
   share: 'Share',
   shareMessage: 'Share the message',
   copiedMessage: 'Copied',
@@ -502,6 +505,10 @@ const es: Messages = {
   noForms: (word) => `«${word}» no tiene otras formas.`,
   noFormsHelp:
     'Las palabras tienen formas según su tipo, que se puede elegir en el modo de edición.',
+  phrases: 'Frases',
+  showPhrases: 'Botón de frases',
+  showPhrasesHelp:
+    'Frases rápidas como «Necesito un descanso», dichas al momento. Se cambian en el modo de edición.',
   share: 'Compartir',
   shareMessage: 'Compartir el mensaje',
   copiedMessage: 'Copiado',

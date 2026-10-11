@@ -20,6 +20,7 @@ export const STARTER_TRANSLATIONS: Record<string, Record<string, string>> = {
     Feelings: 'Emociones',
     Body: 'Cuerpo',
     Things: 'Cosas',
+    Phrases: 'Frases',
 
     // Core words. Spanish drops subject pronouns and conjugates verbs, so
     // without grammar support the verbs most often said first are in the first
@@ -67,6 +68,19 @@ export const STARTER_TRANSLATIONS: Record<string, Record<string, string>> = {
     who: 'quién',
     yes: 'sí',
     no: 'no',
+
+    // Quick phrases
+    Hello: 'Hola',
+    Goodbye: 'Adiós',
+    'Thank you': 'Gracias',
+    "Please wait, I'm thinking": 'Espera, estoy pensando',
+    'I need a break': 'Necesito un descanso',
+    "I don't understand": 'No entiendo',
+    'Can you help me?': '¿Me ayudas?',
+    'I need the bathroom': 'Necesito ir al baño',
+    'Something is wrong': 'Algo está mal',
+    'Leave me alone, please': 'Déjame en paz, por favor',
+    "I'm finished": 'Ya terminé',
 
     // Topic words
     Mom: 'mamá',

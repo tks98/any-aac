@@ -6,7 +6,9 @@
     EXT_LOCKED,
     EXT_PART_OF_SPEECH,
     isLocked,
+    isPhrasesBoard,
     linkableBoards,
+    messageText,
     PARTS_OF_SPEECH,
     partOfSpeech,
     replaceBoard,
@@ -199,7 +201,13 @@
     <form class="add" onsubmit={addButton}>
       <label class="field">
         <span>{multilingual ? t.labelIn(languageName(app.language)) : t.label}</span>
-        <input name="label" lang={app.language} autocomplete="off" />
+        <!-- On the phrases board, the message so far is the likely new phrase. -->
+        <input
+          name="label"
+          lang={app.language}
+          autocomplete="off"
+          value={isPhrasesBoard(board) ? messageText(app.message) : ''}
+        />
       </label>
       <button class="primary" type="submit"
         ><Icon path={ICONS.plus} size={22} />{t.addButton}</button

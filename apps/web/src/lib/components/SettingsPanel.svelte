@@ -654,6 +654,12 @@
             (on) => (app.settings.display.showWordForms = on),
           )}
           {@render toggle(
+            t.showPhrases,
+            t.showPhrasesHelp,
+            s.display.showPhrases,
+            (on) => (app.settings.display.showPhrases = on),
+          )}
+          {@render toggle(
             t.showShare,
             t.showShareHelp,
             s.display.showShare,

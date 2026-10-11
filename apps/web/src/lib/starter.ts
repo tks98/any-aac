@@ -12,6 +12,7 @@ import {
   EXT_LOCKED,
   EXT_NAME_TRANSLATIONS,
   EXT_PART_OF_SPEECH,
+  EXT_PHRASES,
   EXT_PLACEHOLDER,
   placeButton,
   type BoardSet,
@@ -173,7 +174,7 @@ const slug = (label: string) => label.toLowerCase().replace(/[^a-z0-9]+/g, '-');
  * Bump when the starter boards change. Saved starter boards from an older
  * version are replaced on next launch, as long as nobody has edited them.
  */
-export const STARTER_VERSION = 4;
+export const STARTER_VERSION = 5;
 const EXT_STARTER_VERSION = 'ext_openaac_starter_version';
 
 const PHONE = ' (phone)';
@@ -340,6 +341,43 @@ async function loadImages(
   return { images, files };
 }
 
+const PHRASES = [
+  'Hello',
+  'Goodbye',
+  'Thank you',
+  "Please wait, I'm thinking",
+  'I need a break',
+  "I don't understand",
+  'Can you help me?',
+  'I need the bathroom',
+  'Something is wrong',
+  'Leave me alone, please',
+  "I'm finished",
+];
+
+/** Quick phrases, opened from the Phrases button and spoken at once. */
+export function starterPhrases(): ObfBoard {
+  const layout = { rows: 4, columns: 3 };
+  let board: ObfBoard = {
+    ...createBoard({ id: 'phrases', name: 'Phrases', ...layout }),
+    license: LICENSE,
+    [EXT_NAME_TRANSLATIONS]: translated('Phrases'),
+    [EXT_PHRASES]: true,
+    [EXT_PLACEHOLDER]: true,
+    [EXT_STARTER_VERSION]: STARTER_VERSION,
+  };
+  PHRASES.forEach((phrase, i) => {
+    board = placeButton(board, Math.floor(i / layout.columns), i % layout.columns, {
+      id: slug(phrase),
+      label: phrase,
+      translations: Object.fromEntries(
+        Object.entries(translated(phrase)).map(([lang, label]) => [lang, { label }]),
+      ),
+    });
+  });
+  return board;
+}
+
 export async function starterSet(): Promise<BoardSet> {
   const keys = [
     ...new Set([...CORE_COLUMNS.flat(), ...TOPICS.flatMap((t) => t.words)].map((w) => w.pic)),
@@ -361,5 +399,5 @@ export async function starterSet(): Promise<BoardSet> {
     ];
   });
 
-  return { rootId: core.id, boards: [core, phoneCore, ...topics], files };
+  return { rootId: core.id, boards: [core, phoneCore, ...topics, starterPhrases()], files };
 }

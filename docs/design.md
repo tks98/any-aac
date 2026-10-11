@@ -76,6 +76,10 @@ Holding Edit for a second opens edit mode, laid out as in the approved mockup: a
 - **Printing:** Print (in the edit toolbar) prints the board on screen or every board, one per page, in colour, in the language in use, with a line crediting the symbol sets as their licence asks. Phone layouts print portrait. Saving as PDF is the browser's own option.
 - **Symbols:** the library is the whole Mulberry set (3,436 symbols), built from the pinned release by `apps/web/scripts/symbol-library.mjs` and served as static files. The service worker doesn't precache it; symbols are cached as they're seen, and a chosen symbol is copied into the boards, so boards stay complete offline and in exports. Search covers names, categories and tags; Spanish search only finds the starter words for now. Photos are shrunk to 512 px on the device.
 
+## Quick phrases
+
+The Phrases button (on the rail, beside Forms; it can be turned off) opens a board marked with `ext_openaac_phrases`. Its buttons are whole phrases, said at once without joining the message. Because it's an ordinary board, phrases are added, changed, printed, exported and backed up like any other words; in edit mode, a new button on the phrases board starts with the current message filled in. Boards from before phrases existed get the starter phrases the first time Phrases is opened.
+
 ## Word forms
 
 A **Forms** button on the nav rail (it can be turned off in Display settings) changes the last word in the message to another form: _want_ → _wants_, _wanting_, _wanted_; _go_ → _went_, _gone_; _big_ → _bigger_, _biggest_; _I_ → _me_, _my_, _mine_; in Spanish _quiero_ → _quieres_, _queremos_, _quise_…, _cansado_ → _cansada_, _cansados_, _cansadas_, _me gusta_ → _te gusta_, _le gusta_. Buttons never move, so motor plans don't change, and a communicator learns one place per word rather than one per form.
