@@ -1,18 +1,25 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import BoardGrid from './lib/components/BoardGrid.svelte';
-  import ManageDialog from './lib/components/ManageDialog.svelte';
   import MessageBar from './lib/components/MessageBar.svelte';
   import NavRail from './lib/components/NavRail.svelte';
+  import SettingsPanel from './lib/components/SettingsPanel.svelte';
   import { isUntouchedStarter, starterSet } from './lib/starter';
   import { app } from './lib/state.svelte';
-  import { loadBoards, requestPersistentStorage, saveBoards } from './lib/storage';
+  import {
+    loadBoards,
+    loadSettings,
+    requestPersistentStorage,
+    saveBoards,
+    saveSettings,
+  } from './lib/storage';
 
   /** Must match the phone breakpoint in the components' CSS. */
   const PHONE = '(max-width: 599px)';
 
-  let managing = $state(false);
+  let settingsOpen = $state(false);
   let notSaved = $state(false);
+  let settingsLoaded = $state(false);
 
   $effect(() => {
     const query = matchMedia(PHONE);
@@ -22,8 +29,21 @@
     return () => query.removeEventListener('change', update);
   });
 
+  // Save settings whenever they change, once the saved ones have been read.
+  $effect(() => {
+    const settings = $state.snapshot(app.settings);
+    if (!settingsLoaded) return;
+    saveSettings(settings).catch(() => (notSaved = true));
+  });
+
   onMount(async () => {
     void requestPersistentStorage();
+    try {
+      app.settings = await loadSettings();
+    } catch {
+      // Defaults are fine; the save effect will report if storage is unavailable.
+    }
+    settingsLoaded = true;
     try {
       const saved = await loadBoards();
       if (saved && !isUntouchedStarter(saved)) {
@@ -45,7 +65,7 @@
 <div class="app">
   <MessageBar />
   <div class="body">
-    <NavRail onunlock={() => (managing = true)} />
+    <NavRail onunlock={() => (settingsOpen = true)} />
     <main>
       <p class="trail">
         {app.trail.join('  ›  ')}
@@ -58,7 +78,7 @@
   </div>
 </div>
 
-<ManageDialog bind:open={managing} />
+<SettingsPanel bind:open={settingsOpen} />
 
 <style>
   .app {

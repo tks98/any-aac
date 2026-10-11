@@ -4,6 +4,7 @@
  */
 import type { BoardSet } from '@open-aac/core';
 import Dexie, { type EntityTable } from 'dexie';
+import { withDefaults, type Settings } from './settings';
 
 interface StoredSet {
   key: string;
@@ -11,12 +12,19 @@ interface StoredSet {
   savedAt: number;
 }
 
+interface StoredSettings {
+  key: string;
+  settings: Settings;
+}
+
 class Database extends Dexie {
   sets!: EntityTable<StoredSet, 'key'>;
+  settings!: EntityTable<StoredSettings, 'key'>;
 
   constructor() {
     super('open-aac');
     this.version(1).stores({ sets: 'key' });
+    this.version(2).stores({ sets: 'key', settings: 'key' });
   }
 }
 
@@ -29,6 +37,14 @@ export async function loadBoards(): Promise<BoardSet | undefined> {
 
 export async function saveBoards(set: BoardSet): Promise<void> {
   await db.sets.put({ key: CURRENT, set, savedAt: Date.now() });
+}
+
+export async function loadSettings(): Promise<Settings> {
+  return withDefaults((await db.settings.get(CURRENT))?.settings);
+}
+
+export async function saveSettings(settings: Settings): Promise<void> {
+  await db.settings.put({ key: CURRENT, settings });
 }
 
 export async function requestPersistentStorage(): Promise<boolean> {

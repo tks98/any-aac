@@ -3,16 +3,47 @@ import { expect, test, type Page } from '@playwright/test';
 const word = (page: Page, name: string) => page.getByRole('button', { name, exact: true });
 const messageBar = (page: Page) => page.getByRole('button', { name: /^Message/ });
 
-async function openBoardsDialog(page: Page) {
-  const edit = page.getByRole('button', { name: /^Edit boards/ });
-  await edit.hover();
+async function holdOn(page: Page, name: string | RegExp, ms: number) {
+  await page.getByRole('button', { name, exact: typeof name === 'string' }).hover();
   await page.mouse.down();
-  await page.waitForTimeout(1200);
+  await page.waitForTimeout(ms);
   await page.mouse.up();
-  await expect(page.getByRole('dialog', { name: 'Boards' })).toBeVisible();
 }
 
+async function openSettings(page: Page, section?: string) {
+  await holdOn(page, /^Edit boards/, 1200);
+  await expect(page.getByRole('dialog', { name: 'Settings' })).toBeVisible();
+  if (section) await page.getByRole('button', { name: section }).click();
+}
+
+/** Replaces the browser voice with a recorder, so tests can see what would be said. */
+async function recordSpeech(page: Page) {
+  await page.addInitScript(() => {
+    const spoken: string[] = [];
+    Object.assign(window, { spoken });
+    if (!('SpeechSynthesisUtterance' in window)) {
+      Object.assign(window, {
+        SpeechSynthesisUtterance: class {
+          constructor(public text: string) {}
+        },
+      });
+    }
+    const fake = {
+      speak: (utterance: { text: string }) => spoken.push(utterance.text),
+      cancel() {},
+      getVoices: () => [],
+      addEventListener() {},
+      removeEventListener() {},
+    };
+    Object.defineProperty(window, 'speechSynthesis', { value: fake, configurable: true });
+  });
+}
+
+const spoken = (page: Page) =>
+  page.evaluate(() => (window as unknown as { spoken: string[] }).spoken);
+
 test.beforeEach(async ({ page }) => {
+  await recordSpeech(page);
   await page.goto('/');
   await expect(word(page, 'want')).toBeVisible();
 });
@@ -49,12 +80,12 @@ test('opens a folder, keeps core words in place, and comes back', async ({ page 
 
 test('editing needs a press and hold, not a tap', async ({ page }) => {
   await page.getByRole('button', { name: /^Edit boards/ }).click();
-  await expect(page.getByRole('dialog', { name: 'Boards' })).toBeHidden();
-  await openBoardsDialog(page);
+  await expect(page.getByRole('dialog', { name: 'Settings' })).toBeHidden();
+  await openSettings(page);
 });
 
 test('exports boards and imports them back', async ({ page }) => {
-  await openBoardsDialog(page);
+  await openSettings(page, 'Boards & backup');
   const downloading = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Export all boards' }).click();
   const download = await downloading;
@@ -138,4 +169,72 @@ test('keeps working offline after the first visit', async ({ page, context, brow
   await page.reload();
   await word(page, 'I').click();
   await expect(messageBar(page)).toHaveAccessibleName('Message: I. Tap to speak it.');
+});
+
+test('speaks each word, unless that is turned off', async ({ page }) => {
+  await word(page, 'I').click();
+  expect(await spoken(page)).toEqual(['I']);
+
+  await openSettings(page, 'Speech & voice');
+  await page.getByRole('switch', { name: 'Speak each word when tapped' }).click();
+  await page.getByRole('button', { name: 'Done', exact: true }).click();
+
+  await word(page, 'want').click();
+  expect(await spoken(page)).toEqual(['I']);
+  await page.getByRole('button', { name: 'Speak', exact: true }).click();
+  expect(await spoken(page)).toEqual(['I', 'I want']);
+});
+
+test('hold to select: a quick tap does nothing, a long press chooses', async ({ page }) => {
+  await openSettings(page, 'Touch');
+  await page.getByRole('slider', { name: 'Hold to select' }).fill('600');
+  await page.getByRole('button', { name: 'Done', exact: true }).click();
+
+  await word(page, 'want').click();
+  await expect(messageBar(page)).toHaveAccessibleName('Message is empty');
+  await holdOn(page, 'want', 900);
+  await expect(messageBar(page)).toHaveAccessibleName('Message: want. Tap to speak it.');
+
+  // Settings survive a reload.
+  await page.reload();
+  await openSettings(page, 'Touch');
+  await expect(page.getByRole('slider', { name: 'Hold to select' })).toHaveValue('600');
+});
+
+test('select when finger lifts chooses the button it lifts from', async ({ page }) => {
+  await openSettings(page, 'Touch');
+  await page.getByRole('switch', { name: 'Select when finger lifts' }).click();
+  await page.getByRole('button', { name: 'Done', exact: true }).click();
+
+  const from = await word(page, 'want').boundingBox();
+  const to = await word(page, 'like').boundingBox();
+  await page.mouse.move(from!.x + from!.width / 2, from!.y + from!.height / 2);
+  await page.mouse.down();
+  await expect(messageBar(page)).toHaveAccessibleName('Message is empty');
+  await page.mouse.move(to!.x + to!.width / 2, to!.y + to!.height / 2, { steps: 5 });
+  await page.mouse.up();
+  await expect(messageBar(page)).toHaveAccessibleName('Message: like. Tap to speak it.');
+});
+
+test('the keyboard can choose words', async ({ page }) => {
+  await word(page, 'I').focus();
+  await page.keyboard.press('Enter');
+  await expect(messageBar(page)).toHaveAccessibleName('Message: I. Tap to speak it.');
+});
+
+test('labels can go above symbols, or symbols can be hidden', async ({ page }) => {
+  const label = word(page, 'want').locator('.label');
+  const image = word(page, 'want').locator('img');
+  expect((await label.boundingBox())!.y).toBeGreaterThan((await image.boundingBox())!.y);
+
+  await openSettings(page, 'Display');
+  await page.getByRole('button', { name: 'Above symbol' }).click();
+  await page.getByRole('button', { name: 'Done', exact: true }).click();
+  expect((await label.boundingBox())!.y).toBeLessThan((await image.boundingBox())!.y);
+
+  await openSettings(page, 'Display');
+  await page.getByRole('switch', { name: 'Show symbols' }).click();
+  await page.getByRole('button', { name: 'Done', exact: true }).click();
+  await expect(image).toHaveCount(0);
+  await expectBoardFits(page);
 });

@@ -10,4 +10,9 @@ export const ICONS = {
   import: 'M12 16V4M7 9l5-5 5 5M4 16v4h16v-4',
   export: 'M12 4v12M7 11l5 5 5-5M4 16v4h16v-4',
   reset: 'M4 12a8 8 0 1 0 2.3-5.7M4 4v5h5',
+  touch:
+    'M9 11V5a1.5 1.5 0 0 1 3 0v5M12 10V4a1.5 1.5 0 0 1 3 0v6M15 10V5.5a1.5 1.5 0 0 1 3 0V14a7 7 0 0 1-7 7h-1a6 6 0 0 1-5-3l-3-5a1.5 1.5 0 0 1 2.5-1.5L9 14V11',
+  display: 'M3 5h18v12H3zM8 21h8M12 17v4',
+  boards: 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z',
+  about: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 8v.01M11 12h1v5h1',
 } as const;

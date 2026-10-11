@@ -2,7 +2,7 @@
 
 A free, open-source AAC (augmentative and alternative communication) app that runs in any modern browser, keeps working with no internet connection, and can be self-hosted by serving a folder of static files.
 
-**Status: early.** You can tap words to build a message and hear it spoken. Folders work, the app works offline, boards are saved on the device, and you can import and export Open Board Format files. Most of what's in the [plan](docs/plan.md) is still ahead, and the starter vocabulary and pictograms are placeholders (see [design.md](docs/design.md)).
+**Status: early.** You can tap words to build a message and hear it spoken. Folders work, phones get their own smaller board, the app works offline, boards and settings are saved on the device, and you can import and export Open Board Format files. Settings cover the voice, speaking rate and pitch, touch timing (hold to select, select on release, ignore repeat taps), button spacing, label position and text-only mode. Most of what's in the [plan](docs/plan.md) is still ahead, and the starter vocabulary and pictograms are placeholders (see [design.md](docs/design.md)).
 
 ## Run it
 

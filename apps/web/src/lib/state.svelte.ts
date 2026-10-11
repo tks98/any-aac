@@ -10,6 +10,7 @@ import {
   type Message,
   type ObfButton,
 } from '@open-aac/core';
+import { DEFAULT_SETTINGS, type Settings } from './settings';
 import { speech } from './speech';
 
 class AppState {
@@ -19,7 +20,7 @@ class AppState {
   /** Boards we came through to reach this one, for Back. */
   history = $state.raw<string[]>([]);
   message = $state.raw<Message>([]);
-  speakEachWord = $state(true);
+  settings = $state<Settings>(structuredClone(DEFAULT_SETTINGS));
   /** Phone-sized screen: show boards' compact layouts where they have one. */
   compact = $state(false);
 
@@ -70,7 +71,7 @@ class AppState {
         return;
       case 'word':
         this.message = addWord(this.message, button, this.view?.id);
-        if (this.speakEachWord) speech.speak(spokenText(button));
+        if (this.settings.speech.speakEachWord) this.say(spokenText(button));
         return;
     }
   }
@@ -97,11 +98,15 @@ class AppState {
   }
 
   speakMessage() {
-    speech.speak(messageText(this.message));
+    this.say(messageText(this.message));
   }
 
   askForHelp() {
-    speech.speak('I need help');
+    this.say('I need help');
+  }
+
+  say(text: string) {
+    speech.speak(text, this.settings.speech);
   }
 }
 

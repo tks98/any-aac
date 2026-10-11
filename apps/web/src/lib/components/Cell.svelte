@@ -4,9 +4,24 @@
 
   let {
     button,
+    index,
     src,
-    onpress,
-  }: { button: ObfButton; src: string | undefined; onpress: () => void } = $props();
+    holdMs = 0,
+    labelAbove = false,
+    showSymbol = true,
+    onactivate,
+  }: {
+    button: ObfButton;
+    /** Position in the grid; the board's pointer handling finds cells by it. */
+    index: number;
+    src: string | undefined;
+    /** Non-zero while a press-and-hold is under way on this button. */
+    holdMs?: number;
+    labelAbove?: boolean;
+    showSymbol?: boolean;
+    /** Activation that doesn't come from a pointer (keyboard, screen reader). */
+    onactivate: () => void;
+  } = $props();
 
   const colors = $derived(cellColors(button));
   const isFolder = $derived(button.load_board !== undefined);
@@ -15,15 +30,21 @@
 
 <button
   class="cell"
+  class:above={labelAbove}
+  class:text-only={!showSymbol || !src}
+  data-cell={index}
   style:--fill={colors.fill}
   style:--edge={colors.edge}
   aria-label={isFolder ? `${label}, folder` : undefined}
-  onclick={onpress}
+  onclick={onactivate}
 >
   {#if isFolder}
     <span class="tab" aria-hidden="true"></span>
   {/if}
-  {#if src}
+  {#if holdMs > 0}
+    <span class="hold" style:--hold-ms="{holdMs}ms" aria-hidden="true"></span>
+  {/if}
+  {#if src && showSymbol}
     <img {src} alt="" draggable="false" />
   {/if}
   <span class="label">{label}</span>
@@ -78,6 +99,34 @@
     overflow-wrap: normal;
     word-break: normal;
     overflow: hidden;
+  }
+
+  .above {
+    flex-direction: column-reverse;
+  }
+
+  .text-only .label {
+    font-size: clamp(0.9rem, min(20cqi, 30cqb), 2rem);
+  }
+
+  /* Press-and-hold progress fills the button from the bottom. */
+  .hold {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: rgb(29 91 214 / 0.25);
+    transform-origin: bottom;
+    animation: hold-fill var(--hold-ms) linear forwards;
+    pointer-events: none;
+  }
+
+  @keyframes hold-fill {
+    from {
+      transform: scaleY(0);
+    }
+    to {
+      transform: scaleY(1);
+    }
   }
 
   .tab {

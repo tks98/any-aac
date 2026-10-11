@@ -4,11 +4,13 @@
     "types": ["vite/client", "node"]
   },
   "include": [
-    "src/**/*.ts",
-    "src/**/*.svelte",
     "e2e/**/*.ts",
-    "vite.config.ts",
     "playwright.config.ts",
-    "pwa-assets.config.ts"
+    "pwa-assets.config.ts",
+    "src/**/*.svelte",
+    "src/**/*.ts",
+    "test/**/*.ts",
+    "vite.config.ts",
+    "vitest.config.ts"
   ]
 }
