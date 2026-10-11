@@ -50,10 +50,9 @@ Boards are stored in [Open Board Format](https://www.openboardformat.org/), so t
 
 ## Docs
 
-- [research.md](docs/research.md): what AAC systems need, what exists, and what browsers can do
+- [research/](docs/research/README.md): our research findings and the decisions they led to
 - [plan.md](docs/plan.md): principles, features, architecture, and roadmap
 - [design.md](docs/design.md): the approved UI direction and design tokens
-- [research-check.md](docs/research-check.md): how what we built lines up with the research, and the decisions that follow
 - [setup.md](docs/setup.md): setting up a device for someone (installing, locking, voices, switches, backups)
 - [feature-match.md](docs/feature-match.md): Open AAC's features in the categories SLPs compare
 

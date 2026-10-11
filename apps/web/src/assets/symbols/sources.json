@@ -2,88 +2,337 @@
   "mulberry": "v3.6.1",
   "openmoji": "17.0.0",
   "symbols": {
-    "I": { "set": "openmoji", "name": "1F64B" },
-    "you": { "set": "openmoji", "name": "1FAF5" },
-    "he": { "set": "openmoji", "name": "1F468" },
-    "she": { "set": "openmoji", "name": "1F469" },
-    "we": { "set": "openmoji", "name": "1F9D1-200D-1F91D-200D-1F9D1" },
-    "want": { "set": "mulberry", "name": "want_,_to" },
-    "like": { "set": "openmoji", "name": "2764" },
-    "go": { "set": "mulberry", "name": "go_,_to" },
-    "stop": { "set": "openmoji", "name": "1F6D1" },
-    "help": { "set": "mulberry", "name": "help_,_to" },
-    "look": { "set": "mulberry", "name": "look_,_to" },
-    "get": { "set": "mulberry", "name": "get_,_to" },
-    "put": { "set": "mulberry", "name": "put_,_to" },
-    "make": { "set": "mulberry", "name": "make_,_to" },
-    "open": { "set": "mulberry", "name": "open_,_to" },
-    "play": { "set": "mulberry", "name": "play_,_to" },
-    "can": { "set": "openmoji", "name": "1F4AA" },
-    "have": { "set": "openmoji", "name": "1F932" },
-    "eat": { "set": "mulberry", "name": "eat_,_to" },
-    "drink": { "set": "mulberry", "name": "drink_,_to" },
-    "more": { "set": "mulberry", "name": "more" },
-    "again": { "set": "openmoji", "name": "1F501" },
-    "big": { "set": "mulberry", "name": "large" },
-    "little": { "set": "mulberry", "name": "little" },
-    "good": { "set": "mulberry", "name": "good" },
-    "bad": { "set": "mulberry", "name": "bad" },
-    "that": { "set": "openmoji", "name": "1F449" },
-    "in": { "set": "mulberry", "name": "in" },
-    "on": { "set": "mulberry", "name": "on" },
-    "up": { "set": "mulberry", "name": "up" },
-    "down": { "set": "mulberry", "name": "down" },
-    "allDone": { "set": "mulberry", "name": "finish" },
-    "not": { "set": "openmoji", "name": "1F6AB" },
-    "what": { "set": "mulberry", "name": "what" },
-    "where": { "set": "mulberry", "name": "where" },
-    "who": { "set": "mulberry", "name": "who" },
-    "yes": { "set": "openmoji", "name": "2714" },
-    "no": { "set": "openmoji", "name": "274C" },
-    "people": { "set": "openmoji", "name": "1F465" },
-    "food": { "set": "mulberry", "name": "food" },
-    "places": { "set": "openmoji", "name": "1F5FA" },
-    "feelings": { "set": "mulberry", "name": "happy_lady" },
-    "body": { "set": "mulberry", "name": "body_outline" },
-    "things": { "set": "openmoji", "name": "1F4E6" },
-    "mom": { "set": "mulberry", "name": "mum_parent" },
-    "dad": { "set": "mulberry", "name": "dad_parent" },
-    "teacher": { "set": "mulberry", "name": "teacher_2a" },
-    "friend": { "set": "openmoji", "name": "1F91D" },
-    "baby": { "set": "mulberry", "name": "baby" },
-    "apple": { "set": "mulberry", "name": "apple" },
-    "banana": { "set": "mulberry", "name": "banana" },
-    "cookie": { "set": "mulberry", "name": "biscuit_chocolate_chip" },
-    "pizza": { "set": "mulberry", "name": "pizza" },
-    "sandwich": { "set": "mulberry", "name": "sandwich" },
-    "cereal": { "set": "mulberry", "name": "cereal" },
-    "juice": { "set": "mulberry", "name": "orange_juice" },
-    "milk": { "set": "mulberry", "name": "milk" },
-    "water": { "set": "mulberry", "name": "water" },
-    "happy": { "set": "mulberry", "name": "happy_man" },
-    "sad": { "set": "mulberry", "name": "sad_man" },
-    "mad": { "set": "mulberry", "name": "angry_man" },
-    "scared": { "set": "mulberry", "name": "afraid_man" },
-    "tired": { "set": "mulberry", "name": "yawn_,_to" },
-    "sick": { "set": "openmoji", "name": "1F912" },
-    "excited": { "set": "mulberry", "name": "excited_man" },
-    "hurt": { "set": "mulberry", "name": "plaster" },
-    "home": { "set": "mulberry", "name": "house" },
-    "school": { "set": "mulberry", "name": "school" },
-    "park": { "set": "openmoji", "name": "1F3DE" },
-    "store": { "set": "mulberry", "name": "shop" },
-    "outside": { "set": "mulberry", "name": "outside" },
-    "bathroom": { "set": "mulberry", "name": "toilet" },
-    "head": { "set": "mulberry", "name": "head" },
-    "hand": { "set": "openmoji", "name": "270B" },
-    "tummy": { "set": "mulberry", "name": "stomach" },
-    "leg": { "set": "mulberry", "name": "leg" },
-    "mouth": { "set": "mulberry", "name": "mouth" },
-    "eye": { "set": "mulberry", "name": "eye" },
-    "ball": { "set": "mulberry", "name": "ball" },
-    "book": { "set": "openmoji", "name": "1F4D6" },
-    "phone": { "set": "mulberry", "name": "mobile_phone" },
-    "blanket": { "set": "mulberry", "name": "blanket" },
-    "teddy": { "set": "mulberry", "name": "teddy_bear" }
+    "I": {
+      "set": "openmoji",
+      "name": "1F64B"
+    },
+    "you": {
+      "set": "openmoji",
+      "name": "1FAF5"
+    },
+    "he": {
+      "set": "openmoji",
+      "name": "1F468"
+    },
+    "she": {
+      "set": "openmoji",
+      "name": "1F469"
+    },
+    "want": {
+      "set": "mulberry",
+      "name": "want_,_to"
+    },
+    "like": {
+      "set": "openmoji",
+      "name": "2764"
+    },
+    "go": {
+      "set": "mulberry",
+      "name": "go_,_to"
+    },
+    "stop": {
+      "set": "openmoji",
+      "name": "1F6D1"
+    },
+    "help": {
+      "set": "mulberry",
+      "name": "help_,_to"
+    },
+    "look": {
+      "set": "mulberry",
+      "name": "look_,_to"
+    },
+    "get": {
+      "set": "mulberry",
+      "name": "get_,_to"
+    },
+    "put": {
+      "set": "mulberry",
+      "name": "put_,_to"
+    },
+    "make": {
+      "set": "mulberry",
+      "name": "make_,_to"
+    },
+    "open": {
+      "set": "mulberry",
+      "name": "open_,_to"
+    },
+    "play": {
+      "set": "mulberry",
+      "name": "play_,_to"
+    },
+    "can": {
+      "set": "openmoji",
+      "name": "1F4AA"
+    },
+    "eat": {
+      "set": "mulberry",
+      "name": "eat_,_to"
+    },
+    "drink": {
+      "set": "mulberry",
+      "name": "drink_,_to"
+    },
+    "more": {
+      "set": "mulberry",
+      "name": "more"
+    },
+    "good": {
+      "set": "mulberry",
+      "name": "good"
+    },
+    "that": {
+      "set": "openmoji",
+      "name": "1F449"
+    },
+    "in": {
+      "set": "mulberry",
+      "name": "in"
+    },
+    "on": {
+      "set": "mulberry",
+      "name": "on"
+    },
+    "up": {
+      "set": "mulberry",
+      "name": "up"
+    },
+    "allDone": {
+      "set": "mulberry",
+      "name": "finish"
+    },
+    "not": {
+      "set": "openmoji",
+      "name": "1F6AB"
+    },
+    "what": {
+      "set": "mulberry",
+      "name": "what"
+    },
+    "where": {
+      "set": "mulberry",
+      "name": "where"
+    },
+    "who": {
+      "set": "mulberry",
+      "name": "who"
+    },
+    "yes": {
+      "set": "openmoji",
+      "name": "2714"
+    },
+    "no": {
+      "set": "openmoji",
+      "name": "274C"
+    },
+    "people": {
+      "set": "openmoji",
+      "name": "1F465"
+    },
+    "food": {
+      "set": "mulberry",
+      "name": "food"
+    },
+    "places": {
+      "set": "openmoji",
+      "name": "1F5FA"
+    },
+    "feelings": {
+      "set": "mulberry",
+      "name": "happy_lady"
+    },
+    "body": {
+      "set": "mulberry",
+      "name": "body_outline"
+    },
+    "things": {
+      "set": "openmoji",
+      "name": "1F4E6"
+    },
+    "mom": {
+      "set": "mulberry",
+      "name": "mum_parent"
+    },
+    "dad": {
+      "set": "mulberry",
+      "name": "dad_parent"
+    },
+    "teacher": {
+      "set": "mulberry",
+      "name": "teacher_2a"
+    },
+    "friend": {
+      "set": "openmoji",
+      "name": "1F91D"
+    },
+    "baby": {
+      "set": "mulberry",
+      "name": "baby"
+    },
+    "apple": {
+      "set": "mulberry",
+      "name": "apple"
+    },
+    "banana": {
+      "set": "mulberry",
+      "name": "banana"
+    },
+    "cookie": {
+      "set": "mulberry",
+      "name": "biscuit_chocolate_chip"
+    },
+    "pizza": {
+      "set": "mulberry",
+      "name": "pizza"
+    },
+    "sandwich": {
+      "set": "mulberry",
+      "name": "sandwich"
+    },
+    "cereal": {
+      "set": "mulberry",
+      "name": "cereal"
+    },
+    "juice": {
+      "set": "mulberry",
+      "name": "orange_juice"
+    },
+    "milk": {
+      "set": "mulberry",
+      "name": "milk"
+    },
+    "water": {
+      "set": "mulberry",
+      "name": "water"
+    },
+    "happy": {
+      "set": "mulberry",
+      "name": "happy_man"
+    },
+    "sad": {
+      "set": "mulberry",
+      "name": "sad_man"
+    },
+    "mad": {
+      "set": "mulberry",
+      "name": "angry_man"
+    },
+    "scared": {
+      "set": "mulberry",
+      "name": "afraid_man"
+    },
+    "tired": {
+      "set": "mulberry",
+      "name": "yawn_,_to"
+    },
+    "sick": {
+      "set": "openmoji",
+      "name": "1F912"
+    },
+    "excited": {
+      "set": "mulberry",
+      "name": "excited_man"
+    },
+    "hurt": {
+      "set": "mulberry",
+      "name": "plaster"
+    },
+    "home": {
+      "set": "mulberry",
+      "name": "house"
+    },
+    "school": {
+      "set": "mulberry",
+      "name": "school"
+    },
+    "park": {
+      "set": "openmoji",
+      "name": "1F3DE"
+    },
+    "store": {
+      "set": "mulberry",
+      "name": "shop"
+    },
+    "outside": {
+      "set": "mulberry",
+      "name": "outside"
+    },
+    "bathroom": {
+      "set": "mulberry",
+      "name": "toilet"
+    },
+    "head": {
+      "set": "mulberry",
+      "name": "head"
+    },
+    "hand": {
+      "set": "openmoji",
+      "name": "270B"
+    },
+    "tummy": {
+      "set": "mulberry",
+      "name": "stomach"
+    },
+    "leg": {
+      "set": "mulberry",
+      "name": "leg"
+    },
+    "mouth": {
+      "set": "mulberry",
+      "name": "mouth"
+    },
+    "eye": {
+      "set": "mulberry",
+      "name": "eye"
+    },
+    "ball": {
+      "set": "mulberry",
+      "name": "ball"
+    },
+    "book": {
+      "set": "openmoji",
+      "name": "1F4D6"
+    },
+    "phone": {
+      "set": "mulberry",
+      "name": "mobile_phone"
+    },
+    "blanket": {
+      "set": "mulberry",
+      "name": "blanket"
+    },
+    "teddy": {
+      "set": "mulberry",
+      "name": "teddy_bear"
+    },
+    "all": {
+      "set": "mulberry",
+      "name": "every"
+    },
+    "some": {
+      "set": "mulberry",
+      "name": "some"
+    },
+    "same": {
+      "set": "mulberry",
+      "name": "same"
+    },
+    "when": {
+      "set": "mulberry",
+      "name": "when"
+    },
+    "why": {
+      "set": "mulberry",
+      "name": "why"
+    },
+    "turn": {
+      "set": "mulberry",
+      "name": "turn_,_to"
+    },
+    "here": {
+      "set": "openmoji",
+      "name": "1F447"
+    }
   }
 }

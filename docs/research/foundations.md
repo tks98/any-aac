@@ -1,8 +1,8 @@
 # AAC research notes
 
-This file covers three things: what an AAC (augmentative and alternative communication) system has to do well, what already exists, and what a browser can and can't do. [plan.md](plan.md) builds on it.
+This file covers three things: what an AAC (augmentative and alternative communication) system has to do well, what already exists, and what a browser can and can't do. [plan.md](../plan.md) builds on it.
 
-Researched 2026-10-10, and checked against what was built on 2026-10-11 ([research-check.md](research-check.md), which adds sources on Spanish vocabulary, Universal Core, colour coding, CVI, bilingual layouts, modeling and voice licences). Where a source was a vendor blog or a secondary write-up, the text says so. Claims marked _(unverified)_ come from general knowledge and still need checking.
+Researched 2026-10-10, and checked against what was built on 2026-10-11 ([the research check](check-2026-10-11.md), which adds sources on Spanish vocabulary, Universal Core, colour coding, CVI, bilingual layouts, modeling and voice licences). Where a source was a vendor blog or a secondary write-up, the text says so. Claims marked _(unverified)_ come from general knowledge and still need checking.
 
 ---
 

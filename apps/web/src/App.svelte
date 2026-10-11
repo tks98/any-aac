@@ -16,6 +16,7 @@
   import { app } from './lib/state.svelte';
   import { backups } from './lib/backup.svelte';
   import {
+    deleteAudioForVoice,
     loadBackupTimes,
     loadBoards,
     loadSettings,
@@ -24,7 +25,7 @@
     saveSettings,
   } from './lib/storage';
   import { phrase } from './lib/phrases';
-  import { voiceById } from './lib/voice/catalog';
+  import { forgetWithdrawnVoices, voiceById } from './lib/voice/catalog';
   import { openaacVoice } from './lib/voice/voice.svelte';
 
   /** Must match the phone breakpoint in the components' CSS. */
@@ -150,6 +151,14 @@
     } catch {
       // Defaults are fine; the save effect will report if storage is unavailable.
     }
+    // Voices withdrawn (e.g. for their licence) give way to the device voice,
+    // and their files and prepared audio are deleted.
+    for (const [lang, id] of Object.entries(app.settings.speech.openaacVoices)) {
+      if (!voiceById(id)) delete app.settings.speech.openaacVoices[lang];
+    }
+    void forgetWithdrawnVoices().then((ids) =>
+      Promise.all(ids.map((id) => deleteAudioForVoice(id).catch(() => undefined))),
+    );
     settingsLoaded = true;
     try {
       const saved = await loadBoards();

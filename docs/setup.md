@@ -21,7 +21,7 @@ Each word has one place on the board, and people learn where words are by moving
 
 ## 3. Choose a voice
 
-**Settings → Speech & voice.** The device's own voice works straight away. An **Open AAC voice** sounds the same on every device and works offline; it's a one-time download of about 80 MB. **Linda** is recommended for English. Voices marked "licence isn't clearly open" may be withdrawn, so don't choose one as someone's long-term voice yet. There isn't a clearly licensed, good-quality Spanish voice yet ([research-check.md](research-check.md)).
+**Settings → Speech & voice.** The device's own voice works straight away. An **Open AAC voice** sounds the same on every device and works offline; it's a one-time download of about 80 MB. **Linda** is recommended for English. Open AAC only offers voices whose licences are clearly open; for Spanish that's one small, lower-quality voice for now ([decision 0002](research/decisions/0002-only-clearly-licensed-voices.md)).
 
 Firefox on Android can't speak with device voices; use Chrome, or download an Open AAC voice.
 

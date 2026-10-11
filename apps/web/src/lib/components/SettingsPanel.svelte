@@ -40,9 +40,7 @@
   /** Open AAC voices in the language in use, the recommended one first. */
   const openaacVoices = $derived(
     VOICES.filter((v) => baseLanguage(v.lang) === baseLanguage(app.language)).sort(
-      (a, b) =>
-        Number(b.recommended === true) - Number(a.recommended === true) ||
-        Number(b.clear) - Number(a.clear),
+      (a, b) => Number(b.recommended === true) - Number(a.recommended === true),
     ),
   );
   const otherVoices = $derived(voices.filter((v) => !isMain(v)));
@@ -438,9 +436,6 @@
                   <span class="voice-meta"
                     >{describe(voice)} · {voice.license} · {Math.round(voice.sizeMB)} MB</span
                   >
-                  {#if !voice.clear}
-                    <span class="voice-meta unclear">{t.licenceUnclear}</span>
-                  {/if}
                   {#if busy}
                     <span class="voice-meta" role="status">{progressText()}</span>
                     <progress
@@ -928,9 +923,16 @@
               >. Cada símbolo guarda su origen, que viaja con los tableros exportados.
             </p>
             <p>
-              El vocabulario inicial es provisional hasta que se diseñe con terapeutas del lenguaje.
-              Ese vocabulario, sus traducciones y los pocos pictogramas de línea que quedan son de
-              colaboradores de Open AAC, con licencia CC BY-SA 4.0.
+              Las palabras básicas son el vocabulario
+              <a
+                href="https://www.med.unc.edu/ahs/clds/universal-core-vocabulary/"
+                target="_blank"
+                rel="noreferrer">Universal Core</a
+              >
+              del Center for Literacy and Disability Studies (UNC-Chapel Hill, CC BY 4.0), con algunas
+              palabras añadidas. El vocabulario inicial es provisional hasta que lo revisen terapeutas
+              del lenguaje. Su organización, sus traducciones y los pocos pictogramas de línea que quedan
+              son de colaboradores de Open AAC, con licencia CC BY-SA 4.0.
             </p>
             <p>El texto usa Atkinson Hyperlegible Next (SIL Open Font License).</p>
             <p>
@@ -963,9 +965,16 @@
               >. Each symbol's source is recorded with it, and travels with exported boards.
             </p>
             <p>
-              The starter vocabulary is a placeholder until it's designed with speech-language
-              pathologists. It, its translations and the few remaining line-drawing pictograms are
-              by Open AAC contributors, licensed CC BY-SA 4.0.
+              The core words are the
+              <a
+                href="https://www.med.unc.edu/ahs/clds/universal-core-vocabulary/"
+                target="_blank"
+                rel="noreferrer">Universal Core</a
+              >
+              vocabulary from the Center for Literacy and Disability Studies (UNC-Chapel Hill, CC BY 4.0),
+              with a few words added. The starter vocabulary is a placeholder until speech-language pathologists
+              have reviewed it. Its arrangement, translations and the few remaining line-drawing pictograms
+              are by Open AAC contributors, licensed CC BY-SA 4.0.
             </p>
             <p>Text is set in Atkinson Hyperlegible Next (SIL Open Font License).</p>
             <p>Open AAC collects nothing. Your boards and settings stay on this device.</p>
@@ -1339,11 +1348,6 @@
     padding: 10px 12px;
     border-left: 4px solid var(--help);
     background: var(--chip);
-    font-weight: 700;
-  }
-
-  .voice-meta.unclear {
-    color: var(--ink);
     font-weight: 700;
   }
 

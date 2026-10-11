@@ -1,12 +1,13 @@
 import type { VoiceSource } from './piper';
 
 /**
- * Piper voices we can offer. A voice's licence depends on its recordings and,
- * when it was fine-tuned, on the voice it started from. Several popular Piper
- * voices (hfc_female, lessac, ryan) are non-commercial, so they're left out.
- * Some voices here were fine-tuned from lessac, whose recordings are licensed
- * for research only; until that's settled they're marked `clear: false` and
- * never recommended. See docs/decisions/0001-offline-voice.md.
+ * Piper voices we can offer: only voices whose licence is clearly open, from
+ * their recordings and, if they were fine-tuned, from the voice they started
+ * from. Popular Piper voices that are non-commercial (hfc_female, lessac, ryan)
+ * or fine-tuned from lessac, whose recordings are research-only (joe, alba,
+ * davefx, ald, daniela, sharvard, the mls voices), are left out, as are voices
+ * whose training isn't documented (es_MX claude).
+ * See docs/research/decisions/0002-only-clearly-licensed-voices.md.
  *
  * The files currently come from the Piper project on Hugging Face. Before this
  * ships, they must be served from the app's own origin like everything else.
@@ -20,11 +21,6 @@ export interface VoiceEntry {
   small?: boolean;
   /** The one to suggest first for its language. */
   recommended?: boolean;
-  /**
-   * False when the licence isn't clearly open: the voice was fine-tuned from a
-   * research-only voice, or its training isn't documented.
-   */
-  clear: boolean;
   license: string;
   sizeMB: number;
   source: VoiceSource;
@@ -50,7 +46,6 @@ export const VOICES: VoiceEntry[] = [
     recommended: true,
     license: 'Public domain (LJ Speech)',
     sizeMB: 63.5,
-    clear: true,
     source: piper('en_US', 'ljspeech'),
   },
   {
@@ -60,7 +55,6 @@ export const VOICES: VoiceEntry[] = [
     gender: 'female',
     license: 'Public domain (LibriVox)',
     sizeMB: 63.5,
-    clear: true,
     source: piper('en_US', 'kristin'),
   },
   {
@@ -70,18 +64,7 @@ export const VOICES: VoiceEntry[] = [
     gender: 'male',
     license: 'Public domain (LibriVox)',
     sizeMB: 63.5,
-    clear: true,
     source: piper('en_US', 'norman'),
-  },
-  {
-    id: 'en_US-joe-medium',
-    name: 'Joe',
-    lang: 'en-US',
-    gender: 'male',
-    license: 'CC0 recordings; based on a research-only voice',
-    sizeMB: 63.2,
-    clear: false,
-    source: piper('en_US', 'joe'),
   },
   {
     id: 'en_GB-cori-medium',
@@ -90,48 +73,7 @@ export const VOICES: VoiceEntry[] = [
     gender: 'female',
     license: 'Public domain (LibriVox)',
     sizeMB: 63.5,
-    clear: true,
     source: piper('en_GB', 'cori'),
-  },
-  {
-    id: 'en_GB-alba-medium',
-    name: 'Alba',
-    lang: 'en-GB',
-    gender: 'female',
-    license: 'CC BY 4.0 recordings; based on a research-only voice',
-    sizeMB: 63.2,
-    clear: false,
-    source: piper('en_GB', 'alba'),
-  },
-  {
-    id: 'es_MX-claude-high',
-    name: 'Claude',
-    lang: 'es-MX',
-    gender: 'male',
-    license: 'Apache 2.0, training not documented',
-    sizeMB: 63.1,
-    clear: false,
-    source: piper('es_MX', 'claude', 'high'),
-  },
-  {
-    id: 'es_MX-ald-medium',
-    name: 'Ald',
-    lang: 'es-MX',
-    gender: 'male',
-    license: 'Unlicense recordings; based on a research-only voice',
-    sizeMB: 63.2,
-    clear: false,
-    source: piper('es_MX', 'ald'),
-  },
-  {
-    id: 'es_ES-davefx-medium',
-    name: 'Davefx',
-    lang: 'es-ES',
-    gender: 'male',
-    license: 'CC0 recordings; based on a research-only voice',
-    sizeMB: 63.2,
-    clear: false,
-    source: piper('es_ES', 'davefx'),
   },
   {
     id: 'es_ES-carlfm-x_low',
@@ -141,12 +83,30 @@ export const VOICES: VoiceEntry[] = [
     small: true,
     license: 'Public domain',
     sizeMB: 28.1,
-    clear: true,
     source: piper('es_ES', 'carlfm', 'x_low'),
   },
 ];
 
 export const voiceById = (id: string | null | undefined) => VOICES.find((v) => v.id === id);
+
+/**
+ * Deletes downloaded files of voices no longer offered (e.g. withdrawn for
+ * their licence), so they don't keep using space. Returns the ids removed.
+ */
+export async function forgetWithdrawnVoices(): Promise<string[]> {
+  if (!('caches' in globalThis)) return [];
+  const cache = await caches.open(VOICE_CACHE);
+  const offered = new Set(VOICES.flatMap((v) => [v.source.model, v.source.config]));
+  const withdrawn = new Set<string>();
+  for (const request of await cache.keys()) {
+    if (offered.has(request.url)) continue;
+    await cache.delete(request);
+    // …/<lang>/<locale>/<name>/<quality>/<id>.onnx(.json)
+    const file = request.url.split('/').at(-1) ?? '';
+    withdrawn.add(file.replace(/\.onnx(\.json)?$/, ''));
+  }
+  return [...withdrawn];
+}
 
 /** True when the voice's files are on this device (so it works offline). */
 export async function isDownloaded(voice: VoiceEntry): Promise<boolean> {

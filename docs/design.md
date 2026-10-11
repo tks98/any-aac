@@ -38,8 +38,8 @@ The dark and high-contrast themes from the mockups are not built yet.
 
 ## Placeholders
 
-- **Symbols** in the starter boards come from Mulberry (most words) and OpenMoji (pronouns and other function words Mulberry lacks), both CC BY-SA 4.0. Each image records its licence and source. The choices are in `apps/web/src/assets/symbols/sources.json` and should be reviewed with SLPs. Five words (it, feel, is, do, tablet) still use the project's placeholder line drawings.
-- **The starter vocabulary** (`apps/web/src/lib/starter.ts`) follows the rules above, but it is not a designed vocabulary. The real set will be built with SLPs and scored against RELAAACs.
+- **Symbols** in the starter boards come from Mulberry (most words) and OpenMoji (pronouns and other function words Mulberry lacks), both CC BY-SA 4.0. Each image records its licence and source. The choices are in `apps/web/src/assets/symbols/sources.json` and should be reviewed with SLPs. Seven words (it, is, do, my, different, feel, tablet) still use the project's placeholder line drawings.
+- **The starter vocabulary** (`apps/web/src/lib/starter.ts`) follows the rules above. Its core words are Project Core's Universal Core plus six ([decision 0003](research/decisions/0003-core-vocabulary.md)), but it is not yet a designed vocabulary: the real set will be built with SLPs and scored against RELAAACs.
 
 ## Themes
 
@@ -47,7 +47,7 @@ Settings → Display offers the approved design's three themes (Light, Dark, Hig
 
 ## Phone layouts
 
-Screens narrower than 600px show a board's compact layout when it has one. A board names its compact layout in `ext_openaac_compact_board`, and links always point at the full board, so Back and navigation behave the same on every device. The starter set has a phone layout for every board. The phone core board has the 24 words from the approved phone mockup, plus a seventh row for the People, Places, Body and Things folders the mockup had no room for; it still fits an iPhone SE. Core words keep fixed cells within each layout, but a phone cell is not in the same place as the tablet cell. How motor plans should carry between phone and tablet is a question for the vocabulary work with SLPs.
+Screens narrower than 600px show a board's compact layout when it has one. A board names its compact layout in `ext_openaac_compact_board`, and links always point at the full board, so Back and navigation behave the same on every device. The starter set has a phone layout for every board. The phone core board has 22 of the core words in the tablet's left-to-right order and, where possible, the same rows, plus a row for the folders; it still fits an iPhone SE. Phone layouts can be turned off so every device shows the same board ([decision 0005](research/decisions/0005-phone-layouts.md)). Core words keep fixed cells within each layout, but a phone cell is not in the same place as the tablet cell. How motor plans should carry between phone and tablet is a question for the vocabulary work with SLPs.
 
 Labels wrap between words and never mid-word. A word too long for its cell shrinks until it fits (down to 0.6rem), rather than being cut off or split. Each button uses CSS size containment, so nothing inside it can resize the grid; symbol and label sizes come from the cell (container query units).
 
@@ -55,7 +55,7 @@ Labels wrap between words and never mid-word. A word too long for its cell shrin
 
 Languages come in three layers, which can each be set separately:
 
-1. **Board words.** A board's own words are in its language (`locale`); other languages come from each button's OBF `translations`, and board names from `ext_openaac_name_translations`. Every language uses the same boards with every word in the same cell, so a bilingual communicator's motor plans carry over. The starter boards come in English and Spanish (`apps/web/src/lib/starter-translations.ts`). Following Soto and Cooper's early Spanish vocabulary for AAC (2021), the verbs young Spanish speakers use most are conjugated (_quiero_, _puedo_, _tengo_, _voy_, _dame_, _mira_, _para_) and the rest are infinitives that follow them (_quiero comer_); the Forms button gives the other forms. Translating an English layout is a stop-gap for bilingual communicators, not a Spanish vocabulary ([research-check.md](research-check.md)).
+1. **Board words.** A board's own words are in its language (`locale`); other languages come from each button's OBF `translations`, and board names from `ext_openaac_name_translations`. Every language uses the same boards with every word in the same cell, so a bilingual communicator's motor plans carry over. The starter boards come in English and Spanish (`apps/web/src/lib/starter-translations.ts`). Following Soto and Cooper's early Spanish vocabulary for AAC (2021), the verbs young Spanish speakers use most are conjugated (_quiero_, _puedo_, _tengo_, _voy_, _dame_, _mira_, _para_) and the rest are infinitives that follow them (_quiero comer_); the Forms button gives the other forms. Translating an English layout is a stop-gap for bilingual communicators, not a Spanish vocabulary ([the research check](research/check-2026-10-11.md)).
 2. **Speech.** Each language has its own chosen voice, device or Open AAC, and speaks with the right language tag.
 3. **Buttons and menus.** The app's own words are in `apps/web/src/lib/i18n.ts` (English and Spanish). "Automatic" follows the board words when the app is translated into their language, then the browser's languages.
 

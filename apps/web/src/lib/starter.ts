@@ -46,7 +46,17 @@ interface Word {
 const word = (label: string, pos: PartOfSpeech, pic = label): Word => ({ label, pos, pic });
 const folder = (label: string, id: string): Word => ({ label, pic: id, folder: id });
 
-/** Columns of the core board, left to right; each lists its six rows top to bottom. */
+/**
+ * Columns of the core board, left to right; each lists its six rows top to
+ * bottom. Word types run left to right in sentence order (Modified Fitzgerald).
+ *
+ * The words are Project Core's Universal Core vocabulary (Center for Literacy
+ * and Disability Studies, UNC-Chapel Hill, CC BY 4.0): 36 words prioritised
+ * from published core lists, device vocabularies and frequency data, with
+ * "finished" as "all done". Added from Banajee et al.'s (2003) toddler core:
+ * my, is, yes, no; and eat and drink, which young children use constantly.
+ * See docs/research/decisions/0003-core-vocabulary.md.
+ */
 const CORE_COLUMNS: Word[][] = [
   [
     word('I', 'pronoun'),
@@ -54,7 +64,7 @@ const CORE_COLUMNS: Word[][] = [
     word('it', 'pronoun'),
     word('he', 'pronoun'),
     word('she', 'pronoun'),
-    word('we', 'pronoun'),
+    word('my', 'pronoun'),
   ],
   [
     word('want', 'verb'),
@@ -69,31 +79,31 @@ const CORE_COLUMNS: Word[][] = [
     word('put', 'verb'),
     word('make', 'verb'),
     word('open', 'verb'),
-    word('play', 'verb'),
-    word('feel', 'verb'),
+    word('turn', 'verb'),
+    word('do', 'verb'),
   ],
   [
     word('is', 'verb'),
     word('can', 'verb'),
-    word('do', 'verb'),
-    word('have', 'verb'),
     word('eat', 'verb'),
     word('drink', 'verb'),
+    word('yes', 'social'),
+    word('no', 'social'),
   ],
   [
     word('more', 'descriptor'),
-    word('again', 'descriptor'),
-    word('big', 'descriptor'),
-    word('little', 'descriptor'),
+    word('all', 'descriptor'),
+    word('some', 'descriptor'),
     word('good', 'descriptor'),
-    word('bad', 'descriptor'),
+    word('same', 'descriptor'),
+    word('different', 'descriptor'),
   ],
   [
     word('that', 'determiner'),
+    word('here', 'preposition'),
     word('in', 'preposition'),
     word('on', 'preposition'),
     word('up', 'preposition'),
-    word('down', 'preposition'),
     word('all done', 'social', 'allDone'),
   ],
   [
@@ -101,8 +111,8 @@ const CORE_COLUMNS: Word[][] = [
     word('what', 'question'),
     word('where', 'question'),
     word('who', 'question'),
-    word('yes', 'social'),
-    word('no', 'social'),
+    word('when', 'question'),
+    word('why', 'question'),
   ],
   [
     folder('People', 'people'),
@@ -115,7 +125,7 @@ const CORE_COLUMNS: Word[][] = [
 ];
 
 /** Core words that stay in their home position on every topic board. */
-const KEEP_ON_TOPICS = ['I', 'want', 'more', 'not', 'eat', 'drink', 'help', 'feel', 'all done'];
+const KEEP_ON_TOPICS = ['I', 'want', 'more', 'not', 'eat', 'drink', 'help', 'all done'];
 
 const TOPICS: { id: string; name: string; words: Word[] }[] = [
   {
@@ -152,9 +162,12 @@ const TOPICS: { id: string; name: string; words: Word[] }[] = [
   {
     id: 'feelings',
     name: 'Feelings',
-    words: ['happy', 'sad', 'mad', 'scared', 'tired', 'sick', 'excited', 'hurt'].map((w) =>
-      word(w, 'descriptor'),
-    ),
+    words: [
+      word('feel', 'verb'),
+      ...['happy', 'sad', 'mad', 'scared', 'tired', 'sick', 'excited', 'hurt'].map((w) =>
+        word(w, 'descriptor'),
+      ),
+    ],
   },
   {
     id: 'body',
@@ -164,7 +177,10 @@ const TOPICS: { id: string; name: string; words: Word[] }[] = [
   {
     id: 'things',
     name: 'Things',
-    words: ['ball', 'book', 'tablet', 'phone', 'blanket', 'teddy'].map((w) => word(w, 'noun')),
+    words: [
+      word('play', 'verb'),
+      ...['ball', 'book', 'tablet', 'phone', 'blanket', 'teddy'].map((w) => word(w, 'noun')),
+    ],
   },
 ];
 
@@ -174,7 +190,7 @@ const slug = (label: string) => label.toLowerCase().replace(/[^a-z0-9]+/g, '-');
  * Bump when the starter boards change. Saved starter boards from an older
  * version are replaced on next launch, as long as nobody has edited them.
  */
-export const STARTER_VERSION = 6;
+export const STARTER_VERSION = 7;
 const EXT_STARTER_VERSION = 'ext_openaac_starter_version';
 
 const PHONE = ' (phone)';
@@ -240,16 +256,19 @@ const coreWord = (label: string): Word => {
 };
 
 /**
- * The phone layout of the core board: the 24 words from the approved phone
- * mockup, with a row below them for the topics the mockup had no room for.
+ * The phone layout of the core board: 22 of its words, in the same left-to-right
+ * order and, where possible, the same rows, so that what's learned on one
+ * carries to the other as far as it can. The two topic folders the phone has
+ * room for sit at the right, like the tablet's folder column, and the rest get a
+ * row of their own.
  */
 const PHONE_CORE: Layout = [
   ['I', 'want', 'more', 'not'],
-  ['you', 'go', 'like', 'what'],
-  ['it', 'stop', 'big', 'that'],
-  ['get', 'help', 'good', 'yes'],
-  ['eat', 'play', 'up', 'no'],
-  ['drink', 'all done', 'Food', 'Feelings'],
+  ['you', 'like', 'here', 'what'],
+  ['it', 'go', 'eat', 'where'],
+  ['stop', 'drink', 'good', 'that'],
+  ['help', 'get', 'yes', 'up'],
+  ['no', 'all done', 'Food', 'Feelings'],
   ['People', 'Places', 'Body', 'Things'],
 ].map((row) => row.map(coreWord));
 
@@ -263,8 +282,13 @@ function newBoard(id: string, name: string, layout: Layout): ObfBoard {
   };
 }
 
+/** Credit for the core word list, which its CC BY 4.0 licence asks for; it travels with exports. */
+const CORE_CREDIT =
+  '<p>Core words from the <a href="https://www.med.unc.edu/ahs/clds/universal-core-vocabulary/">Universal Core vocabulary</a> ' +
+  '(Center for Literacy and Disability Studies, UNC-Chapel Hill, CC BY 4.0), with a few additions, arranged by Open AAC contributors.</p>';
+
 function coreBoard(id: string, name: string, layout: Layout, images: Images): ObfBoard {
-  let board = newBoard(id, name, layout);
+  let board: ObfBoard = { ...newBoard(id, name, layout), description_html: CORE_CREDIT };
   layout.forEach((row, r) => row.forEach((w, c) => (board = addWord(board, r, c, w, images))));
   return board;
 }

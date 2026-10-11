@@ -1,6 +1,6 @@
 # Open AAC: product and technical plan
 
-This plan is for a free, open-source AAC app that runs in any modern browser, keeps working with no connection, and can be self-hosted by serving one folder. The evidence behind it is in [research.md](research.md).
+This plan is for a free, open-source AAC app that runs in any modern browser, keeps working with no connection, and can be self-hosted by serving one folder. The evidence behind it is in [foundations.md](research/foundations.md).
 
 Status: draft for discussion, 2026-10-10.
 
@@ -309,6 +309,6 @@ Phases end when their exit criteria are met, not on a calendar.
 
 ### Still open
 
-From the research check ([research-check.md](research-check.md#decisions-needed)): what to do about voices with unclear licences, aligning the core vocabulary with Universal Core, a Spanish-first vocabulary, and phone layouts as a second motor plan.
+Decisions since then are recorded in [research/](research/README.md#decisions).
 
 1. **Who comes first?** My recommendation: **emergent and developing communicators using touch, plus their SLPs and parents.** That's the largest group, and it forces the vocabulary work. ALS and literate-adult features (keyboard, prediction, voice banking) follow in P2 and P5.

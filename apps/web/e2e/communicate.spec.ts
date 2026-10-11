@@ -412,7 +412,7 @@ test.describe('Open AAC voice', () => {
     await openSettings(page, 'Speech & voice');
     await page.getByRole('button', { name: 'Open AAC voice' }).click();
     const voices = page.locator('.voice.offline');
-    await expect(voices).toHaveCount(6);
+    await expect(voices).toHaveCount(4);
     await expect(voices.filter({ hasText: /CC BY-NC|lessac|hfc/ })).toHaveCount(0);
     await expect(voices.first().getByRole('button', { name: 'Download' })).toBeVisible();
     // The recommended voice comes first.
@@ -542,14 +542,14 @@ test.describe('word forms', () => {
 });
 
 test.describe('research checks', () => {
-  test('voices whose licence is unclear say so, and are never recommended', async ({ page }) => {
+  test('only voices with clearly open licences are offered', async ({ page }) => {
     await openSettings(page, 'Speech & voice');
     await page.getByRole('button', { name: 'Open AAC voice' }).click();
-    const joe = page.locator('.voice.offline').filter({ hasText: 'Joe' });
-    await expect(joe).toContainText('based on a research-only voice');
-    await expect(joe).toContainText("Its licence isn't clearly open");
-    const linda = page.locator('.voice.offline').filter({ hasText: 'Linda' });
-    await expect(linda).not.toContainText('clearly open');
+    const voices = page.locator('.voice.offline');
+    await expect(voices).toHaveText([/Linda/, /Kristin/, /Norman/, /Cori/]);
+    // Fine-tuned from a research-only voice, or training not documented.
+    for (const name of ['Joe', 'Alba'])
+      await expect(voices.filter({ hasText: name })).toHaveCount(0);
   });
 
   test('warns when the device has no voice for the language in use', async ({ page }) => {

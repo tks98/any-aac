@@ -122,7 +122,6 @@ const en = {
   confirmDeleteVoice: (name: string) => `Delete the ${name} voice from this device?`,
   download: 'Download',
   recommended: 'Recommended',
-  licenceUnclear: "Its licence isn't clearly open (see above), so Open AAC may stop offering it.",
   gettingReady: (done: number, total: number) => `Getting words ready: ${done} of ${total}`,
   deviceSpeaksUntilReady: 'Until an Open AAC voice is ready, the device voice speaks.',
   deviceVoicesHelp:
@@ -442,8 +441,6 @@ const es: Messages = {
   confirmDeleteVoice: (name) => `¿Borrar la voz ${name} de este dispositivo?`,
   download: 'Descargar',
   recommended: 'Recomendada',
-  licenceUnclear:
-    'Su licencia no es claramente abierta (ver arriba), así que Open AAC podría dejar de ofrecerla.',
   gettingReady: (done, total) => `Preparando palabras: ${done} de ${total}`,
   deviceSpeaksUntilReady: 'Hasta que una voz de Open AAC esté lista, habla la voz del dispositivo.',
   deviceVoicesHelp:

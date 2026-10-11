@@ -77,7 +77,7 @@ Settings lists one voice per language first, marked Recommended: **Linda** (`en_
 
 ## Voice lineage (2026-10-11)
 
-A voice's licence depends on its recordings and, if it was fine-tuned, on the voice it started from. Checking each MODEL_CARD for the base model as well as the dataset ([research-check.md](../research-check.md)):
+A voice's licence depends on its recordings and, if it was fine-tuned, on the voice it started from. Checking each MODEL_CARD for the base model as well as the dataset ([the research check](../check-2026-10-11.md)):
 
 | Voice            | Recordings               | Started from                      | Clearly open? |
 | ---------------- | ------------------------ | --------------------------------- | ------------- |
@@ -91,4 +91,4 @@ A voice's licence depends on its recordings and, if it was fine-tuned, on the vo
 | Ald (es_MX)      | Unlicense                | Davefx, so lessac                 | No            |
 | Claude (es_MX)   | Stated Apache 2.0        | Not documented                    | No            |
 
-The lessac recordings are licensed for research only, excluding "developing … voice synthesis … products"; the licence doesn't say whether a model fine-tuned from them is a derived work. Until that's settled, the five are labelled in Settings and never recommended, so Spanish has no recommended voice. Before a public release: remove them or get clarity, and evaluate Kokoro-82M (Apache 2.0, with Spanish voices) for Spanish.
+The lessac recordings are licensed for research only, excluding "developing … voice synthesis … products"; the licence doesn't say whether a model fine-tuned from them is a derived work. The five were removed: see [0002](0002-only-clearly-licensed-voices.md).
