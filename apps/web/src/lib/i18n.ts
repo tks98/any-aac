@@ -199,6 +199,16 @@ const en = {
   useSymbol: (name: string) => `Use the symbol “${name}”`,
   cancel: 'Cancel',
   backToBoard: 'Back to the board',
+
+  // Word forms
+  forms: 'Forms',
+  wordForms: 'Word forms',
+  formsOf: (word: string) => `Forms of “${word}”`,
+  chooseWordFirst: 'Choose a word first. Forms changes the last word in the message.',
+  noForms: (word: string) => `“${word}” has no other forms.`,
+  noFormsHelp: 'Words get forms from their word type, which can be set in edit mode.',
+  showWordForms: 'Word forms button',
+  showWordFormsHelp: 'Changes the last word: want → wants, wanting, wanted.',
 };
 
 export type Messages = typeof en;
@@ -393,6 +403,16 @@ const es: Messages = {
   useSymbol: (name) => `Usar el símbolo «${name}»`,
   cancel: 'Cancelar',
   backToBoard: 'Volver al tablero',
+
+  forms: 'Formas',
+  wordForms: 'Formas de palabras',
+  formsOf: (word) => `Formas de «${word}»`,
+  chooseWordFirst: 'Primero elige una palabra. Formas cambia la última palabra del mensaje.',
+  noForms: (word) => `«${word}» no tiene otras formas.`,
+  noFormsHelp:
+    'Las palabras tienen formas según su tipo, que se puede elegir en el modo de edición.',
+  showWordForms: 'Botón de formas',
+  showWordFormsHelp: 'Cambia la última palabra: quiero → quieres, quiere, queremos.',
 };
 
 export const MESSAGES = { en, es } satisfies Record<string, Messages>;

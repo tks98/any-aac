@@ -47,7 +47,7 @@ describe('buttonWords', () => {
 describe('addWord in a language', () => {
   it('keeps the translated label and text', () => {
     expect(addWord([], want, 'core', 'es')).toEqual([
-      { label: 'querer', text: 'quiero', boardId: 'core' },
+      { label: 'querer', text: 'quiero', boardId: 'core', lang: 'es' },
     ]);
   });
 });

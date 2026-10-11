@@ -534,6 +534,12 @@
             s.display.showSymbols,
             (on) => (app.settings.display.showSymbols = on),
           )}
+          {@render toggle(
+            t.showWordForms,
+            t.showWordFormsHelp,
+            s.display.showWordForms,
+            (on) => (app.settings.display.showWordForms = on),
+          )}
         </div>
       {:else if section === 'boards'}
         <h3>{t.sectionBoards}</h3>

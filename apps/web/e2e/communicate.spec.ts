@@ -405,3 +405,52 @@ test.describe('Open AAC voice', () => {
       .toBe('openaac');
   });
 });
+
+test.describe('word forms', () => {
+  test('change the last word: want → wanted', async ({ page }) => {
+    await page.getByRole('button', { name: 'Word forms' }).click();
+    await expect(page.getByRole('dialog')).toContainText('Choose a word first.');
+    await page.getByRole('button', { name: 'Cancel' }).click();
+
+    await word(page, 'I').click();
+    await word(page, 'want').click();
+    await page.getByRole('button', { name: 'Word forms' }).click();
+    const forms = page.getByRole('dialog', { name: 'Forms of “want”' });
+    await expect(forms.getByRole('button', { name: 'want', exact: true })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    await forms.getByRole('button', { name: 'wanted', exact: true }).click();
+    await expect(forms).toBeHidden();
+    await expect(messageBar(page)).toHaveAccessibleName('Message: I wanted. Tap to speak it.');
+    expect((await spoken(page)).at(-1)).toBe('wanted');
+  });
+
+  test('in Spanish, describing words change gender: cansado → cansada', async ({ page }) => {
+    await openSettings(page, 'Language');
+    await page
+      .getByRole('group', { name: 'Words' })
+      .getByRole('button', { name: 'Español' })
+      .click();
+    await closeSettings(page, 'Listo');
+    await page.getByRole('button', { name: 'Emociones, carpeta' }).click();
+    await word(page, 'cansado').click();
+    await page.getByRole('button', { name: 'Formas de palabras' }).click();
+    await page.getByRole('button', { name: 'cansada', exact: true }).click();
+    await expect(messageBar(page)).toHaveAccessibleName('Mensaje: cansada. Toca para decirlo.');
+
+    await word(page, 'quiero').click();
+    await page.getByRole('button', { name: 'Formas de palabras' }).click();
+    await page.getByRole('button', { name: 'quieres (tú)' }).click();
+    await expect(messageBar(page)).toHaveAccessibleName(
+      'Mensaje: cansada quieres. Toca para decirlo.',
+    );
+  });
+
+  test('the button can be turned off', async ({ page }) => {
+    await openSettings(page, 'Display');
+    await page.getByRole('switch', { name: 'Word forms button' }).click();
+    await closeSettings(page);
+    await expect(page.getByRole('button', { name: 'Word forms' })).toHaveCount(0);
+  });
+});

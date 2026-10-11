@@ -51,7 +51,7 @@ Phases are defined in §6. **P1** is the MVP.
 - [P2] A keyboard page (QWERTY or ABC) with word prediction.
 - [P2] A partner display: large text shown to the partner, rotatable, or mirrored to a second screen.
 - [P3] Visual scene displays (a photo with hotspots), plus just-in-time creation from the camera.
-- [P3] Word forms: a long-press or "grammar" button for plural, tense, -ing, and so on, starting with English and built on a morphology engine that each language plugs into.
+- [P3] Word forms: a long-press or "grammar" button for plural, tense, -ing, and so on, starting with English and built on a morphology engine that each language plugs into. _Started:_ a Forms button for the last word, English and Spanish engines; see [design.md](design.md#word-forms).
 - [P3] Multilingual and bilingual use: switch languages without losing your place, with each language having its own layout where needed. _Started:_ one shared layout with OBF translations, a one-tap language switch, per-language voices, and the app in English and Spanish (see [design.md](design.md#languages)).
 - [P4] Sentence history and favourites (stored locally).
 

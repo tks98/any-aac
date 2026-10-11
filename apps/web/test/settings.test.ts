@@ -56,6 +56,11 @@ describe('withDefaults', () => {
     expect(settings.speech.rate).toBe(2);
     expect(settings.speech.speakEachWord).toBe(false);
     expect(settings.touch).toEqual({ holdMs: 600, selectOnRelease: false, ignoreRepeatMs: 0 });
-    expect(settings.display).toEqual({ labelPosition: 'above', showSymbols: true, buttonGap: 0 });
+    expect(settings.display).toEqual({
+      labelPosition: 'above',
+      showSymbols: true,
+      buttonGap: 0,
+      showWordForms: true,
+    });
   });
 });

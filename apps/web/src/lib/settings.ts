@@ -30,6 +30,8 @@ export interface DisplaySettings {
   showSymbols: boolean;
   /** Space between buttons, in px. More space suits keyguards and tremor. */
   buttonGap: number;
+  /** A Forms button that changes the last word: want → wants, wanting, wanted. */
+  showWordForms: boolean;
 }
 
 export interface Settings {
@@ -50,7 +52,7 @@ export const DEFAULT_SETTINGS: Settings = {
     speakEachWord: true,
   },
   touch: { holdMs: 0, selectOnRelease: false, ignoreRepeatMs: 0 },
-  display: { labelPosition: 'below', showSymbols: true, buttonGap: 10 },
+  display: { labelPosition: 'below', showSymbols: true, buttonGap: 10, showWordForms: true },
 };
 
 const isRecord = (v: unknown): v is Record<string, unknown> =>
@@ -128,6 +130,7 @@ export function withDefaults(saved: unknown): Settings {
       labelPosition: display.labelPosition === 'above' ? 'above' : d.display.labelPosition,
       showSymbols: bool(display.showSymbols, d.display.showSymbols),
       buttonGap: num(display.buttonGap, d.display.buttonGap, 0, 32),
+      showWordForms: bool(display.showWordForms, d.display.showWordForms),
     },
   };
 }

@@ -32,4 +32,5 @@ export const ICONS = {
   photo: 'M4 8h3l2-3h6l2 3h3v11H4zM12 9.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z',
   plus: 'M12 5v14M5 12h14',
   folder: 'M3 6h6l2 2h10v11H3z',
+  forms: 'M3 12h5M8 12c4 0 4-6 8-6h5M8 12c4 0 4 6 8 6h5M8 12h13',
 } as const;

@@ -7,6 +7,7 @@ import {
   boardName,
   compactBoardId,
   messageText,
+  replaceLastWord,
   setLanguages,
   spokenText,
   type BoardSet,
@@ -142,6 +143,14 @@ class AppState {
     this.say(messageText(this.message));
   }
 
+  /** Swaps the last word for another of its forms ("want" → "wanted"). */
+  useForm(form: string) {
+    const last = this.message.at(-1);
+    if (!last) return;
+    this.message = replaceLastWord(this.message, form);
+    if (this.settings.speech.speakEachWord) this.say(form, last.lang);
+  }
+
   askForHelp() {
     this.say(phrase('help', this.language));
   }
@@ -159,17 +168,18 @@ class AppState {
    * Speaks with the Open AAC voice when it's chosen and ready, and with the
    * device voice otherwise, or if the Open AAC voice fails.
    */
-  say(text: string) {
+  say(text: string, lang = this.language) {
     preferPlaybackAudio();
     const options = this.settings.speech;
-    const lang = this.language;
     const device = {
       voice: options.deviceVoices[lang] ?? null,
       rate: options.rate,
       pitch: options.pitch,
       lang,
     };
-    if (options.engine === 'openaac' && openaacVoice.isReady(this.openaacVoiceId)) {
+    // The loaded Open AAC voice is the one for the language in use.
+    const voiceId = options.openaacVoices[lang] ?? null;
+    if (options.engine === 'openaac' && openaacVoice.isReady(voiceId)) {
       speech.stop();
       openaacVoice.engine.speak(text, options.rate).then(
         () => announce('openaac', text),

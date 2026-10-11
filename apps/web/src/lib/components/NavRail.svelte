@@ -3,6 +3,7 @@
   import { nativeName } from '../languages';
   import { app } from '../state.svelte';
   import Icon from './Icon.svelte';
+  import WordForms from './WordForms.svelte';
 
   /** Editing sits behind a press-and-hold so a tap can't open it by accident. */
   const HOLD_MS = 1000;
@@ -10,6 +11,7 @@
   let { onunlock }: { onunlock: () => void } = $props();
 
   let holding = $state(false);
+  let showingForms = $state(false);
 
   /** The other language of a bilingual communicator, which the switch button changes to. */
   const otherLanguage = $derived.by(() => {
@@ -61,6 +63,12 @@
       {nativeName(otherLanguage)}
     </button>
   {/if}
+  {#if app.settings.display.showWordForms}
+    <button aria-label={app.t.wordForms} onclick={() => (showingForms = true)}>
+      <Icon path={ICONS.forms} />
+      {app.t.forms}
+    </button>
+  {/if}
   <span class="spacer"></span>
   <button class="help" onclick={() => app.askForHelp()}>
     <Icon path={ICONS.help} />
@@ -84,6 +92,10 @@
     {app.t.edit}
   </button>
 </nav>
+
+{#if showingForms}
+  <WordForms onclose={() => (showingForms = false)} />
+{/if}
 
 <style>
   .rail {
