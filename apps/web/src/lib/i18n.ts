@@ -66,6 +66,7 @@ const en = {
   deleteVoice: (name: string) => `Delete ${name}`,
   confirmDeleteVoice: (name: string) => `Delete the ${name} voice from this device?`,
   download: 'Download',
+  recommended: 'Recommended',
   gettingReady: (done: number, total: number) => `Getting words ready: ${done} of ${total}`,
   deviceSpeaksUntilReady: 'Until an Open AAC voice is ready, the device voice speaks.',
   deviceVoicesHelp:
@@ -200,6 +201,14 @@ const en = {
   cancel: 'Cancel',
   backToBoard: 'Back to the board',
 
+  print: 'Print',
+  printWhat: 'What to print',
+  printThisBoard: 'This board',
+  printAllBoards: (count: number) => `All boards (${count})`,
+  printHelp: 'To keep a PDF, choose “Save as PDF” in the print window.',
+  printCredit: (date: string) =>
+    `Printed from Open AAC on ${date}. Symbols: Mulberry Symbols © Steve Lee and OpenMoji, CC BY-SA 4.0.`,
+
   // Word forms
   forms: 'Forms',
   wordForms: 'Word forms',
@@ -268,6 +277,7 @@ const es: Messages = {
   deleteVoice: (name) => `Borrar ${name}`,
   confirmDeleteVoice: (name) => `¿Borrar la voz ${name} de este dispositivo?`,
   download: 'Descargar',
+  recommended: 'Recomendada',
   gettingReady: (done, total) => `Preparando palabras: ${done} de ${total}`,
   deviceSpeaksUntilReady: 'Hasta que una voz de Open AAC esté lista, habla la voz del dispositivo.',
   deviceVoicesHelp:
@@ -403,6 +413,14 @@ const es: Messages = {
   useSymbol: (name) => `Usar el símbolo «${name}»`,
   cancel: 'Cancelar',
   backToBoard: 'Volver al tablero',
+
+  print: 'Imprimir',
+  printWhat: 'Qué imprimir',
+  printThisBoard: 'Este tablero',
+  printAllBoards: (count) => `Todos los tableros (${count})`,
+  printHelp: 'Para guardar un PDF, elige «Guardar como PDF» en la ventana de impresión.',
+  printCredit: (date) =>
+    `Impreso desde Open AAC el ${date}. Símbolos: Mulberry Symbols © Steve Lee y OpenMoji, CC BY-SA 4.0.`,
 
   forms: 'Formas',
   wordForms: 'Formas de palabras',

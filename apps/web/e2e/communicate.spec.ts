@@ -358,6 +358,10 @@ test.describe('Open AAC voice', () => {
     await expect(voices).toHaveCount(6);
     await expect(voices.filter({ hasText: /CC BY-NC|lessac|hfc/ })).toHaveCount(0);
     await expect(voices.first().getByRole('button', { name: 'Download' })).toBeVisible();
+    // The recommended voice comes first.
+    await expect(voices.first()).toContainText('Linda');
+    await expect(voices.first()).toContainText('Recommended');
+    await expect(voices.filter({ hasText: 'Recommended' })).toHaveCount(1);
     await expect(
       page.getByText('Until an Open AAC voice is ready, the device voice speaks.'),
     ).toBeVisible();

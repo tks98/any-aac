@@ -178,3 +178,23 @@ test.describe('on a phone', () => {
     await expect(word(page, 'need')).toBeVisible();
   });
 });
+
+test('prints this board or all boards, one per page', async ({ page }) => {
+  await page.addInitScript(() => {
+    window.print = () => Object.assign(window, { printed: true });
+  });
+  await page.reload();
+  await openEditor(page);
+  await page.getByRole('button', { name: 'Print' }).click();
+  await page.getByRole('button', { name: 'All boards (7)' }).click();
+  await page.waitForFunction(() => (window as unknown as { printed?: boolean }).printed);
+  await page.emulateMedia({ media: 'print' });
+  const pages = page.locator('.print .page');
+  await expect(pages).toHaveCount(7);
+  await expect(pages.first().getByRole('heading')).toHaveText('Core words');
+  await expect(page.locator('.screen > *').first()).toBeHidden();
+  // Printing ends when the print window closes.
+  await page.evaluate(() => dispatchEvent(new Event('afterprint')));
+  await page.emulateMedia({ media: 'screen' });
+  await expect(pages).toHaveCount(0);
+});

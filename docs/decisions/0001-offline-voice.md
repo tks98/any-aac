@@ -70,3 +70,7 @@ Use option 3, with these parts:
 - Which voice sounds best for a default, as judged by AAC users.
 - Multithreading needs cross-origin isolation (COOP/COEP headers), which would speed up synthesis on multi-core devices.
 - Smaller models: quantized (int8) versions of the voices could be about a quarter of the size. Their quality needs testing.
+
+## Recommended voices (2026-10-11)
+
+Settings lists one voice per language first, marked Recommended: **Linda** (`en_US-ljspeech-medium`) for English, clear and natural from the public-domain LJ Speech recordings, and **Claude** (`es_MX-claude-high`) for Spanish, the only high-quality Spanish model and Latin American like the starter words. The device voice stays the default until someone chooses to download a voice, since a voice is a 63 MB download.

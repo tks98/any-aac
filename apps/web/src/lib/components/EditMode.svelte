@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { boardName, buttonAt } from '@open-aac/core';
+  import { boardName, buttonAt, linkableBoards, type ObfBoard } from '@open-aac/core';
   import { editor } from '../editor.svelte';
   import { ICONS } from '../icons';
   import { app } from '../state.svelte';
@@ -7,7 +7,16 @@
   import EditGrid from './EditGrid.svelte';
   import Icon from './Icon.svelte';
 
-  let { onsettings }: { onsettings: () => void } = $props();
+  let { onsettings, onprint }: { onsettings: () => void; onprint: (boards: ObfBoard[]) => void } =
+    $props();
+
+  let printDialog: HTMLDialogElement;
+  const allBoards = $derived(app.set ? linkableBoards(app.set) : []);
+
+  function printBoards(boards: ObfBoard[]) {
+    printDialog.close();
+    onprint(boards);
+  }
 
   const t = $derived(app.t);
   const name = $derived(app.board ? boardName(app.board, app.language) : '');
@@ -68,6 +77,10 @@
         <Icon path={editor.showHidden ? ICONS.eye : ICONS.eyeOff} size={22} />
         {t.showHidden}
       </button>
+      <button onclick={() => printDialog.showModal()}>
+        <Icon path={ICONS.print} size={22} />
+        {t.print}
+      </button>
       <button onclick={onsettings}>
         <Icon path={ICONS.settings} size={22} />
         {t.settings}
@@ -84,6 +97,16 @@
     <ButtonPanel />
   </div>
 </div>
+
+<dialog bind:this={printDialog} class="print-choice" aria-labelledby="print-title">
+  <h2 id="print-title">{t.printWhat}</h2>
+  <div class="choices">
+    <button onclick={() => editor.board && printBoards([editor.board])}>{t.printThisBoard}</button>
+    <button onclick={() => printBoards(allBoards)}>{t.printAllBoards(allBoards.length)}</button>
+  </div>
+  <p>{t.printHelp}</p>
+  <button class="cancel" onclick={() => printDialog.close()}>{t.cancel}</button>
+</dialog>
 
 <style>
   .edit {
@@ -185,6 +208,47 @@
     margin: 0;
     padding-left: 4px;
     font-weight: 700;
+  }
+
+  .print-choice {
+    width: min(480px, calc(100vw - 24px));
+    padding: 20px;
+    border: none;
+    border-radius: 16px;
+    background: var(--surface);
+    color: var(--ink);
+  }
+
+  .print-choice::backdrop {
+    background: rgb(21 32 43 / 0.4);
+  }
+
+  .print-choice h2 {
+    white-space: normal;
+  }
+
+  .choices {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 16px 0;
+  }
+
+  .choices button,
+  .cancel {
+    min-height: 52px;
+    padding: 0 18px;
+    border: 2px solid var(--line);
+    border-radius: 12px;
+    background: var(--surface);
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .print-choice p {
+    margin: 0 0 16px;
+    color: var(--muted);
   }
 
   .body {

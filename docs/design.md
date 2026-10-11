@@ -69,6 +69,7 @@ Holding Edit for a second opens edit mode, laid out as in the approved mockup: a
 - **Motor plans:** starter buttons are locked in place. A locked button can't be swapped or deleted until it's unlocked. Hidden buttons keep their cell.
 - **Two layouts, one vocabulary:** a board and its phone layout share words but not positions. Changing a word changes it on both; adding or deleting one does too where there's room; swapping only changes the layout being edited. A new board made from a board with a phone layout gets a phone layout too.
 - **Saving:** every change is saved at once, and Undo goes back up to 100 changes (Ctrl/⌘-Z works too). Edited boards are no longer starter boards, so starter updates never replace them. Files nothing uses any more are dropped.
+- **Printing:** Print (in the edit toolbar) prints the board on screen or every board, one per page, in colour, in the language in use, with a line crediting the symbol sets as their licence asks. Phone layouts print portrait. Saving as PDF is the browser's own option.
 - **Symbols:** the library is the whole Mulberry set (3,436 symbols), built from the pinned release by `apps/web/scripts/symbol-library.mjs` and served as static files. The service worker doesn't precache it; symbols are cached as they're seen, and a chosen symbol is copied into the boards, so boards stay complete offline and in exports. Search covers names, categories and tags; Spanish search only finds the starter words for now. Photos are shrunk to 512 px on the device.
 
 ## Word forms
@@ -80,4 +81,4 @@ Forms come from the word's type (the one that sets its colour) and its language,
 ## Known gaps
 
 - **Phones in landscape** get the tablet board, which is very short at phone height.
-- **Edit mode** can't yet resize a board, drag to swap, print boards, or record a sound for a button. On phones, a board's name can only be changed on a tablet-sized screen. Symbol search finds English words only, apart from the starter words.
+- **Edit mode** can't yet resize a board, drag to swap, or record a sound for a button. On phones, a board's name can only be changed on a tablet-sized screen. Symbol search finds English words only, apart from the starter words.

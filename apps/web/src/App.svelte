@@ -1,10 +1,11 @@
 <script lang="ts">
-  import { behaviorOf, spokenText } from '@open-aac/core';
+  import { behaviorOf, spokenText, type ObfBoard } from '@open-aac/core';
   import { onMount, untrack } from 'svelte';
   import BoardGrid from './lib/components/BoardGrid.svelte';
   import EditMode from './lib/components/EditMode.svelte';
   import MessageBar from './lib/components/MessageBar.svelte';
   import NavRail from './lib/components/NavRail.svelte';
+  import PrintView from './lib/components/PrintView.svelte';
   import SettingsPanel from './lib/components/SettingsPanel.svelte';
   import { editor } from './lib/editor.svelte';
   import { isOutdatedStarter, starterSet } from './lib/starter';
@@ -24,6 +25,7 @@
   const PHONE = '(max-width: 599px)';
 
   let settingsOpen = $state(false);
+  let printing = $state.raw<ObfBoard[] | null>(null);
   let notSaved = $state(false);
   let settingsLoaded = $state(false);
 
@@ -110,29 +112,40 @@
   });
 </script>
 
-{#if editor.active}
-  <EditMode onsettings={() => (settingsOpen = true)} />
-{:else}
-  <div class="app">
-    <MessageBar />
-    <div class="body">
-      <NavRail onunlock={() => editor.open()} />
-      <main>
-        <p class="trail">
-          {app.trail.join('  ›  ')}
-          {#if notSaved}<span class="warning">· {app.t.notSaved}</span>{/if}
-        </p>
-        {#if app.view}
-          <BoardGrid board={app.view} />
-        {/if}
-      </main>
+<div class="screen">
+  {#if editor.active}
+    <EditMode onsettings={() => (settingsOpen = true)} onprint={(boards) => (printing = boards)} />
+  {:else}
+    <div class="app">
+      <MessageBar />
+      <div class="body">
+        <NavRail onunlock={() => editor.open()} />
+        <main>
+          <p class="trail">
+            {app.trail.join('  ›  ')}
+            {#if notSaved}<span class="warning">· {app.t.notSaved}</span>{/if}
+          </p>
+          {#if app.view}
+            <BoardGrid board={app.view} />
+          {/if}
+        </main>
+      </div>
     </div>
-  </div>
+  {/if}
+
+  <SettingsPanel bind:open={settingsOpen} />
+</div>
+
+{#if printing}
+  <PrintView boards={printing} ondone={() => (printing = null)} />
 {/if}
 
-<SettingsPanel bind:open={settingsOpen} />
-
 <style>
+  /* Everything on screen; printing swaps it for the print view. */
+  .screen {
+    display: contents;
+  }
+
   .app {
     height: 100%;
     display: flex;

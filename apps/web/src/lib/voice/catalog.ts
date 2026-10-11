@@ -15,6 +15,8 @@ export interface VoiceEntry {
   gender: 'female' | 'male';
   /** A smaller, lower-quality model that's quicker to download and run. */
   small?: boolean;
+  /** The one to suggest first for its language. */
+  recommended?: boolean;
   license: string;
   sizeMB: number;
   source: VoiceSource;
@@ -36,6 +38,8 @@ export const VOICES: VoiceEntry[] = [
     name: 'Linda',
     lang: 'en-US',
     gender: 'female',
+    // Clear and natural, from the widely used, public-domain LJ Speech recordings.
+    recommended: true,
     license: 'Public domain (LJ Speech)',
     sizeMB: 63.5,
     source: piper('en_US', 'ljspeech'),
@@ -90,6 +94,8 @@ export const VOICES: VoiceEntry[] = [
     name: 'Claude',
     lang: 'es-MX',
     gender: 'male',
+    // The only high-quality Spanish model, and Latin American like the starter words.
+    recommended: true,
     license: 'Apache 2.0',
     sizeMB: 63.1,
     source: piper('es_MX', 'claude', 'high'),

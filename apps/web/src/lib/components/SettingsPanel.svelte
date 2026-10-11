@@ -35,9 +35,11 @@
   const isMain = (v: VoiceInfo) =>
     !v.novelty && baseLanguage(v.lang) === baseLanguage(app.language);
   const myVoices = $derived(voices.filter(isMain));
-  /** Open AAC voices in the language in use. */
+  /** Open AAC voices in the language in use, the recommended one first. */
   const openaacVoices = $derived(
-    VOICES.filter((v) => baseLanguage(v.lang) === baseLanguage(app.language)),
+    VOICES.filter((v) => baseLanguage(v.lang) === baseLanguage(app.language)).sort(
+      (a, b) => Number(b.recommended === true) - Number(a.recommended === true),
+    ),
   );
   const otherVoices = $derived(voices.filter((v) => !isMain(v)));
   const s = $derived(app.settings);
@@ -353,7 +355,10 @@
               {@const inUse = s.speech.openaacVoices[baseLanguage(voice.lang)] === voice.id}
               <div class="voice offline">
                 <div class="voice-text">
-                  <span class="voice-name">{voice.name}</span>
+                  <span class="voice-name"
+                    >{voice.name}
+                    {#if voice.recommended}<span class="badge">{t.recommended}</span>{/if}</span
+                  >
                   <span class="voice-meta"
                     >{describe(voice)} · {voice.license} · {Math.round(voice.sizeMB)} MB</span
                   >
@@ -954,6 +959,16 @@
 
   .voice-name {
     font-weight: 700;
+  }
+
+  .badge {
+    margin-left: 6px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: #e8effc;
+    color: var(--accent);
+    font-size: 0.85rem;
+    font-weight: 800;
   }
 
   .voice-meta {
