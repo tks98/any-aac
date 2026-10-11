@@ -48,7 +48,9 @@ const status = (text: string) => (el('status').textContent = text);
 const buttons = ['say', 'bench', 'copy'].map((id) => el<HTMLButtonElement>(id));
 
 for (const v of VOICES) {
-  select.add(new Option(`${v.name}: ${v.description} (${v.license})`, v.id));
+  select.add(
+    new Option(`${v.name}: ${v.lang}, ${v.gender}${v.small ? ', small' : ''} (${v.license})`, v.id),
+  );
 }
 el('env').textContent = JSON.stringify(results.env, null, 2);
 

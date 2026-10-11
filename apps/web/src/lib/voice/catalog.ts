@@ -12,7 +12,9 @@ export interface VoiceEntry {
   id: string;
   name: string;
   lang: string;
-  description: string;
+  gender: 'female' | 'male';
+  /** A smaller, lower-quality model that's quicker to download and run. */
+  small?: boolean;
   license: string;
   sizeMB: number;
   source: VoiceSource;
@@ -33,7 +35,7 @@ export const VOICES: VoiceEntry[] = [
     id: 'en_US-ljspeech-medium',
     name: 'Linda',
     lang: 'en-US',
-    description: 'US English, female',
+    gender: 'female',
     license: 'Public domain (LJ Speech)',
     sizeMB: 63.5,
     source: piper('en_US', 'ljspeech'),
@@ -42,7 +44,7 @@ export const VOICES: VoiceEntry[] = [
     id: 'en_US-kristin-medium',
     name: 'Kristin',
     lang: 'en-US',
-    description: 'US English, female',
+    gender: 'female',
     license: 'Public domain (LibriVox)',
     sizeMB: 63.5,
     source: piper('en_US', 'kristin'),
@@ -51,7 +53,7 @@ export const VOICES: VoiceEntry[] = [
     id: 'en_US-norman-medium',
     name: 'Norman',
     lang: 'en-US',
-    description: 'US English, male',
+    gender: 'male',
     license: 'Public domain (LibriVox)',
     sizeMB: 63.5,
     source: piper('en_US', 'norman'),
@@ -60,7 +62,7 @@ export const VOICES: VoiceEntry[] = [
     id: 'en_US-joe-medium',
     name: 'Joe',
     lang: 'en-US',
-    description: 'US English, male',
+    gender: 'male',
     license: 'CC0 (Nabu Casa)',
     sizeMB: 63.2,
     source: piper('en_US', 'joe'),
@@ -69,7 +71,7 @@ export const VOICES: VoiceEntry[] = [
     id: 'en_GB-cori-medium',
     name: 'Cori',
     lang: 'en-GB',
-    description: 'UK English, female',
+    gender: 'female',
     license: 'Public domain (LibriVox)',
     sizeMB: 63.5,
     source: piper('en_GB', 'cori'),
@@ -78,7 +80,7 @@ export const VOICES: VoiceEntry[] = [
     id: 'en_GB-alba-medium',
     name: 'Alba',
     lang: 'en-GB',
-    description: 'UK English, female',
+    gender: 'female',
     license: 'CC BY 4.0 (University of Edinburgh)',
     sizeMB: 63.2,
     source: piper('en_GB', 'alba'),
@@ -87,7 +89,7 @@ export const VOICES: VoiceEntry[] = [
     id: 'es_MX-claude-high',
     name: 'Claude',
     lang: 'es-MX',
-    description: 'Mexican Spanish, male',
+    gender: 'male',
     license: 'Apache 2.0',
     sizeMB: 63.1,
     source: piper('es_MX', 'claude', 'high'),
@@ -96,7 +98,7 @@ export const VOICES: VoiceEntry[] = [
     id: 'es_MX-ald-medium',
     name: 'Ald',
     lang: 'es-MX',
-    description: 'Mexican Spanish, male',
+    gender: 'male',
     license: 'Public domain (Unlicense)',
     sizeMB: 63.2,
     source: piper('es_MX', 'ald'),
@@ -105,7 +107,7 @@ export const VOICES: VoiceEntry[] = [
     id: 'es_ES-davefx-medium',
     name: 'Davefx',
     lang: 'es-ES',
-    description: 'Spanish (Spain), male',
+    gender: 'male',
     license: 'CC0',
     sizeMB: 63.2,
     source: piper('es_ES', 'davefx'),
@@ -114,7 +116,8 @@ export const VOICES: VoiceEntry[] = [
     id: 'es_ES-carlfm-x_low',
     name: 'Carlfm',
     lang: 'es-ES',
-    description: 'Spanish (Spain), male, small and fast',
+    gender: 'male',
+    small: true,
     license: 'Public domain',
     sizeMB: 28.1,
     source: piper('es_ES', 'carlfm', 'x_low'),

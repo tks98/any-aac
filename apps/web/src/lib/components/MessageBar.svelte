@@ -30,11 +30,11 @@
   <button
     bind:this={strip}
     class="message"
-    aria-label={text ? `Message: ${text}. Tap to speak it.` : 'Message is empty'}
+    aria-label={text ? app.t.message(text) : app.t.messageEmpty}
     onclick={() => app.speakMessage()}
   >
     {#if chips.length === 0}
-      <span class="hint">Tap words to build a message</span>
+      <span class="hint">{app.t.messageHint}</span>
     {/if}
     {#each chips as chip (chip.key)}
       <span class="chip">
@@ -45,15 +45,15 @@
       </span>
     {/each}
   </button>
-  <button class="tool" aria-label="Delete last word" onclick={() => app.deleteLast()}>
+  <button class="tool" aria-label={app.t.deleteLast} onclick={() => app.deleteLast()}>
     <Icon path={ICONS.backspace} size={40} />
   </button>
-  <button class="tool" aria-label="Clear message" onclick={() => app.clear()}>
+  <button class="tool" aria-label={app.t.clearMessage} onclick={() => app.clear()}>
     <Icon path={ICONS.clear} size={40} />
   </button>
   <button class="speak" onclick={() => app.speakMessage()}>
     <Icon path={ICONS.speak} size={40} />
-    Speak
+    {app.t.speak}
   </button>
 </div>
 

@@ -60,6 +60,7 @@
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
   class="grid"
+  lang={app.language}
   style:--rows={board.grid.rows}
   style:--columns={board.grid.columns}
   style:--cell-gap="{app.settings.display.buttonGap}px"
@@ -78,6 +79,7 @@
         holdMs={holding?.index === index ? holding.ms : 0}
         labelAbove={app.settings.display.labelPosition === 'above'}
         showSymbol={app.settings.display.showSymbols}
+        lang={app.language}
         onactivate={() => onclick(index)}
       />
     {:else}

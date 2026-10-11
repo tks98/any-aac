@@ -14,6 +14,7 @@
     saveBoards,
     saveSettings,
   } from './lib/storage';
+  import { phrase } from './lib/phrases';
   import { voiceById } from './lib/voice/catalog';
   import { openaacVoice } from './lib/voice/voice.svelte';
 
@@ -32,6 +33,11 @@
     return () => query.removeEventListener('change', update);
   });
 
+  // Screen readers read the buttons and menus in this language.
+  $effect(() => {
+    document.documentElement.lang = app.appLanguage;
+  });
+
   // Save settings whenever they change, once the saved ones have been read.
   $effect(() => {
     const settings = $state.snapshot(app.settings);
@@ -42,7 +48,8 @@
   // Start the chosen Open AAC voice from the files on this device. This never
   // downloads: downloading only happens when someone asks for it in Settings.
   $effect(() => {
-    const { engine, openaacVoice: id } = app.settings.speech;
+    const engine = app.settings.speech.engine;
+    const id = app.openaacVoiceId;
     if (!settingsLoaded || engine !== 'openaac') return;
     const voice = voiceById(id);
     if (!voice || openaacVoice.voiceId === id) return;
@@ -53,14 +60,18 @@
   // (current board first) so taps play instantly.
   $effect(() => {
     const set = app.set;
-    const { engine, openaacVoice: id, rate } = app.settings.speech;
-    if (!set || engine !== 'openaac' || !openaacVoice.isReady(id)) return;
+    const { engine, rate } = app.settings.speech;
+    const lang = app.language;
+    if (!set || engine !== 'openaac' || !openaacVoice.isReady(app.openaacVoiceId)) return;
     const first = untrack(() => app.view?.buttons ?? []);
     const texts = [...first, ...set.boards.flatMap((board) => board.buttons)]
       .filter((button) => behaviorOf(button).kind === 'word')
-      .map(spokenText);
+      .map((button) => spokenText(button, lang));
     // Wait for the rate slider to settle before rendering everything again.
-    const timer = setTimeout(() => void openaacVoice.prepare(['I need help', ...texts], rate), 600);
+    const timer = setTimeout(
+      () => void openaacVoice.prepare([phrase('help', lang), ...texts], rate),
+      600,
+    );
     return () => clearTimeout(timer);
   });
 
@@ -104,7 +115,7 @@
     <main>
       <p class="trail">
         {app.trail.join('  ›  ')}
-        {#if notSaved}<span class="warning">· Not saved on this device</span>{/if}
+        {#if notSaved}<span class="warning">· {app.t.notSaved}</span>{/if}
       </p>
       {#if app.view}
         <BoardGrid board={app.view} />

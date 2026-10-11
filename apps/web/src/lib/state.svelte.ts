@@ -2,16 +2,21 @@ import {
   addWord,
   appendText,
   backspace,
+  baseLanguage,
   behaviorOf,
+  boardName,
   compactBoardId,
   messageText,
+  setLanguages,
   spokenText,
   type BoardSet,
   type Message,
   type ObfButton,
 } from '@open-aac/core';
+import { MESSAGES, pickAppLanguage } from './i18n';
 import { DEFAULT_SETTINGS, type Settings } from './settings';
-import { baseLanguage, preferPlaybackAudio, speech } from './speech';
+import { phrase } from './phrases';
+import { preferPlaybackAudio, speech } from './speech';
 import { openaacVoice } from './voice/voice.svelte';
 
 class AppState {
@@ -32,13 +37,34 @@ class AppState {
     return this.boardById(compactBoardId(this.board)) ?? this.board;
   });
   atHome = $derived(this.set !== null && this.boardId === this.set.rootId);
-  /** The language the boards are in (base code, e.g. "en"). */
-  language = $derived(
+  /** The language the boards are written in (base code, e.g. "en"). */
+  boardsLanguage = $derived(
     baseLanguage(this.set?.boards.find((b) => b.id === this.set?.rootId)?.locale ?? 'en'),
   );
+  /** Every language the boards can be shown in. */
+  languages = $derived(this.set ? setLanguages(this.set) : ['en']);
+  /** The language buttons are shown and spoken in right now. */
+  language = $derived.by(() => {
+    const { primary, second, usingSecond } = this.settings.language;
+    if (usingSecond && second) return second;
+    return primary ?? this.boardsLanguage;
+  });
+  /** The language of buttons and menus. */
+  appLanguage = $derived(
+    pickAppLanguage(
+      this.settings.language.app,
+      this.language,
+      typeof navigator === 'undefined' ? [] : navigator.languages,
+    ),
+  );
+  /** The app's own words, in its language. */
+  t = $derived(MESSAGES[this.appLanguage]);
   trail = $derived(
     [...this.history, this.boardId]
-      .map((id) => this.set?.boards.find((b) => b.id === id)?.name ?? '')
+      .map((id) => {
+        const board = this.boardById(id);
+        return board ? boardName(board, this.language) : '';
+      })
       .filter((name) => name !== ''),
   );
 
@@ -75,8 +101,8 @@ class AppState {
         this.message = appendText(this.message, behavior.text);
         return;
       case 'word':
-        this.message = addWord(this.message, button, this.view?.id);
-        if (this.settings.speech.speakEachWord) this.say(spokenText(button));
+        this.message = addWord(this.message, button, this.view?.id, this.language);
+        if (this.settings.speech.speakEachWord) this.say(spokenText(button, this.language));
         return;
     }
   }
@@ -107,8 +133,17 @@ class AppState {
   }
 
   askForHelp() {
-    this.say('I need help');
+    this.say(phrase('help', this.language));
   }
+
+  /** Switches between the two languages of a bilingual communicator. */
+  switchLanguage() {
+    const settings = this.settings.language;
+    if (settings.second) settings.usingSecond = !settings.usingSecond;
+  }
+
+  /** The Open AAC voice chosen for the language in use. */
+  openaacVoiceId = $derived(this.settings.speech.openaacVoices[this.language] ?? null);
 
   /**
    * Speaks with the Open AAC voice when it's chosen and ready, and with the
@@ -117,19 +152,26 @@ class AppState {
   say(text: string) {
     preferPlaybackAudio();
     const options = this.settings.speech;
-    if (options.engine === 'openaac' && openaacVoice.isReady(options.openaacVoice)) {
+    const lang = this.language;
+    const device = {
+      voice: options.deviceVoices[lang] ?? null,
+      rate: options.rate,
+      pitch: options.pitch,
+      lang,
+    };
+    if (options.engine === 'openaac' && openaacVoice.isReady(this.openaacVoiceId)) {
       speech.stop();
       openaacVoice.engine.speak(text, options.rate).then(
         () => announce('openaac', text),
         () => {
-          speech.speak(text, options);
+          speech.speak(text, device);
           announce('device', text);
         },
       );
       return;
     }
     openaacVoice.engine.stop();
-    speech.speak(text, options);
+    speech.speak(text, device);
     announce('device', text);
   }
 }

@@ -1,7 +1,8 @@
 import { expect, test, type Page } from '@playwright/test';
 
 const word = (page: Page, name: string) => page.getByRole('button', { name, exact: true });
-const messageBar = (page: Page) => page.getByRole('button', { name: /^Message/ });
+const messageBar = (page: Page) =>
+  page.getByRole('button', { name: /^(Message|Mensaje|El mensaje)/ });
 
 async function holdOn(page: Page, name: string | RegExp, ms: number) {
   await page.getByRole('button', { name, exact: typeof name === 'string' }).hover();
@@ -20,7 +21,8 @@ async function openSettings(page: Page, section?: string) {
 async function recordSpeech(page: Page) {
   await page.addInitScript(() => {
     const spoken: string[] = [];
-    Object.assign(window, { spoken });
+    const spokenIn: string[] = [];
+    Object.assign(window, { spoken, spokenIn });
     if (!('SpeechSynthesisUtterance' in window)) {
       Object.assign(window, {
         SpeechSynthesisUtterance: class {
@@ -29,7 +31,10 @@ async function recordSpeech(page: Page) {
       });
     }
     const fake = {
-      speak: (utterance: { text: string }) => spoken.push(utterance.text),
+      speak(utterance: { text: string; lang: string }) {
+        spoken.push(utterance.text);
+        spokenIn.push(utterance.lang);
+      },
       cancel() {},
       getVoices: () => [],
       addEventListener() {},
@@ -41,6 +46,9 @@ async function recordSpeech(page: Page) {
 
 const spoken = (page: Page) =>
   page.evaluate(() => (window as unknown as { spoken: string[] }).spoken);
+/** The language each spoken text was said in. */
+const spokenIn = (page: Page) =>
+  page.evaluate(() => (window as unknown as { spokenIn: string[] }).spokenIn);
 
 test.beforeEach(async ({ page }) => {
   await recordSpeech(page);
@@ -123,6 +131,7 @@ async function expectBoardFits(page: Page) {
         labelBottom: labelBox.bottom,
         labelHeight: labelBox.height,
         fontSize: parseFloat(getComputedStyle(label).fontSize),
+        labelClipped: label.scrollWidth > label.clientWidth + 1,
       };
     }),
   );
@@ -133,6 +142,7 @@ async function expectBoardFits(page: Page) {
     expect(cell.imageTop, cell.name ?? '').toBeGreaterThanOrEqual(cell.top);
     expect(cell.labelBottom, cell.name ?? '').toBeLessThanOrEqual(cell.bottom);
     expect(cell.labelHeight, cell.name ?? '').toBeGreaterThanOrEqual(cell.fontSize);
+    expect(cell.labelClipped, `${cell.name} is cut off`).toBe(false);
   }
 }
 
@@ -177,6 +187,22 @@ test.describe('on a phone', () => {
 
     await word(page, 'apple').tap();
     await expect(messageBar(page)).toHaveAccessibleName('Message: apple. Tap to speak it.');
+  });
+
+  test('Spanish words fit too', async ({ page }) => {
+    await openSettings(page, 'Language');
+    await page
+      .getByRole('group', { name: 'Words' })
+      .getByRole('button', { name: 'Español' })
+      .click();
+    await page.getByRole('button', { name: 'Listo', exact: true }).click();
+    await expectBoardFits(page);
+    await page
+      .getByRole('button', { name: /, carpeta$/ })
+      .last()
+      .tap();
+    await expect(word(page, 'feliz')).toBeVisible();
+    await expectBoardFits(page);
   });
 });
 
@@ -258,6 +284,76 @@ test('labels can go above symbols, or symbols can be hidden', async ({ page }) =
   await page.getByRole('button', { name: 'Done', exact: true }).click();
   await expect(image).toHaveCount(0);
   await expectBoardFits(page);
+});
+
+test.describe('languages', () => {
+  test('shows and speaks the boards in Spanish, with Spanish buttons and menus', async ({
+    page,
+  }) => {
+    await openSettings(page, 'Language');
+    await page
+      .getByRole('group', { name: 'Words' })
+      .getByRole('button', { name: 'Español' })
+      .click();
+    // Buttons and menus follow the words.
+    await expect(page.getByRole('dialog', { name: 'Ajustes' })).toBeVisible();
+    await page.getByRole('button', { name: 'Listo', exact: true }).click();
+    await expect(page.locator('html')).toHaveAttribute('lang', 'es');
+
+    await word(page, 'quiero').click();
+    await word(page, 'más').click();
+    await expect(messageBar(page)).toHaveAccessibleName('Mensaje: quiero más. Toca para decirlo.');
+    expect(await spoken(page)).toEqual(['quiero', 'más']);
+    expect(await spokenIn(page)).toEqual(['es', 'es']);
+
+    await page.getByRole('button', { name: 'Comida, carpeta' }).click();
+    await expect(word(page, 'manzana')).toBeVisible();
+    await expect(page.getByText('Palabras básicas  ›  Comida')).toBeVisible();
+    await page.getByRole('button', { name: 'Ayuda', exact: true }).click();
+    expect((await spoken(page)).at(-1)).toBe('Necesito ayuda');
+
+    await page.reload();
+    await expect(word(page, 'quiero')).toBeVisible();
+  });
+
+  test('a bilingual communicator switches language with one tap, and words stay put', async ({
+    page,
+  }) => {
+    const wantAt = await word(page, 'want').boundingBox();
+    await openSettings(page, 'Language');
+    await page
+      .getByRole('group', { name: 'Second language' })
+      .getByRole('button', { name: 'Español' })
+      .click();
+    await page.getByRole('button', { name: 'Done', exact: true }).click();
+
+    await word(page, 'I').click();
+    await page.getByRole('button', { name: 'Español (switch language)' }).click();
+    expect(await word(page, 'quiero').boundingBox()).toEqual(wantAt);
+    await word(page, 'quiero').click();
+    await expect(messageBar(page)).toHaveAccessibleName('Mensaje: I quiero. Toca para decirlo.');
+    expect(await spokenIn(page)).toEqual(['en', 'es']);
+
+    await page.getByRole('button', { name: 'English (cambiar idioma)' }).click();
+    await expect(word(page, 'want')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Speak', exact: true })).toBeVisible();
+  });
+
+  test('buttons and menus can stay in one language while the words change', async ({ page }) => {
+    await openSettings(page, 'Language');
+    await page
+      .getByRole('group', { name: 'Buttons and menus' })
+      .getByRole('button', { name: 'English' })
+      .click();
+    await page
+      .getByRole('group', { name: 'Words' })
+      .getByRole('button', { name: 'Español' })
+      .click();
+    await expect(page.getByRole('dialog', { name: 'Settings' })).toBeVisible();
+    await page.getByRole('button', { name: 'Done', exact: true }).click();
+    await expect(word(page, 'quiero')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Speak', exact: true })).toBeVisible();
+  });
 });
 
 test.describe('Open AAC voice', () => {

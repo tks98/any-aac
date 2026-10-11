@@ -52,7 +52,7 @@ Phases are defined in §6. **P1** is the MVP.
 - [P2] A partner display: large text shown to the partner, rotatable, or mirrored to a second screen.
 - [P3] Visual scene displays (a photo with hotspots), plus just-in-time creation from the camera.
 - [P3] Word forms: a long-press or "grammar" button for plural, tense, -ing, and so on, starting with English and built on a morphology engine that each language plugs into.
-- [P3] Multilingual and bilingual use: switch languages without losing your place, with each language having its own layout where needed.
+- [P3] Multilingual and bilingual use: switch languages without losing your place, with each language having its own layout where needed. _Started:_ one shared layout with OBF translations, a one-tap language switch, per-language voices, and the app in English and Spanish (see [design.md](design.md#languages)).
 - [P4] Sentence history and favourites (stored locally).
 
 ### 4.2 Vocabulary content
@@ -63,7 +63,7 @@ Phases are defined in §6. **P1** is the MVP.
 - [P2] Symbol search across optional packs: ARASAAC as an opt-in download because of its NC licence; Global Symbols and OpenSymbols search when online.
 - [P2] Vocabulary masking: hide or show buttons without moving them, plus a "reveal next level" workflow for teaching.
 - [P3] Topic and fringe templates (school, meals, medical, ICU/hospital, aphasia phrases).
-- [P4] More languages, each with its own vocabulary design, not a translation.
+- [P4] More languages, each with its own vocabulary design, not a translation. The Spanish translation of the starter set is a stop-gap that lets bilingual families try it now.
 
 ### 4.3 Speech and audio
 
@@ -305,8 +305,8 @@ Phases end when their exit criteria are met, not on a calendar.
 - **Name:** keep "Open AAC" for now. Check for a clash with openaac.org before any public launch.
 - **Build fresh** rather than fork AsTeRICS Grid. Still worth talking to them and to Ace Centre.
 - **UI design:** approved from the mockups. See [design.md](design.md).
+- **Spanish is the first language after English.** Board words, speech, and the app's own buttons and menus are separate layers, so each can be added on its own. See [design.md](design.md#languages).
 
 ### Still open
 
 1. **Who comes first?** My recommendation: **emergent and developing communicators using touch, plus their SLPs and parents.** That's the largest group, and it forces the vocabulary work. ALS and literate-adult features (keyboard, prediction, voice banking) follow in P2 and P5.
-2. **First languages after English.** Spanish is the obvious candidate in the US.

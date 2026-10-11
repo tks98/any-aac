@@ -1,8 +1,11 @@
 <script lang="ts">
   import { ObfError, type BoardSet } from '@open-aac/core';
   import { downloadBoards, readBoardFile } from '../files';
+  import { APP_LANGUAGES, type AppLanguage } from '../i18n';
   import { ICONS } from '../icons';
-  import { appLanguage, baseLanguage, speech, type VoiceInfo } from '../speech';
+  import { capitalize, nameIn, nativeName } from '../languages';
+  import { phrase } from '../phrases';
+  import { baseLanguage, speech, type VoiceInfo } from '../speech';
   import { starterSet } from '../starter';
   import { VOICES, type VoiceEntry } from '../voice/catalog';
   import { openaacVoice } from '../voice/voice.svelte';
@@ -12,13 +15,15 @@
 
   let { open = $bindable(false) }: { open?: boolean } = $props();
 
-  const SECTIONS = [
-    { id: 'speech', name: 'Speech & voice', icon: ICONS.speak },
-    { id: 'touch', name: 'Touch', icon: ICONS.touch },
-    { id: 'display', name: 'Display', icon: ICONS.display },
-    { id: 'boards', name: 'Boards & backup', icon: ICONS.boards },
-    { id: 'about', name: 'About', icon: ICONS.about },
-  ] as const;
+  const t = $derived(app.t);
+  const SECTIONS = $derived([
+    { id: 'speech', name: t.sectionSpeech, icon: ICONS.speak },
+    { id: 'language', name: t.sectionLanguage, icon: ICONS.language },
+    { id: 'touch', name: t.sectionTouch, icon: ICONS.touch },
+    { id: 'display', name: t.sectionDisplay, icon: ICONS.display },
+    { id: 'boards', name: t.sectionBoards, icon: ICONS.boards },
+    { id: 'about', name: t.sectionAbout, icon: ICONS.about },
+  ] as const);
   type SectionId = (typeof SECTIONS)[number]['id'];
 
   let dialog: HTMLDialogElement;
@@ -27,14 +32,20 @@
   let status = $state('');
   let fixes = $state<string[]>([]);
 
-  const isMain = (v: VoiceInfo) => !v.novelty && baseLanguage(v.lang) === baseLanguage(appLanguage);
+  const isMain = (v: VoiceInfo) =>
+    !v.novelty && baseLanguage(v.lang) === baseLanguage(app.language);
   const myVoices = $derived(voices.filter(isMain));
-  /** Open AAC voices in the boards' language. */
+  /** Open AAC voices in the language in use. */
   const openaacVoices = $derived(
     VOICES.filter((v) => baseLanguage(v.lang) === baseLanguage(app.language)),
   );
   const otherVoices = $derived(voices.filter((v) => !isMain(v)));
   const s = $derived(app.settings);
+
+  /** The main language: the one shown when the second isn't. */
+  const primary = $derived(s.language.primary ?? app.boardsLanguage);
+  /** A bilingual communicator's two languages, for choosing each one's voice. */
+  const bilingual = $derived(s.language.second ? [primary, s.language.second] : []);
 
   $effect(() => {
     if (open && !dialog.open) {
@@ -49,11 +60,10 @@
   $effect(() => {
     if (!open) return;
     void openaacVoice.refreshDownloaded();
-    voices = speech.voices();
-    return speech.onVoicesChanged(() => (voices = speech.voices()));
+    const lang = app.language;
+    voices = speech.voices(lang);
+    return speech.onVoicesChanged(() => (voices = speech.voices(lang)));
   });
-
-  const seconds = (ms: number) => `${(ms / 1000).toFixed(1)} s`;
 
   async function replaceBoards(set: BoardSet, done: string) {
     app.load(set);
@@ -61,7 +71,7 @@
       await saveBoards(set);
       status = done;
     } catch {
-      status = `${done} They could not be saved on this device, so they will be gone when the app closes.`;
+      status = `${done} ${t.couldNotSave}`;
     }
   }
 
@@ -73,51 +83,79 @@
     fixes = [];
     try {
       const { set, issues } = await readBoardFile(file);
-      const count = set.boards.length === 1 ? '1 board' : `${set.boards.length} boards`;
-      if (!confirm(`Replace all boards on this device with ${count} from “${file.name}”?`)) return;
-      await replaceBoards(set, `Imported ${count}.`);
+      const count = t.boardCount(set.boards.length);
+      if (!confirm(t.confirmImport(count, file.name))) return;
+      await replaceBoards(set, t.imported(count));
       fixes = issues.map((issue) => issue.message);
     } catch (error) {
-      status = error instanceof ObfError ? error.message : 'That file could not be read.';
+      status = error instanceof ObfError ? error.message : t.unreadable;
     }
   }
 
   function exportAll() {
     if (!app.set) return;
     downloadBoards(app.set);
-    status = 'Exported a copy of all boards.';
+    status = t.exported;
   }
 
   function progressText() {
     const { loaded, total } = openaacVoice.progress;
     if (openaacVoice.status === 'downloading' && total > 0 && loaded < total) {
-      return `Downloading ${(loaded / 1e6).toFixed(0)} of ${(total / 1e6).toFixed(0)} MB`;
+      return t.downloading(Math.round(loaded / 1e6), Math.round(total / 1e6));
     }
-    return 'Starting the voice…';
+    return t.startingVoice;
+  }
+
+  /** "Mexican Spanish, male · small and fast", in the app's language. */
+  function describe(voice: VoiceEntry) {
+    const lang = app.appLanguage;
+    const parts = [capitalize(nameIn(voice.lang, lang), lang), t[voice.gender]];
+    if (voice.small) parts.push(t.smallAndFast);
+    return parts.join(', ');
   }
 
   async function downloadVoice(voice: VoiceEntry) {
     if (await openaacVoice.use(voice, { download: true })) {
-      app.settings.speech.openaacVoice = voice.id;
+      app.settings.speech.openaacVoices[baseLanguage(voice.lang)] = voice.id;
       app.settings.speech.engine = 'openaac';
     }
   }
 
   // The app starts the chosen voice from the files on this device.
   function chooseVoice(voice: VoiceEntry) {
-    app.settings.speech.openaacVoice = voice.id;
+    app.settings.speech.openaacVoices[baseLanguage(voice.lang)] = voice.id;
     app.settings.speech.engine = 'openaac';
   }
 
   async function removeVoice(voice: VoiceEntry) {
-    if (!confirm(`Delete the ${voice.name} voice from this device?`)) return;
+    if (!confirm(t.confirmDeleteVoice(voice.name))) return;
     await openaacVoice.remove(voice);
-    if (app.settings.speech.openaacVoice === voice.id) app.settings.speech.openaacVoice = null;
+    const voices = app.settings.speech.openaacVoices;
+    const lang = baseLanguage(voice.lang);
+    if (voices[lang] === voice.id) delete voices[lang];
+  }
+
+  function choosePrimary(lang: string) {
+    const settings = app.settings.language;
+    settings.primary = lang;
+    if (settings.second === lang) settings.second = null;
+    settings.usingSecond = false;
+  }
+
+  function chooseSecond(lang: string | null) {
+    const settings = app.settings.language;
+    settings.second = lang;
+    if (lang === null) settings.usingSecond = false;
+  }
+
+  /** Shows a bilingual communicator's other language, as the switch beside Home does. */
+  function useLanguage(lang: string) {
+    app.settings.language.usingSecond = lang !== primary;
   }
 
   async function reset() {
-    if (!confirm('Replace all boards on this device with the starter boards?')) return;
-    await replaceBoards(await starterSet(), 'Starter boards restored.');
+    if (!confirm(t.confirmReset)) return;
+    await replaceBoards(await starterSet(), t.restored);
   }
 </script>
 
@@ -171,28 +209,59 @@
   </div>
 {/snippet}
 
+{#snippet choice(
+  label: string,
+  help: string,
+  options: { value: string; name: string; lang?: string }[],
+  selected: string,
+  change: (value: string) => void,
+)}
+  <div class="row">
+    <div class="text">
+      <span class="label">{label}</span>
+      {#if help}<span class="help">{help}</span>{/if}
+    </div>
+    <div class="segmented" role="group" aria-label={label}>
+      {#each options as option (option.value)}
+        <button
+          lang={option.lang}
+          aria-pressed={selected === option.value}
+          class:on={selected === option.value}
+          onclick={() => change(option.value)}
+        >
+          {option.name}
+        </button>
+      {/each}
+    </div>
+  </div>
+{/snippet}
+
 {#snippet voiceOption(voice: VoiceInfo)}
   <label class="voice">
     <input
       type="radio"
       name="voice"
-      checked={s.speech.voice === voice.key}
-      onchange={() => (app.settings.speech.voice = voice.key)}
+      checked={s.speech.deviceVoices[app.language] === voice.key}
+      onchange={() => (app.settings.speech.deviceVoices[app.language] = voice.key)}
     />
     <span class="voice-name">{voice.name}</span>
-    <span class="voice-meta">{voice.lang} · {voice.local ? 'works offline' : 'needs internet'}</span
-    >
+    <span class="voice-meta">{voice.lang} · {voice.local ? t.worksOffline : t.needsInternet}</span>
   </label>
 {/snippet}
 
-<dialog bind:this={dialog} aria-labelledby="settings-title" onclose={() => (open = false)}>
+<dialog
+  bind:this={dialog}
+  lang={app.appLanguage}
+  aria-labelledby="settings-title"
+  onclose={() => (open = false)}
+>
   <header>
-    <h2 id="settings-title">Settings</h2>
-    <button class="done" onclick={() => (open = false)}>Done</button>
+    <h2 id="settings-title">{t.settings}</h2>
+    <button class="done" onclick={() => (open = false)}>{t.done}</button>
   </header>
 
   <div class="layout">
-    <nav aria-label="Settings sections">
+    <nav aria-label={t.settingsSections}>
       {#each SECTIONS as item (item.id)}
         <button
           class:current={section === item.id}
@@ -207,90 +276,86 @@
 
     <main>
       {#if section === 'speech'}
-        <h3>Speech & voice</h3>
+        <h3>{t.sectionSpeech}</h3>
         <div class="card">
-          <div class="row">
-            <div class="text">
-              <span class="label">Voice</span>
-              <span class="help"
-                >Open AAC voices sound the same on every device and work offline once downloaded.</span
-              >
-            </div>
-            <div class="segmented" role="group" aria-label="Voice">
-              <button
-                aria-pressed={s.speech.engine === 'openaac'}
-                class:on={s.speech.engine === 'openaac'}
-                onclick={() => (app.settings.speech.engine = 'openaac')}
-              >
-                Open AAC voice
-              </button>
-              <button
-                aria-pressed={s.speech.engine === 'device'}
-                class:on={s.speech.engine === 'device'}
-                onclick={() => (app.settings.speech.engine = 'device')}
-              >
-                Device voice
-              </button>
-            </div>
-          </div>
+          {#if bilingual.length > 0}
+            {@render choice(
+              t.sectionLanguage,
+              '',
+              bilingual.map((lang) => ({ value: lang, name: nativeName(lang), lang })),
+              app.language,
+              useLanguage,
+            )}
+          {/if}
+          {@render choice(
+            t.voice,
+            t.voiceHelp,
+            [
+              { value: 'openaac', name: t.openaacVoice },
+              { value: 'device', name: t.deviceVoice },
+            ],
+            s.speech.engine,
+            (engine) => (app.settings.speech.engine = engine === 'openaac' ? 'openaac' : 'device'),
+          )}
           {@render toggle(
-            'Speak each word when tapped',
-            'Off: words only build the message until Speak is pressed.',
+            t.speakEachWord,
+            t.speakEachWordHelp,
             s.speech.speakEachWord,
             (on) => (app.settings.speech.speakEachWord = on),
           )}
           {@render slider(
-            'Speaking rate',
+            t.rate,
             '',
             s.speech.rate,
             0.5,
             2,
             0.1,
-            `${s.speech.rate.toFixed(1)}×`,
+            t.times(s.speech.rate),
             (v) => (app.settings.speech.rate = v),
           )}
           {#if s.speech.engine === 'device'}
             {@render slider(
-              'Pitch',
+              t.pitch,
               '',
               s.speech.pitch,
               0.5,
               1.5,
               0.1,
-              `${s.speech.pitch.toFixed(1)}×`,
+              t.times(s.speech.pitch),
               (v) => (app.settings.speech.pitch = v),
             )}
           {/if}
           <div class="row">
             <div class="text">
-              <span class="label">Try it</span>
+              <span class="label">{t.tryIt}</span>
             </div>
-            <button class="action" onclick={() => app.say('Hello. This is how I sound.')}>
+            <button class="action" onclick={() => app.say(phrase('test', app.language))}>
               <Icon path={ICONS.speak} size={22} />
-              Test voice
+              {t.testVoice}
             </button>
           </div>
         </div>
 
         {#if s.speech.engine === 'openaac'}
           <section class="card voices" aria-labelledby="openaac-voices">
-            <h4 id="openaac-voices" class="legend">Open AAC voices</h4>
-            <p class="help">
-              These run on this device. The first download is about 80 MB (the voice plus the speech
-              engine), from the Piper project at huggingface.co. After that they work offline.
-            </p>
+            <h4 id="openaac-voices" class="legend">{t.openaacVoices}</h4>
+            {#if openaacVoices.length === 0}
+              <p class="help">{t.noOpenaacVoice(nameIn(app.language, app.appLanguage))}</p>
+            {:else}
+              <p class="help">{t.openaacVoicesHelp}</p>
+            {/if}
             {#each openaacVoices as voice (voice.id)}
               {@const anyBusy =
                 openaacVoice.status === 'downloading' || openaacVoice.status === 'loading'}
               {@const busy =
                 openaacVoice.voiceId === voice.id &&
                 (openaacVoice.status === 'downloading' || openaacVoice.status === 'loading')}
-              {@const inUse = s.speech.openaacVoice === voice.id}
+              {@const inUse = s.speech.openaacVoices[baseLanguage(voice.lang)] === voice.id}
               <div class="voice offline">
                 <div class="voice-text">
                   <span class="voice-name">{voice.name}</span>
                   <span class="voice-meta"
-                    >{voice.description} · {voice.license} · {Math.round(voice.sizeMB)} MB</span
+                    >{describe(voice)} · {voice.license} · {Math.round(voice.sizeMB)} MB</span
                   >
                   {#if busy}
                     <span class="voice-meta" role="status">{progressText()}</span>
@@ -300,9 +365,7 @@
                     ></progress>
                   {/if}
                   {#if openaacVoice.voiceId === voice.id && openaacVoice.status === 'error'}
-                    <span class="error" role="alert"
-                      >Couldn't load this voice: {openaacVoice.error}</span
-                    >
+                    <span class="error" role="alert">{t.voiceError(openaacVoice.error)}</span>
                   {/if}
                 </div>
                 <div class="voice-actions">
@@ -313,99 +376,136 @@
                       disabled={anyBusy && !inUse}
                       onclick={() => chooseVoice(voice)}
                     >
-                      {inUse ? 'In use' : 'Use'}
+                      {inUse ? t.inUse : t.use}
                     </button>
                     <button
-                      aria-label="Delete {voice.name}"
+                      aria-label={t.deleteVoice(voice.name)}
                       disabled={busy}
                       onclick={() => removeVoice(voice)}
                     >
-                      Delete
+                      {t.delete}
                     </button>
                   {:else}
-                    <button disabled={anyBusy} onclick={() => downloadVoice(voice)}>Download</button
+                    <button disabled={anyBusy} onclick={() => downloadVoice(voice)}
+                      >{t.download}</button
                     >
                   {/if}
                 </div>
               </div>
             {/each}
-            {#if openaacVoice.isReady(s.speech.openaacVoice) && openaacVoice.preparing.done < openaacVoice.preparing.total}
+            {#if openaacVoice.isReady(app.openaacVoiceId) && openaacVoice.preparing.done < openaacVoice.preparing.total}
               <p class="help" role="status">
-                Getting words ready: {openaacVoice.preparing.done} of {openaacVoice.preparing.total}
+                {t.gettingReady(openaacVoice.preparing.done, openaacVoice.preparing.total)}
               </p>
             {/if}
-            {#if !openaacVoice.isReady(s.speech.openaacVoice)}
-              <p class="help">Until an Open AAC voice is ready, the device voice speaks.</p>
+            {#if openaacVoices.length > 0 && !openaacVoice.isReady(app.openaacVoiceId)}
+              <p class="help">{t.deviceSpeaksUntilReady}</p>
             {/if}
           </section>
         {:else}
           <fieldset class="card voices">
-            <legend>Voice</legend>
-            <p class="help">
-              The voices this device offers. Voices that work offline keep speaking without
-              internet.
-            </p>
+            <legend>{t.voice}</legend>
+            <p class="help">{t.deviceVoicesHelp}</p>
             <label class="voice">
               <input
                 type="radio"
                 name="voice"
-                checked={s.speech.voice === null}
-                onchange={() => (app.settings.speech.voice = null)}
+                checked={!s.speech.deviceVoices[app.language]}
+                onchange={() => delete app.settings.speech.deviceVoices[app.language]}
               />
-              <span class="voice-name">Device default</span>
-              <span class="voice-meta"
-                >Picks an offline voice in your language when there is one</span
-              >
+              <span class="voice-name">{t.deviceDefault}</span>
+              <span class="voice-meta">{t.deviceDefaultHelp}</span>
             </label>
             {#each myVoices as voice (voice.key)}
               {@render voiceOption(voice)}
             {/each}
             {#if otherVoices.length > 0}
               <details>
-                <summary>Other voices ({otherVoices.length})</summary>
+                <summary>{t.otherVoices(otherVoices.length)}</summary>
                 {#each otherVoices as voice (voice.key)}
                   {@render voiceOption(voice)}
                 {/each}
               </details>
             {/if}
             {#if voices.length === 0}
-              <p class="help">This browser hasn't listed any voices yet.</p>
+              <p class="help">{t.noVoices}</p>
             {/if}
           </fieldset>
         {/if}
+      {:else if section === 'language'}
+        <h3>{t.sectionLanguage}</h3>
+        <p class="intro">{t.languageIntro}</p>
+        <div class="card">
+          {#if app.languages.length > 1}
+            {@render choice(
+              t.words,
+              t.wordsHelp,
+              app.languages.map((lang) => ({ value: lang, name: nativeName(lang), lang })),
+              primary,
+              choosePrimary,
+            )}
+            {@render choice(
+              t.secondLanguage,
+              t.secondLanguageHelp,
+              [
+                { value: '', name: t.none },
+                ...app.languages
+                  .filter((lang) => lang !== primary)
+                  .map((lang) => ({ value: lang, name: nativeName(lang), lang })),
+              ],
+              s.language.second ?? '',
+              (lang) => chooseSecond(lang || null),
+            )}
+          {:else}
+            <div class="row">
+              <p class="help">{t.onlyLanguage(nameIn(app.boardsLanguage, app.appLanguage))}</p>
+            </div>
+          {/if}
+          {@render choice(
+            t.appLanguage,
+            t.appLanguageHelp,
+            [
+              { value: 'auto', name: t.automatic },
+              ...APP_LANGUAGES.map((lang) => ({ value: lang, name: nativeName(lang), lang })),
+            ],
+            s.language.app,
+            (lang) => (app.settings.language.app = lang as 'auto' | AppLanguage),
+          )}
+        </div>
+        <p class="intro">{t.draftWords}</p>
       {:else if section === 'touch'}
-        <h3>Touch</h3>
-        <p class="intro">When a touch on a word counts. These apply to the board.</p>
+        <h3>{t.sectionTouch}</h3>
+        <p class="intro">{t.touchIntro}</p>
         <div class="card">
           {@render slider(
-            'Hold to select',
-            'How long a finger must stay on a word. 0 chooses it on first touch.',
+            t.holdToSelect,
+            t.holdToSelectHelp,
             s.touch.holdMs,
             0,
             2000,
             100,
-            seconds(s.touch.holdMs),
+            t.seconds(s.touch.holdMs),
             (v) => (app.settings.touch.holdMs = v),
           )}
           {@render toggle(
-            'Select when finger lifts',
-            'Lets the finger slide to the right word before choosing it.',
+            t.selectOnRelease,
+            t.selectOnReleaseHelp,
             s.touch.selectOnRelease,
             (on) => (app.settings.touch.selectOnRelease = on),
           )}
           {@render slider(
-            'Ignore repeat taps for',
-            'Stops one tap from counting twice.',
+            t.ignoreRepeats,
+            t.ignoreRepeatsHelp,
             s.touch.ignoreRepeatMs,
             0,
             2000,
             100,
-            seconds(s.touch.ignoreRepeatMs),
+            t.seconds(s.touch.ignoreRepeatMs),
             (v) => (app.settings.touch.ignoreRepeatMs = v),
           )}
           {@render slider(
-            'Space between buttons',
-            'More space suits keyguards and tremor.',
+            t.buttonGap,
+            t.buttonGapHelp,
             s.display.buttonGap,
             0,
             32,
@@ -415,45 +515,33 @@
           )}
         </div>
       {:else if section === 'display'}
-        <h3>Display</h3>
+        <h3>{t.sectionDisplay}</h3>
         <div class="card">
-          <div class="row">
-            <div class="text">
-              <span class="label">Labels</span>
-            </div>
-            <div class="segmented" role="group" aria-label="Labels">
-              <button
-                aria-pressed={s.display.labelPosition === 'below'}
-                class:on={s.display.labelPosition === 'below'}
-                onclick={() => (app.settings.display.labelPosition = 'below')}
-              >
-                Below symbol
-              </button>
-              <button
-                aria-pressed={s.display.labelPosition === 'above'}
-                class:on={s.display.labelPosition === 'above'}
-                onclick={() => (app.settings.display.labelPosition = 'above')}
-              >
-                Above symbol
-              </button>
-            </div>
-          </div>
+          {@render choice(
+            t.labels,
+            '',
+            [
+              { value: 'below', name: t.labelsBelow },
+              { value: 'above', name: t.labelsAbove },
+            ],
+            s.display.labelPosition,
+            (position) =>
+              (app.settings.display.labelPosition = position === 'above' ? 'above' : 'below'),
+          )}
           {@render toggle(
-            'Show symbols',
-            'Off: words only, in larger text.',
+            t.showSymbols,
+            t.showSymbolsHelp,
             s.display.showSymbols,
             (on) => (app.settings.display.showSymbols = on),
           )}
         </div>
       {:else if section === 'boards'}
-        <h3>Boards & backup</h3>
-        <p class="intro">
-          Boards are stored on this device only. Export a copy now and then so they can't be lost.
-        </p>
+        <h3>{t.sectionBoards}</h3>
+        <p class="intro">{t.boardsIntro}</p>
         <div class="actions">
           <label class="action">
             <Icon path={ICONS.import} size={24} />
-            Import boards
+            {t.importBoards}
             <input
               class="visually-hidden"
               type="file"
@@ -463,11 +551,11 @@
           </label>
           <button class="action" onclick={exportAll}>
             <Icon path={ICONS.export} size={24} />
-            Export all boards
+            {t.exportBoards}
           </button>
           <button class="action" onclick={reset}>
             <Icon path={ICONS.reset} size={24} />
-            Reset to starter boards
+            {t.resetBoards}
           </button>
         </div>
         {#if status}
@@ -475,7 +563,7 @@
         {/if}
         {#if fixes.length > 0}
           <details>
-            <summary>{fixes.length} small problems were fixed while importing</summary>
+            <summary>{t.fixedWhileImporting(fixes.length)}</summary>
             <ul>
               {#each fixes.slice(0, 50) as fix, i (i)}
                 <li>{fix}</li>
@@ -484,39 +572,76 @@
           </details>
         {/if}
       {:else}
-        <h3>About</h3>
-        <div class="card prose">
-          <p>
-            Open AAC is free, open-source software, licensed under the
-            <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noreferrer"
-              >GNU AGPL v3 or later</a
-            >. The source is at
-            <a href="https://github.com/tks98/open-aac" target="_blank" rel="noreferrer"
-              >github.com/tks98/open-aac</a
-            >.
-          </p>
-          <p>
-            Symbols from
-            <a href="https://mulberrysymbols.org" target="_blank" rel="noreferrer"
-              >Mulberry Symbols</a
-            >
-            © Steve Lee, and from
-            <a href="https://openmoji.org" target="_blank" rel="noreferrer">OpenMoji</a>, the
-            open-source emoji and icon project. Both are licensed
-            <a
-              href="https://creativecommons.org/licenses/by-sa/4.0/"
-              target="_blank"
-              rel="noreferrer">CC BY-SA 4.0</a
-            >. Each symbol's source is recorded with it, and travels with exported boards.
-          </p>
-          <p>
-            The starter vocabulary is a placeholder until it's designed with speech-language
-            pathologists. It and the few remaining line-drawing pictograms are by Open AAC
-            contributors, licensed CC BY-SA 4.0.
-          </p>
-          <p>Text is set in Atkinson Hyperlegible Next (SIL Open Font License).</p>
-          <p>Open AAC collects nothing. Your boards and settings stay on this device.</p>
-        </div>
+        <h3>{t.sectionAbout}</h3>
+        {#if app.appLanguage === 'es'}
+          <div class="card prose">
+            <p>
+              Open AAC es software libre y de código abierto, con licencia
+              <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noreferrer"
+                >GNU AGPL v3 o posterior</a
+              >. El código está en
+              <a href="https://github.com/tks98/open-aac" target="_blank" rel="noreferrer"
+                >github.com/tks98/open-aac</a
+              >.
+            </p>
+            <p>
+              Símbolos de
+              <a href="https://mulberrysymbols.org" target="_blank" rel="noreferrer"
+                >Mulberry Symbols</a
+              >
+              © Steve Lee, y de
+              <a href="https://openmoji.org" target="_blank" rel="noreferrer">OpenMoji</a>, el
+              proyecto de emojis e iconos de código abierto. Ambos tienen licencia
+              <a
+                href="https://creativecommons.org/licenses/by-sa/4.0/deed.es"
+                target="_blank"
+                rel="noreferrer">CC BY-SA 4.0</a
+              >. Cada símbolo guarda su origen, que viaja con los tableros exportados.
+            </p>
+            <p>
+              El vocabulario inicial es provisional hasta que se diseñe con terapeutas del lenguaje.
+              Ese vocabulario, sus traducciones y los pocos pictogramas de línea que quedan son de
+              colaboradores de Open AAC, con licencia CC BY-SA 4.0.
+            </p>
+            <p>El texto usa Atkinson Hyperlegible Next (SIL Open Font License).</p>
+            <p>
+              Open AAC no recoge ningún dato. Tus tableros y ajustes se quedan en este dispositivo.
+            </p>
+          </div>
+        {:else}
+          <div class="card prose">
+            <p>
+              Open AAC is free, open-source software, licensed under the
+              <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noreferrer"
+                >GNU AGPL v3 or later</a
+              >. The source is at
+              <a href="https://github.com/tks98/open-aac" target="_blank" rel="noreferrer"
+                >github.com/tks98/open-aac</a
+              >.
+            </p>
+            <p>
+              Symbols from
+              <a href="https://mulberrysymbols.org" target="_blank" rel="noreferrer"
+                >Mulberry Symbols</a
+              >
+              © Steve Lee, and from
+              <a href="https://openmoji.org" target="_blank" rel="noreferrer">OpenMoji</a>, the
+              open-source emoji and icon project. Both are licensed
+              <a
+                href="https://creativecommons.org/licenses/by-sa/4.0/"
+                target="_blank"
+                rel="noreferrer">CC BY-SA 4.0</a
+              >. Each symbol's source is recorded with it, and travels with exported boards.
+            </p>
+            <p>
+              The starter vocabulary is a placeholder until it's designed with speech-language
+              pathologists. It, its translations and the few remaining line-drawing pictograms are
+              by Open AAC contributors, licensed CC BY-SA 4.0.
+            </p>
+            <p>Text is set in Atkinson Hyperlegible Next (SIL Open Font License).</p>
+            <p>Open AAC collects nothing. Your boards and settings stay on this device.</p>
+          </div>
+        {/if}
       {/if}
     </main>
   </div>
@@ -710,6 +835,7 @@
 
   .segmented {
     display: flex;
+    flex-wrap: wrap;
     gap: 4px;
     padding: 4px;
     border-radius: 14px;

@@ -10,6 +10,7 @@ import {
   createBoard,
   EXT_COMPACT_BOARD,
   EXT_LOCKED,
+  EXT_NAME_TRANSLATIONS,
   EXT_PART_OF_SPEECH,
   EXT_PLACEHOLDER,
   placeButton,
@@ -21,6 +22,7 @@ import {
   type PartOfSpeech,
 } from '@open-aac/core';
 import { pictogramDataUri } from './pictograms';
+import { STARTER_TRANSLATIONS } from './starter-translations';
 import { starterSymbol } from './symbols';
 
 const ROWS = 6;
@@ -171,8 +173,19 @@ const slug = (label: string) => label.toLowerCase().replace(/[^a-z0-9]+/g, '-');
  * Bump when the starter boards change. Saved starter boards from an older
  * version are replaced on next launch, as long as nobody has edited them.
  */
-export const STARTER_VERSION = 2;
+export const STARTER_VERSION = 3;
 const EXT_STARTER_VERSION = 'ext_openaac_starter_version';
+
+/** A word or board name in every language the starter boards come in. */
+function translated(english: string): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const [lang, words] of Object.entries(STARTER_TRANSLATIONS)) {
+    const word = words[english];
+    if (word === undefined) throw new Error(`"${english}" has no ${lang} translation.`);
+    out[lang] = word;
+  }
+  return out;
+}
 
 /** Images by word key; real symbols where we have them, placeholders otherwise. */
 type Images = Map<string, ObfImage>;
@@ -195,6 +208,9 @@ function addWord(board: ObfBoard, row: number, column: number, w: Word, images: 
     id: slug(w.label),
     label: w.label,
     image_id: image.id,
+    translations: Object.fromEntries(
+      Object.entries(translated(w.label)).map(([lang, label]) => [lang, { label }]),
+    ),
     [EXT_LOCKED]: true,
   };
   if (w.pos) button[EXT_PART_OF_SPEECH] = w.pos;
@@ -232,6 +248,7 @@ function newBoard(id: string, name: string, layout: Layout): ObfBoard {
   return {
     ...createBoard({ id, name, rows: layout.length, columns: layout[0]!.length }),
     license: LICENSE,
+    [EXT_NAME_TRANSLATIONS]: translated(name),
     [EXT_PLACEHOLDER]: true,
     [EXT_STARTER_VERSION]: STARTER_VERSION,
   };

@@ -7,29 +7,54 @@ describe('withDefaults', () => {
     expect(withDefaults('nonsense')).toEqual(DEFAULT_SETTINGS);
   });
 
-  it('reads the Open AAC voice choice', () => {
+  it('reads voices chosen per language', () => {
     const settings = withDefaults({
-      speech: { engine: 'openaac', openaacVoice: 'en_US-joe-medium' },
+      speech: {
+        engine: 'openaac',
+        openaacVoices: { en: 'en_US-joe-medium', es: 'es_MX-ald-medium', 'not a lang': 'x' },
+        deviceVoices: { es: 'Paulina|es-MX', en: 42 },
+      },
     });
     expect(settings.speech.engine).toBe('openaac');
-    expect(settings.speech.openaacVoice).toBe('en_US-joe-medium');
+    expect(settings.speech.openaacVoices).toEqual({
+      en: 'en_US-joe-medium',
+      es: 'es_MX-ald-medium',
+    });
+    expect(settings.speech.deviceVoices).toEqual({ es: 'Paulina|es-MX' });
     expect(withDefaults({ speech: { engine: 'robot' } }).speech.engine).toBe('device');
+  });
+
+  it('carries over the single voices saved by older versions', () => {
+    const settings = withDefaults({
+      speech: { voice: 'Samantha|en-US', openaacVoice: 'en_US-joe-medium' },
+    });
+    expect(settings.speech.deviceVoices).toEqual({ en: 'Samantha|en-US' });
+    expect(settings.speech.openaacVoices).toEqual({ en: 'en_US-joe-medium' });
+  });
+
+  it('reads language choices and rejects malformed ones', () => {
+    const settings = withDefaults({
+      language: { primary: 'en', second: 'es', usingSecond: true, app: 'es' },
+    });
+    expect(settings.language).toEqual({
+      primary: 'en',
+      second: 'es',
+      usingSecond: true,
+      app: 'es',
+    });
+    expect(withDefaults({ language: { second: 'Spanish', app: 'xx' } }).language).toEqual(
+      DEFAULT_SETTINGS.language,
+    );
   });
 
   it('keeps valid saved values and repairs the rest', () => {
     const settings = withDefaults({
-      speech: { voice: 'Samantha|en-US', rate: 9, speakEachWord: false },
+      speech: { rate: 9, speakEachWord: false },
       touch: { holdMs: 600, selectOnRelease: 'yes' },
       display: { labelPosition: 'above', buttonGap: -4 },
     });
-    expect(settings.speech).toEqual({
-      engine: 'device',
-      voice: 'Samantha|en-US',
-      openaacVoice: null,
-      rate: 2,
-      pitch: 1,
-      speakEachWord: false,
-    });
+    expect(settings.speech.rate).toBe(2);
+    expect(settings.speech.speakEachWord).toBe(false);
     expect(settings.touch).toEqual({ holdMs: 600, selectOnRelease: false, ignoreRepeatMs: 0 });
     expect(settings.display).toEqual({ labelPosition: 'above', showSymbols: true, buttonGap: 0 });
   });

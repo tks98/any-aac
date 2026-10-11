@@ -2,7 +2,7 @@
  * The message being built in the message bar. Pure functions so every access
  * method (touch, scanning, dwell) shares the same behaviour.
  */
-import { spokenText } from './board';
+import { buttonWords } from './language';
 import type { ObfButton } from './obf';
 
 export interface MessageItem {
@@ -14,11 +14,17 @@ export interface MessageItem {
 
 export type Message = readonly MessageItem[];
 
-export function addWord(message: Message, button: ObfButton, boardId?: string): Message {
-  const text = spokenText(button);
+/** Adds a button's word, in `lang` if the button has a translation for it. */
+export function addWord(
+  message: Message,
+  button: ObfButton,
+  boardId?: string,
+  lang?: string,
+): Message {
+  const { label, text } = buttonWords(button, lang);
   if (text === '') return message;
   const item: MessageItem = {
-    label: button.label ?? text,
+    label: label || text,
     text,
     ...(button.image_id !== undefined ? { imageId: button.image_id } : {}),
     ...(boardId !== undefined ? { boardId } : {}),

@@ -1,5 +1,6 @@
 <script lang="ts">
-  import type { ObfButton } from '@open-aac/core';
+  import { buttonWords, type ObfButton } from '@open-aac/core';
+  import { app } from '../state.svelte';
   import { cellColors } from '../theme';
 
   let {
@@ -9,6 +10,7 @@
     holdMs = 0,
     labelAbove = false,
     showSymbol = true,
+    lang,
     onactivate,
   }: {
     button: ObfButton;
@@ -19,13 +21,17 @@
     holdMs?: number;
     labelAbove?: boolean;
     showSymbol?: boolean;
+    /** Language to show the button in, when it has a translation. */
+    lang?: string;
     /** Activation that doesn't come from a pointer (keyboard, screen reader). */
     onactivate: () => void;
   } = $props();
 
   const colors = $derived(cellColors(button));
   const isFolder = $derived(button.load_board !== undefined);
-  const label = $derived(button.label ?? button.vocalization ?? '');
+  const label = $derived(buttonWords(button, lang).label);
+  /** Letters in the label's longest word, so long words can shrink to fit. */
+  const longest = $derived(Math.max(1, ...label.split(/\s+/).map((word) => [...word].length)));
 </script>
 
 <button
@@ -35,7 +41,8 @@
   data-cell={index}
   style:--fill={colors.fill}
   style:--edge={colors.edge}
-  aria-label={isFolder ? `${label}, folder` : undefined}
+  style:--longest={longest}
+  aria-label={isFolder ? app.t.folder(label) : undefined}
   onclick={onactivate}
 >
   {#if isFolder}
@@ -91,7 +98,9 @@
 
   .label {
     max-width: 100%;
-    font-size: clamp(0.75rem, min(17cqi, 19cqb), 1.3rem);
+    /* A word wider than the cell shrinks until it fits (letters are about
+       0.55em wide in this font), rather than being cut off or split. */
+    font-size: min(clamp(0.75rem, min(17cqi, 19cqb), 1.3rem), max(0.6rem, 160cqi / var(--longest)));
     font-weight: 700;
     line-height: 1.05;
     text-align: center;
@@ -106,7 +115,7 @@
   }
 
   .text-only .label {
-    font-size: clamp(0.9rem, min(20cqi, 30cqb), 2rem);
+    font-size: min(clamp(0.9rem, min(20cqi, 30cqb), 2rem), max(0.6rem, 160cqi / var(--longest)));
   }
 
   /* Press-and-hold progress fills the button from the bottom. */

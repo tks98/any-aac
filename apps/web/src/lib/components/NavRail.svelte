@@ -1,5 +1,6 @@
 <script lang="ts">
   import { ICONS } from '../icons';
+  import { nativeName } from '../languages';
   import { app } from '../state.svelte';
   import Icon from './Icon.svelte';
 
@@ -9,6 +10,13 @@
   let { onunlock }: { onunlock: () => void } = $props();
 
   let holding = $state(false);
+
+  /** The other language of a bilingual communicator, which the switch button changes to. */
+  const otherLanguage = $derived.by(() => {
+    const { primary, second, usingSecond } = app.settings.language;
+    if (!second) return null;
+    return usingSecond ? (primary ?? app.boardsLanguage) : second;
+  });
   let timer: ReturnType<typeof setTimeout> | undefined;
 
   function startHold() {
@@ -33,25 +41,36 @@
   }
 </script>
 
-<nav class="rail" aria-label="Board navigation">
+<nav class="rail" aria-label={app.t.boardNavigation}>
   <button class:current={app.atHome} onclick={() => app.home()}>
     <Icon path={ICONS.home} />
-    Home
+    {app.t.home}
   </button>
   <button disabled={app.history.length === 0} onclick={() => app.back()}>
     <Icon path={ICONS.back} />
-    Back
+    {app.t.back}
   </button>
+  {#if otherLanguage}
+    <button
+      class="language"
+      lang={otherLanguage}
+      aria-label={app.t.switchLanguage(nativeName(otherLanguage))}
+      onclick={() => app.switchLanguage()}
+    >
+      <Icon path={ICONS.language} />
+      {nativeName(otherLanguage)}
+    </button>
+  {/if}
   <span class="spacer"></span>
   <button class="help" onclick={() => app.askForHelp()}>
     <Icon path={ICONS.help} />
-    Help
+    {app.t.help}
   </button>
   <button
     class="edit"
     class:holding
     style:--hold-ms="{HOLD_MS}ms"
-    aria-label="Edit boards (press and hold)"
+    aria-label={app.t.editHold}
     onpointerdown={startHold}
     onpointerup={cancelHold}
     onpointerleave={cancelHold}
@@ -62,7 +81,7 @@
   >
     <span class="progress" aria-hidden="true"></span>
     <Icon path={ICONS.lock} size={28} />
-    Edit
+    {app.t.edit}
   </button>
 </nav>
 

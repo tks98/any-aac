@@ -19,13 +19,16 @@ export interface SpeakOptions {
   voice: string | null;
   rate: number;
   pitch: number;
+  /** Language of the text; picks the default voice when none is chosen. */
+  lang: string;
 }
 
 export interface SpeechOutput {
   readonly available: boolean;
   speak(text: string, options?: Partial<SpeakOptions>): void;
   stop(): void;
-  voices(): VoiceInfo[];
+  /** The device's voices, ranked for a language (default: the device's language). */
+  voices(lang?: string): VoiceInfo[];
   /** Calls back when the browser's voice list changes; returns an unsubscribe. */
   onVoicesChanged(callback: () => void): () => void;
 }
@@ -133,9 +136,10 @@ class WebSpeech implements SpeechOutput {
     const voices = speechSynthesis.getVoices();
     const chosen =
       options.voice != null ? voices.find((v) => voiceKey(v) === options.voice) : undefined;
-    const voice = chosen ?? pickDefaultVoice(voices, this.lang);
+    const lang = options.lang ?? this.lang;
+    const voice = chosen ?? pickDefaultVoice(voices, lang);
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = voice?.lang ?? this.lang;
+    utterance.lang = voice?.lang ?? lang;
     if (voice) utterance.voice = voice;
     utterance.rate = options.rate ?? 1;
     utterance.pitch = options.pitch ?? 1;
@@ -146,8 +150,8 @@ class WebSpeech implements SpeechOutput {
     speechSynthesis.cancel();
   }
 
-  voices(): VoiceInfo[] {
-    return rankVoices(speechSynthesis.getVoices(), this.lang);
+  voices(lang = this.lang): VoiceInfo[] {
+    return rankVoices(speechSynthesis.getVoices(), lang);
   }
 
   onVoicesChanged(callback: () => void) {

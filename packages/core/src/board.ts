@@ -1,3 +1,4 @@
+import { buttonWords } from './language';
 import { OBF_FORMAT, type ObfBoard, type ObfBoardRef, type ObfButton, type ObfImage } from './obf';
 
 export interface Cell {
@@ -18,8 +19,9 @@ export function cells(board: ObfBoard): Cell[] {
   );
 }
 
-export function spokenText(button: ObfButton): string {
-  return (button.vocalization ?? button.label ?? '').trim();
+/** What a button says, in a language if it has a translation for it. */
+export function spokenText(button: ObfButton, lang?: string): string {
+  return buttonWords(button, lang).text;
 }
 
 /** OBF "specialty" actions we act on. Others are kept but ignored. */
