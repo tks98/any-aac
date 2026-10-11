@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
@@ -9,7 +10,15 @@ const allowedHosts = ['.ts.net'];
 export default defineConfig({
   server: { allowedHosts },
   preview: { allowedHosts },
+  // ONNX Runtime finds its .wasm next to itself; pre-bundling would break that.
+  optimizeDeps: { exclude: ['onnxruntime-web'] },
   build: {
+    rollupOptions: {
+      input: {
+        main: fileURLToPath(new URL('./index.html', import.meta.url)),
+        voiceLab: fileURLToPath(new URL('./voice-lab.html', import.meta.url)),
+      },
+    },
     // Keep symbols as separate files (cached by the service worker) rather than
     // inlining the small ones into the JavaScript bundle.
     assetsInlineLimit: (file) => (file.includes('/assets/symbols/') ? false : undefined),
@@ -45,6 +54,16 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,ico,woff2}'],
+        // The offline voice is an optional download: cache its code when first
+        // used, rather than making every install fetch it.
+        globIgnores: ['**/ort*.js', '**/phonemizer*.js', '**/piper*.js'],
+        runtimeCaching: [
+          {
+            urlPattern: /\/assets\/(ort|phonemizer|piper)[^/]*\.(m?js|wasm)$/,
+            handler: 'CacheFirst',
+            options: { cacheName: 'open-aac-voice-runtime' },
+          },
+        ],
         clientsClaim: true,
       },
     }),

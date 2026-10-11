@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Open AAC voice lab</title>
+    <style>
+      :root {
+        font-family: system-ui, sans-serif;
+        color: #15202b;
+        background: #f3f5f7;
+      }
+      body {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      h1 {
+        margin: 0 0 4px;
+      }
+      p {
+        line-height: 1.45;
+      }
+      .card {
+        margin: 16px 0;
+        padding: 16px;
+        border: 1px solid #d5dce3;
+        border-radius: 14px;
+        background: #fff;
+      }
+      label {
+        font-weight: 700;
+      }
+      select,
+      input,
+      button {
+        font: inherit;
+        min-height: 44px;
+      }
+      select,
+      input {
+        width: 100%;
+        box-sizing: border-box;
+        margin: 6px 0 12px;
+        padding: 0 10px;
+        border: 2px solid #c3cdd6;
+        border-radius: 10px;
+      }
+      button {
+        margin: 4px 6px 4px 0;
+        padding: 0 16px;
+        border: 2px solid #c3cdd6;
+        border-radius: 10px;
+        background: #fff;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      button.primary {
+        border: none;
+        background: #1d5bd6;
+        color: #fff;
+      }
+      button:disabled {
+        opacity: 0.5;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-variant-numeric: tabular-nums;
+      }
+      th,
+      td {
+        padding: 6px 4px;
+        border-bottom: 1px solid #e4e9ee;
+        text-align: right;
+      }
+      th:first-child,
+      td:first-child {
+        text-align: left;
+      }
+      #status {
+        font-weight: 700;
+      }
+      pre {
+        white-space: pre-wrap;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Voice lab</h1>
+    <p>
+      Tries the offline Piper voices and measures them on this device. A voice is about 63 MB to
+      download the first time; after that it's cached.
+    </p>
+
+    <div class="card">
+      <label for="voice">Voice</label>
+      <select id="voice"></select>
+      <button id="load" class="primary">Load voice</button>
+      <span id="status" role="status"></span>
+    </div>
+
+    <div class="card">
+      <label for="text">Say something</label>
+      <input id="text" value="I want to go outside." />
+      <button id="say" disabled>Speak</button>
+      <button id="bench" disabled>Run benchmark</button>
+      <button id="copy" disabled>Copy results</button>
+      <table>
+        <thead>
+          <tr>
+            <th>Phrase</th>
+            <th>Audio s</th>
+            <th>First ms</th>
+            <th>Median ms</th>
+            <th>Phonemes ms</th>
+            <th>Real-time factor</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <pre id="env"></pre>
+    </div>
+
+    <script type="module" src="/src/voice-lab.ts"></script>
+  </body>
+</html>
