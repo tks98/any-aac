@@ -20,7 +20,7 @@ import { MESSAGES, pickAppLanguage } from './i18n';
 import { DEFAULT_SETTINGS, type Settings } from './settings';
 import { phrase } from './phrases';
 import { saveBoards } from './storage';
-import { starterPhrases } from './starter';
+import { starterOf, starterPhrases } from './starter';
 import { preferPlaybackAudio, speech } from './speech';
 import { openaacVoice } from './voice/voice.svelte';
 
@@ -133,7 +133,7 @@ class AppState {
   openPhrases() {
     if (!this.set) return;
     if (!this.phrases) {
-      this.set = { ...this.set, boards: [...this.set.boards, starterPhrases()] };
+      this.set = { ...this.set, boards: [...this.set.boards, starterPhrases(starterOf(this.set))] };
       void saveBoards(this.set).catch(() => undefined);
     }
     if (this.phrases) this.open(this.phrases.id);

@@ -4,7 +4,7 @@
  * vocabulary's own symbols, some of which come from OpenMoji.
  */
 import type { ObfImage } from '@open-aac/core';
-import { STARTER_TRANSLATIONS } from './starter-translations';
+import { STARTER_TRANSLATIONS } from './starter/english-translations';
 import { STARTER_SYMBOL_KEYS, starterSymbol, symbolLicense, type SetName } from './symbols';
 
 export interface LibrarySymbol {

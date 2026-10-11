@@ -17,4 +17,4 @@ From Soto and Cooper's early Spanish vocabulary for AAC ([2021](https://doi.org/
 - **Pronoun + verb is rare** because the verb carries the person; "yo + gusto", seen in some AAC software, is ungrammatical. Most early sentences put the verb first.
 - Their 218-word list is a starting pool, to be combined with what matters to each child and their dialect.
 
-**What we do:** board words, voices and menus per language; one-tap switching; mixed messages; Spanish word choices and verb forms follow Soto and Cooper. The English-first board's Spanish is a translation for bilingual communicators; a Spanish-first vocabulary is [0004](../decisions/0004-spanish-first-vocabulary.md).
+**What we do:** board words, voices and menus per language; one-tap switching; mixed messages; Spanish word choices and verb forms follow Soto and Cooper. The English-first board's Spanish is a translation for bilingual communicators; Spanish-dominant communicators get a vocabulary chosen in Spanish from Soto and Cooper's list ([0004](../decisions/0004-spanish-first-vocabulary.md)).

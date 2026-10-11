@@ -149,6 +149,8 @@ export const PICTOGRAMS: Record<string, string> = {
     'M21 16v1M27 16v1M22 21c1.5 1 2.5 1 4 0',
 };
 
+export const hasPictogram = (key: string) => key in PICTOGRAMS;
+
 export function pictogramDataUri(key: string, stroke = '#15202B'): string {
   const path = PICTOGRAMS[key];
   if (path === undefined) throw new Error(`No pictogram named "${key}".`);

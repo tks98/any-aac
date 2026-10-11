@@ -19,13 +19,17 @@ Each word has one place on the board, and people learn where words are by moving
 - For someone **starting out**, use a tablet or larger screen with big buttons as the main device. Vocabulary designers recommend this ([PRC-Saltillo](https://prc-saltillo.com/blog/LAMPWFL-iPhone)).
 - If they use a **phone and a tablet**, consider turning off **Settings → Display → Smaller layouts on phones**, so both show the same board. The buttons will be small on the phone.
 
-## 3. Choose a voice
+## 3. Choose the starter boards
+
+Devices set to Spanish start with the **Spanish** starter boards, chosen in Spanish for Spanish speakers; others start with the **English** boards, which come with Spanish translations for bilingual communicators. To switch, use **Settings → Boards & backup → Start over with…** (this replaces the boards, so back up first).
+
+## 4. Choose a voice
 
 **Settings → Speech & voice.** The device's own voice works straight away. An **Open AAC voice** sounds the same on every device and works offline; it's a one-time download of about 80 MB. **Linda** is recommended for English. Open AAC only offers voices whose licences are clearly open; for Spanish that's one small, lower-quality voice for now ([decision 0002](research/decisions/0002-only-clearly-licensed-voices.md)).
 
 Firefox on Android can't speak with device voices; use Chrome, or download an Open AAC voice.
 
-## 4. Lock the device
+## 5. Lock the device
 
 Open AAC's own lock keeps editing behind a press-and-hold on **Edit**. To keep someone in the app, use the device's lock as well:
 
@@ -34,14 +38,14 @@ Open AAC's own lock keeps editing behind a press-and-hold on **Edit**. To keep s
 - **Windows: Kiosk.** Settings → Accounts → Other users → **Set up a kiosk**, choose Microsoft Edge, and give it the app's address.
 - **Chromebooks:** kiosk mode needs a managed device (Google Admin console).
 
-## 5. Switches
+## 6. Switches
 
 **Settings → Switch scanning.** Most switch interfaces send keys: set yours to send **Space** (switch 1) and **Enter** (switch 2). Game controllers work too (button A is switch 1, B is switch 2). Start with **two switches** (one to move, one to choose) or **by itself** with one switch, a slow speed, and **dim the rest**. With **tap anywhere** on, hold the screen for 3 seconds to get back to edit mode.
 
-## 6. Modeling
+## 7. Modeling
 
 People learn to use AAC by seeing others use it. **Model** (in the edit toolbar: hold Edit, then tap Model) lets partners tap words on the person's own board as they talk: the words are said but don't go into the person's message. **Find a word** shows where any word is, one step at a time.
 
-## 7. Back up
+## 8. Back up
 
 **Settings → Boards & backup → Back up everything** saves every board, picture and setting in one file. Keep a copy somewhere other than the device. Edit mode reminds you when the boards have changed since the last backup. **Print** (in edit mode) makes paper boards for when the device isn't available.

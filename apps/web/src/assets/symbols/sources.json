@@ -333,6 +333,110 @@
     "here": {
       "set": "openmoji",
       "name": "1F447"
+    },
+    "give": {
+      "set": "mulberry",
+      "name": "give_,_to"
+    },
+    "have": {
+      "set": "openmoji",
+      "name": "1F932"
+    },
+    "lots": {
+      "set": "mulberry",
+      "name": "lots_more"
+    },
+    "big": {
+      "set": "mulberry",
+      "name": "large"
+    },
+    "again": {
+      "set": "openmoji",
+      "name": "1F501"
+    },
+    "there": {
+      "set": "openmoji",
+      "name": "1F449"
+    },
+    "grandmother": {
+      "set": "mulberry",
+      "name": "grandmother"
+    },
+    "grandfather": {
+      "set": "mulberry",
+      "name": "grandfather"
+    },
+    "brother": {
+      "set": "mulberry",
+      "name": "brother"
+    },
+    "sister": {
+      "set": "mulberry",
+      "name": "sister"
+    },
+    "aunt": {
+      "set": "mulberry",
+      "name": "aunt_maternal"
+    },
+    "iceCream": {
+      "set": "mulberry",
+      "name": "ice_cream"
+    },
+    "potato": {
+      "set": "mulberry",
+      "name": "potato"
+    },
+    "orange": {
+      "set": "mulberry",
+      "name": "orange"
+    },
+    "chocolate": {
+      "set": "mulberry",
+      "name": "chocolate"
+    },
+    "beach": {
+      "set": "mulberry",
+      "name": "beach"
+    },
+    "road": {
+      "set": "mulberry",
+      "name": "road"
+    },
+    "nose": {
+      "set": "openmoji",
+      "name": "1F443"
+    },
+    "ear": {
+      "set": "mulberry",
+      "name": "ear"
+    },
+    "foot": {
+      "set": "mulberry",
+      "name": "foot"
+    },
+    "doll": {
+      "set": "mulberry",
+      "name": "doll"
+    },
+    "car": {
+      "set": "mulberry",
+      "name": "car"
+    },
+    "truck": {
+      "set": "mulberry",
+      "name": "lorry"
+    },
+    "balloon": {
+      "set": "mulberry",
+      "name": "balloon"
+    },
+    "toy": {
+      "set": "mulberry",
+      "name": "toys"
+    },
+    "crayon": {
+      "set": "mulberry",
+      "name": "crayon"
     }
   }
 }

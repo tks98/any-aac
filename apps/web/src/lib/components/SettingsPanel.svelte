@@ -7,7 +7,7 @@
   import { capitalize, nameIn, nameInSentence, nativeName } from '../languages';
   import { phrase } from '../phrases';
   import { baseLanguage, speech, type VoiceInfo } from '../speech';
-  import { starterSet } from '../starter';
+  import { starterSet, type StarterId } from '../starter';
   import { VOICES, type VoiceEntry } from '../voice/catalog';
   import { openaacVoice } from '../voice/voice.svelte';
   import { app } from '../state.svelte';
@@ -179,9 +179,12 @@
     form.reset();
   }
 
-  async function reset() {
+  async function reset(starter: StarterId) {
     if (!confirm(t.confirmReset)) return;
-    await replaceBoards(await starterSet(), t.restored);
+    await replaceBoards(await starterSet(starter), t.restored);
+    // Show the new boards in their own language.
+    app.settings.language.primary = null;
+    app.settings.language.usingSecond = false;
   }
 </script>
 
@@ -846,10 +849,15 @@
             <Icon path={ICONS.boards} size={24} />
             {t.exportBoards}
           </button>
-          <button class="action" onclick={reset}>
+          <button class="action" onclick={() => reset('en')}>
             <Icon path={ICONS.reset} size={24} />
-            {t.resetBoards}
+            {t.resetEnglish}
           </button>
+          <button class="action" lang="es" onclick={() => reset('es')}>
+            <Icon path={ICONS.reset} size={24} />
+            {t.resetSpanish}
+          </button>
+          <p class="help">{t.resetHelp}</p>
         </div>
         {#if status}
           <p class="status" role="status">{status}</p>

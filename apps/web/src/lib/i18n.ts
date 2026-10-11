@@ -197,7 +197,10 @@ const en = {
   settingsRestored: 'Settings restored.',
   importBoards: 'Import boards or a backup',
   exportBoards: 'Export boards only (to share)',
-  resetBoards: 'Reset to starter boards',
+  resetEnglish: 'Start over with the English starter boards',
+  resetSpanish: 'Start over with the Spanish starter boards',
+  resetHelp:
+    'The English boards come with Spanish translations, for bilingual communicators. The Spanish boards are chosen in Spanish, for Spanish speakers, with English translations.',
   boardCount: (count: number) => (count === 1 ? '1 board' : `${count} boards`),
   confirmImport: (count: string, file: string) =>
     `Replace all boards on this device with ${count} from “${file}”?`,
@@ -535,7 +538,10 @@ const es: Messages = {
   settingsRestored: 'Ajustes restaurados.',
   importBoards: 'Importar tableros o una copia',
   exportBoards: 'Exportar solo los tableros (para compartir)',
-  resetBoards: 'Volver a los tableros iniciales',
+  resetEnglish: 'Empezar de nuevo con los tableros iniciales en inglés',
+  resetSpanish: 'Empezar de nuevo con los tableros iniciales en español',
+  resetHelp:
+    'Los tableros en inglés traen traducciones al español, para comunicadores bilingües. Los tableros en español están elegidos en español, para hispanohablantes, con traducciones al inglés.',
   boardCount: (count) => (count === 1 ? '1 tablero' : `${count} tableros`),
   confirmImport: (count, file) =>
     `¿Reemplazar todos los tableros de este dispositivo por ${count} de «${file}»?`,
