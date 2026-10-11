@@ -20,7 +20,7 @@ Options:
    - Nothing that changes pages: Rocket Loader, Email Address Obfuscation, Speed Brain and Early Hints are off, and Real User Monitoring is set to **Disable completely**. Left unconfigured, Cloudflare injects its analytics beacon (static.cloudflareinsights.com) into pages on the Free plan.
    - A cache rule: files under `/voices/`, and `.wasm` and `.data` files (the speech engine), are cached at Cloudflare for 7 days, whatever GitHub's 10-minute cache header says. If a voice file ever changes in place, purge Cloudflare's cache.
    - DNS: GitHub Pages' four addresses for the domain, `www` to `tks98.github.io` (GitHub redirects it), GitHub's verification record, and records saying the domain sends no email (SPF `-all`, DMARC reject).
-   - DNSSEC is off; it can be turned on in Cloudflare and its DS record added at Squarespace.
+   - DNSSEC is on: Cloudflare signs the zone, and its DS record (key tag 2371, algorithm 13, digest type 2) is at Squarespace. If DNSSEC is ever turned off or re-keyed in Cloudflare, change the DS record at Squarespace first, or the domain stops resolving for validating resolvers.
 3. **The voices are copied into the site at build time** by `apps/web/scripts/self-host-voices.mjs`, from the pinned Piper release, and each file is checked against the size and hash in `voices.json`. Built with `VITE_SELF_HOST_VOICES=true`, the app downloads voices from its own site. The hosted app makes no requests to any other site.
 4. **Self-hosters use the same two commands** (README, "Self-hosting"), with `BASE_PATH` for a sub-path.
 
