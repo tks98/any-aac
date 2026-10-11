@@ -31,7 +31,7 @@ Longer documents:
 | [0007](decisions/0007-kokoro-for-spanish.md)           | Kokoro for a clearly licensed Spanish voice                            | Not adopted |
 | [0008](decisions/0008-train-a-spanish-voice.md)        | Train a clearly licensed Spanish voice                                 | Deferred    |
 | [0009](decisions/0009-plain-interface.md)              | A plain, consistent interface, checked against accessibility standards | Accepted    |
-| [0010](decisions/0010-hosting.md)                      | Host on GitHub Pages, with the voices on the same site                 | Accepted    |
+| [0010](decisions/0010-hosting.md)                      | Host on GitHub Pages at any-aac.com, behind Cloudflare                 | Accepted    |
 | [0011](decisions/0011-name.md)                         | Rename Open AAC to Any AAC                                             | Accepted    |
 
 Earlier project decisions (licence, framework, building fresh, the approved design) are in [plan.md §10](../plan.md#10-decisions).

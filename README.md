@@ -2,7 +2,7 @@
 
 A free, open-source AAC (augmentative and alternative communication) app. It runs in the browser on iPad, iPhone, Android, Chromebook, Windows and Mac, keeps working with no internet connection once installed, and can be self-hosted from a folder of static files.
 
-**Try it: [tks98.github.io/any-aac](https://tks98.github.io/any-aac/).** On an iPad or iPhone, open it in Safari and tap Share → **Add to Home Screen**. On Android, use Chrome's ⋮ menu → **Install app**. [Setting up a device](docs/setup.md) covers the rest.
+**Try it: [any-aac.com](https://any-aac.com/).** On an iPad or iPhone, open it in Safari and tap Share → **Add to Home Screen**. On Android, use Chrome's ⋮ menu → **Install app**. [Setting up a device](docs/setup.md) covers the rest.
 
 <p align="center">
   <img src="docs/screenshots/ipad-board.png" alt="The core word board on an iPad: 42 words in columns by word type and six topic folders down the right, with the message “I like it” above" width="420">

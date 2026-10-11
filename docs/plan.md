@@ -208,7 +208,7 @@ docs/
 
 ### 5.5 Offline and self-hosting modes
 
-1. **Hosted:** use our public instance once and install it; after that it runs offline. It's on GitHub Pages at [tks98.github.io/any-aac](https://tks98.github.io/any-aac/), with the voices on the same site ([decision 0010](research/decisions/0010-hosting.md)).
+1. **Hosted:** use our public instance once and install it; after that it runs offline. It's at [any-aac.com](https://any-aac.com/), on GitHub Pages behind Cloudflare, with the voices on the same site ([decision 0010](research/decisions/0010-hosting.md)).
 2. **Static self-host:** `dist/` is plain static files, servable by nginx, Caddy, GitHub Pages, or a school web server. HTTPS is required for offline mode (or `localhost`). Document Caddy's automatic TLS and an internal CA for LAN setups.
 3. **Docker:** static app plus optional sync server in one `docker compose up` (P4).
 4. **Desktop wrapper:** Tauri for kiosks or air-gapped installs (P5).

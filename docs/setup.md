@@ -1,6 +1,6 @@
 # Setting up a device
 
-For families, teachers and speech-language pathologists (SLPs) setting up Any AAC for someone. Any AAC is at **[tks98.github.io/any-aac](https://tks98.github.io/any-aac/)**. This is its first release, and its vocabulary hasn't yet been reviewed by SLPs; see the [README](../README.md).
+For families, teachers and speech-language pathologists (SLPs) setting up Any AAC for someone. Any AAC is at **[any-aac.com](https://any-aac.com/)**. This is its first release, and its vocabulary hasn't yet been reviewed by SLPs; see the [README](../README.md).
 
 ## 1. Install it
 
