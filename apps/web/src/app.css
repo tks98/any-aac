@@ -8,12 +8,90 @@
   --accent-ink: #ffffff;
   --chip: #eef2f6;
   --help: #b42318;
+  /* Panel borders, row separators, selection and other UI colours. */
+  --divider: #d5dce3;
+  --divider-soft: #e4e9ee;
+  --selected: #e8effc;
+  --track: #8a97a3;
+  --knob: #ffffff;
+  --panel-ground: #f3f5f7;
+  --backdrop: rgb(21 32 43 / 0.4);
+  --shadow: rgb(21 32 43 / 0.2);
+  --hold: rgb(29 91 214 / 0.25);
+  /* Behind symbols: their black outlines need a light card on dark themes. */
+  --symbol-card: transparent;
+  /* Outlines the chosen option of a segmented control where fills alone don't show it. */
+  --on-ring: transparent;
+  --label-scale: 1;
   --radius: 14px;
   --gap: clamp(6px, 1.2vmin, 12px);
 
   font-family: 'Atkinson Hyperlegible Next', system-ui, sans-serif;
   color: var(--ink);
   background: var(--ground);
+}
+
+/* Themes from the approved design (Settings → Display). */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --ground: #0d1318;
+  --surface: #18212a;
+  --ink: #edf1f5;
+  --muted: #a3b1bf;
+  --line: #2e3b48;
+  --accent: #2f6fe4;
+  --accent-ink: #ffffff;
+  --chip: #222d38;
+  --help: #ff7a6e;
+  --divider: #2e3b48;
+  --divider-soft: #222d38;
+  --selected: #1e3357;
+  --track: #4d5b69;
+  --panel-ground: #0d1318;
+  --backdrop: rgb(0 0 0 / 0.6);
+  --shadow: rgb(0 0 0 / 0.5);
+  --hold: rgb(47 111 228 / 0.35);
+  --symbol-card: #f4f6f8;
+  --on-ring: #2f6fe4;
+}
+
+:root[data-theme='contrast'] {
+  color-scheme: dark;
+  --ground: #000000;
+  --surface: #000000;
+  --ink: #ffffff;
+  --muted: #dddddd;
+  --line: #ffffff;
+  --accent: #ffe14d;
+  --accent-ink: #000000;
+  --chip: #1a1a1a;
+  --help: #ff7a6e;
+  --divider: #ffffff;
+  --divider-soft: #555555;
+  --selected: #3a3300;
+  --track: #777777;
+  --knob: #ffffff;
+  --panel-ground: #000000;
+  --backdrop: rgb(0 0 0 / 0.75);
+  --shadow: rgb(0 0 0 / 0);
+  --hold: rgb(255 225 77 / 0.4);
+  --symbol-card: #ffffff;
+  --on-ring: #ffe14d;
+}
+
+input:not([type='range'], [type='checkbox'], [type='radio'], [type='file']),
+select {
+  color: var(--ink);
+  background-color: var(--surface);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 *,

@@ -227,7 +227,7 @@
 
   .tools button[aria-pressed='true'] {
     border-color: var(--accent);
-    background: #e8effc;
+    background: var(--selected);
   }
 
   .tools button:disabled {
@@ -257,7 +257,7 @@
   }
 
   .print-choice::backdrop {
-    background: rgb(21 32 43 / 0.4);
+    background: var(--backdrop);
   }
 
   .print-choice h2 {

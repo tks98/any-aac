@@ -211,7 +211,11 @@
       </button>
     {/if}
   {:else}
-    {@const colors = cellColors(button)}
+    {@const colors = cellColors(
+      button,
+      app.settings.display.theme,
+      app.settings.display.colorStyle,
+    )}
     {@const type = partOfSpeech(button) ?? null}
     {@const locked = isLocked(button)}
     <div class="heading">
@@ -366,7 +370,7 @@
     flex-direction: column;
     gap: 14px;
     padding: 16px;
-    border: 1px solid #d5dce3;
+    border: 1px solid var(--divider);
     border-radius: 16px;
     background: var(--surface);
     overflow-y: auto;
@@ -518,7 +522,7 @@
   }
 
   .card {
-    border: 1px solid #e4e9ee;
+    border: 1px solid var(--divider-soft);
     border-radius: 12px;
   }
 
@@ -530,7 +534,7 @@
   }
 
   .row + .row {
-    border-top: 1px solid #e4e9ee;
+    border-top: 1px solid var(--divider-soft);
   }
 
   .text {
@@ -552,7 +556,7 @@
     padding: 3px;
     border: none;
     border-radius: 17px;
-    background: #8a97a3;
+    background: var(--track);
     cursor: pointer;
   }
 
@@ -565,7 +569,7 @@
     width: 28px;
     height: 28px;
     border-radius: 14px;
-    background: #ffffff;
+    background: var(--knob);
   }
 
   .error {

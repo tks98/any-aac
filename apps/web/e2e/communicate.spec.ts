@@ -282,6 +282,25 @@ test('the keyboard can choose words', async ({ page }) => {
   await expect(messageBar(page)).toHaveAccessibleName('Message: I. Tap to speak it.');
 });
 
+test('the dark and high-contrast themes apply everywhere, and stay chosen', async ({ page }) => {
+  await openSettings(page, 'Display');
+  await page.getByRole('group', { name: 'Theme' }).getByRole('button', { name: 'Dark' }).click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await page
+    .getByRole('group', { name: 'Theme' })
+    .getByRole('button', { name: 'High contrast' })
+    .click();
+  await closeSettings(page);
+  await expect(page.locator('html')).toHaveCSS('background-color', 'rgb(0, 0, 0)');
+  // Symbols sit on a light card so their black outlines still show.
+  await expect(word(page, 'want').locator('img')).toHaveCSS(
+    'background-color',
+    'rgb(255, 255, 255)',
+  );
+  await page.reload();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'contrast');
+});
+
 test('labels can go above symbols, or symbols can be hidden', async ({ page }) => {
   const label = word(page, 'want').locator('.label');
   const image = word(page, 'want').locator('img');

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { buttonWords, type ObfButton } from '@open-aac/core';
   import { app } from '../state.svelte';
-  import { cellColors } from '../theme';
+  import { cellColors, type Theme } from '../theme';
 
   let {
     button,
@@ -13,6 +13,7 @@
     lang,
     hidden = false,
     pressed,
+    theme,
     onactivate,
   }: {
     button: ObfButton;
@@ -29,11 +30,15 @@
     hidden?: boolean;
     /** Edit mode: whether this is the selected cell. */
     pressed?: boolean;
+    /** A theme other than the one in settings (printing is always light). */
+    theme?: Theme;
     /** Activation that doesn't come from a pointer (keyboard, screen reader). */
     onactivate: () => void;
   } = $props();
 
-  const colors = $derived(cellColors(button));
+  const colors = $derived(
+    cellColors(button, theme ?? app.settings.display.theme, app.settings.display.colorStyle),
+  );
   const isFolder = $derived(button.load_board !== undefined);
   const label = $derived(buttonWords(button, lang).label);
   /** Letters in the label's longest word, so long words can shrink to fit. */
@@ -47,6 +52,7 @@
   data-cell={index}
   style:--fill={colors.fill}
   style:--edge={colors.edge}
+  style:--edge-width="{colors.width}px"
   style:--longest={longest}
   class:hidden
   aria-label={hidden ? app.t.hiddenButton(label) : isFolder ? app.t.folder(label) : undefined}
@@ -81,7 +87,7 @@
     min-height: 0;
     padding: 3px;
     border-radius: var(--radius);
-    border: 2px solid var(--edge);
+    border: var(--edge-width, 2px) solid var(--edge);
     background: var(--fill);
     cursor: pointer;
     touch-action: manipulation;
@@ -106,6 +112,8 @@
     height: min(54cqb, 62cqi);
     flex-shrink: 0;
     object-fit: contain;
+    border-radius: 6px;
+    background: var(--symbol-card);
     pointer-events: none;
   }
 
@@ -113,7 +121,10 @@
     max-width: 100%;
     /* A word wider than the cell shrinks until it fits (letters are about
        0.55em wide in this font), rather than being cut off or split. */
-    font-size: min(clamp(0.75rem, min(17cqi, 19cqb), 1.3rem), max(0.6rem, 160cqi / var(--longest)));
+    font-size: min(
+      calc(clamp(0.75rem, min(17cqi, 19cqb), 1.3rem) * var(--label-scale)),
+      max(0.6rem, 160cqi / var(--longest))
+    );
     font-weight: 700;
     line-height: 1.05;
     text-align: center;
@@ -128,7 +139,10 @@
   }
 
   .text-only .label {
-    font-size: min(clamp(0.9rem, min(20cqi, 30cqb), 2rem), max(0.6rem, 160cqi / var(--longest)));
+    font-size: min(
+      calc(clamp(0.9rem, min(20cqi, 30cqb), 2rem) * var(--label-scale)),
+      max(0.6rem, 160cqi / var(--longest))
+    );
   }
 
   /* Press-and-hold progress fills the button from the bottom. */
@@ -136,7 +150,7 @@
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    background: rgb(29 91 214 / 0.25);
+    background: var(--hold);
     transform-origin: bottom;
     animation: hold-fill var(--hold-ms) linear forwards;
     pointer-events: none;

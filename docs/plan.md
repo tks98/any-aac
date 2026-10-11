@@ -93,7 +93,7 @@ Phases are defined in §6. **P1** is the MVP.
 
 ### 4.5 Visual customization
 
-- [P1] Grid size, font and size, label position, high contrast, dark mode, and reduced motion.
+- [P1] Grid size, font and size, label position, high contrast, dark mode, and reduced motion. _Done except grid size and font choice:_ Light, Dark and High contrast themes and Fill, Border or None colour styles (from the approved design), label size, and the system's reduced-motion setting.
 - [P2] CVI-friendly presets: black background, a single bright highlight colour, less clutter, and dimming of everything outside the scan focus.
 - [P2] Text-only mode for literate adults, with an age-appropriate look.
 

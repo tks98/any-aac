@@ -1,5 +1,6 @@
 import type { Pronunciation } from '@open-aac/core';
 import type { TouchSettings } from './access/touch';
+import type { ColorStyle, Theme } from './theme';
 import { isAppLanguage, type AppLanguage } from './i18n';
 
 export interface SpeechSettings {
@@ -31,6 +32,11 @@ export interface LanguageSettings {
 }
 
 export interface DisplaySettings {
+  theme: Theme;
+  /** How word types show their colour. */
+  colorStyle: ColorStyle;
+  /** Label size, as a multiple of the size that fits the cell. */
+  labelScale: number;
   labelPosition: 'below' | 'above';
   showSymbols: boolean;
   /** Space between buttons, in px. More space suits keyguards and tremor. */
@@ -62,6 +68,9 @@ export const DEFAULT_SETTINGS: Settings = {
   },
   touch: { holdMs: 0, selectOnRelease: false, ignoreRepeatMs: 0 },
   display: {
+    theme: 'light',
+    colorStyle: 'fill',
+    labelScale: 1,
     labelPosition: 'below',
     showSymbols: true,
     buttonGap: 10,
@@ -72,6 +81,10 @@ export const DEFAULT_SETTINGS: Settings = {
 
 const isRecord = (v: unknown): v is Record<string, unknown> =>
   typeof v === 'object' && v !== null && !Array.isArray(v);
+
+function oneOf<T extends string>(value: unknown, options: readonly T[], fallback: T): T {
+  return (options as readonly unknown[]).includes(value) ? (value as T) : fallback;
+}
 
 function num(value: unknown, fallback: number, min: number, max: number): number {
   return typeof value === 'number' && Number.isFinite(value)
@@ -152,6 +165,13 @@ export function withDefaults(saved: unknown): Settings {
       ignoreRepeatMs: num(touch.ignoreRepeatMs, d.touch.ignoreRepeatMs, 0, 3000),
     },
     display: {
+      theme: oneOf(display.theme, ['light', 'dark', 'contrast'] as const, d.display.theme),
+      colorStyle: oneOf(
+        display.colorStyle,
+        ['fill', 'border', 'none'] as const,
+        d.display.colorStyle,
+      ),
+      labelScale: num(display.labelScale, d.display.labelScale, 1, 1.5),
       labelPosition: display.labelPosition === 'above' ? 'above' : d.display.labelPosition,
       showSymbols: bool(display.showSymbols, d.display.showSymbols),
       buttonGap: num(display.buttonGap, d.display.buttonGap, 0, 32),

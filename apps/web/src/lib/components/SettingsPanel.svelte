@@ -595,6 +595,42 @@
         <h3>{t.sectionDisplay}</h3>
         <div class="card">
           {@render choice(
+            t.theme,
+            '',
+            [
+              { value: 'light', name: t.themeLight },
+              { value: 'dark', name: t.themeDark },
+              { value: 'contrast', name: t.themeContrast },
+            ],
+            s.display.theme,
+            (theme) =>
+              (app.settings.display.theme =
+                theme === 'dark' || theme === 'contrast' ? theme : 'light'),
+          )}
+          {@render choice(
+            t.wordColors,
+            t.wordColorsHelp,
+            [
+              { value: 'fill', name: t.colorFill },
+              { value: 'border', name: t.colorBorder },
+              { value: 'none', name: t.colorNone },
+            ],
+            s.display.colorStyle,
+            (style) =>
+              (app.settings.display.colorStyle =
+                style === 'border' || style === 'none' ? style : 'fill'),
+          )}
+          {@render slider(
+            t.labelSize,
+            t.labelSizeHelp,
+            s.display.labelScale,
+            1,
+            1.5,
+            0.1,
+            t.percent(s.display.labelScale),
+            (v) => (app.settings.display.labelScale = v),
+          )}
+          {@render choice(
             t.labels,
             '',
             [
@@ -755,7 +791,7 @@
     margin: 0;
     padding: 0;
     border: none;
-    background: #f3f5f7;
+    background: var(--panel-ground);
     color: var(--ink);
     user-select: text;
   }
@@ -772,7 +808,7 @@
     gap: 16px;
     padding: max(12px, env(safe-area-inset-top)) 20px 12px;
     background: var(--surface);
-    border-bottom: 1px solid #d5dce3;
+    border-bottom: 1px solid var(--divider);
   }
 
   h2 {
@@ -806,7 +842,7 @@
     gap: 4px;
     padding: 16px 12px;
     background: var(--surface);
-    border-right: 1px solid #d5dce3;
+    border-right: 1px solid var(--divider);
     overflow-y: auto;
   }
 
@@ -826,7 +862,7 @@
   }
 
   nav button.current {
-    background: #e8effc;
+    background: var(--selected);
     font-weight: 800;
   }
 
@@ -850,7 +886,7 @@
   .card {
     margin: 0 0 20px;
     padding: 0;
-    border: 1px solid #d5dce3;
+    border: 1px solid var(--divider);
     border-radius: 16px;
     background: var(--surface);
     overflow: hidden;
@@ -866,7 +902,7 @@
   }
 
   .row + .row {
-    border-top: 1px solid #e4e9ee;
+    border-top: 1px solid var(--divider-soft);
   }
 
   .text {
@@ -895,7 +931,7 @@
     padding: 3px;
     border: none;
     border-radius: 17px;
-    background: #8a97a3;
+    background: var(--track);
     cursor: pointer;
   }
 
@@ -908,7 +944,7 @@
     width: 28px;
     height: 28px;
     border-radius: 14px;
-    background: #ffffff;
+    background: var(--knob);
   }
 
   .slider {
@@ -938,7 +974,7 @@
     gap: 4px;
     padding: 4px;
     border-radius: 14px;
-    background: #eef2f6;
+    background: var(--chip);
   }
 
   .segmented button {
@@ -952,9 +988,11 @@
   }
 
   .segmented button.on {
-    background: #ffffff;
+    background: var(--surface);
     font-weight: 800;
-    box-shadow: 0 1px 3px rgb(21 32 43 / 0.2);
+    box-shadow:
+      0 1px 3px var(--shadow),
+      inset 0 0 0 2px var(--on-ring);
   }
 
   .voices {
@@ -967,7 +1005,7 @@
     align-items: center;
     gap: 8px;
     padding: 8px 0;
-    border-top: 1px solid #e4e9ee;
+    border-top: 1px solid var(--divider-soft);
   }
 
   .pronunciation input {
@@ -1012,7 +1050,7 @@
     column-gap: 12px;
     align-items: center;
     padding: 10px 0;
-    border-top: 1px solid #e4e9ee;
+    border-top: 1px solid var(--divider-soft);
     cursor: pointer;
   }
 
@@ -1086,7 +1124,7 @@
     margin-left: 6px;
     padding: 2px 8px;
     border-radius: 999px;
-    background: #e8effc;
+    background: var(--selected);
     color: var(--accent);
     font-size: 0.85rem;
     font-weight: 800;
@@ -1167,7 +1205,7 @@
       padding: 8px;
       overflow-x: auto;
       border-right: none;
-      border-bottom: 1px solid #d5dce3;
+      border-bottom: 1px solid var(--divider);
     }
 
     nav button {

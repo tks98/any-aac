@@ -57,6 +57,9 @@ describe('withDefaults', () => {
     expect(settings.speech.speakEachWord).toBe(false);
     expect(settings.touch).toEqual({ holdMs: 600, selectOnRelease: false, ignoreRepeatMs: 0 });
     expect(settings.display).toEqual({
+      theme: 'light',
+      colorStyle: 'fill',
+      labelScale: 1,
       labelPosition: 'above',
       showSymbols: true,
       buttonGap: 0,

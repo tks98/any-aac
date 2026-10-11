@@ -102,7 +102,7 @@
   }
 
   dialog::backdrop {
-    background: rgb(21 32 43 / 0.4);
+    background: var(--backdrop);
   }
 
   header {
@@ -111,7 +111,7 @@
     justify-content: space-between;
     gap: 12px;
     padding: 14px 16px;
-    border-bottom: 1px solid #d5dce3;
+    border-bottom: 1px solid var(--divider);
   }
 
   h2 {

@@ -45,6 +45,18 @@
     document.documentElement.lang = app.appLanguage;
   });
 
+  // The theme and label size apply to everything, dialogs included.
+  $effect(() => {
+    const { theme, labelScale } = app.settings.display;
+    const root = document.documentElement;
+    if (theme === 'light') delete root.dataset.theme;
+    else root.dataset.theme = theme;
+    root.style.setProperty('--label-scale', String(labelScale));
+    document
+      .querySelector('meta[name="theme-color"]')
+      ?.setAttribute('content', getComputedStyle(root).getPropertyValue('--ground').trim());
+  });
+
   // Save settings whenever they change, once the saved ones have been read.
   $effect(() => {
     const settings = $state.snapshot(app.settings);

@@ -154,6 +154,8 @@
   .chip img {
     width: 2.5rem;
     height: 2.5rem;
+    border-radius: 4px;
+    background: var(--symbol-card);
     pointer-events: none;
   }
 

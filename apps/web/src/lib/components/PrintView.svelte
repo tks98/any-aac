@@ -39,6 +39,7 @@
               labelAbove={app.settings.display.labelPosition === 'above'}
               showSymbol={app.settings.display.showSymbols}
               lang={app.language}
+              theme="light"
               onactivate={() => {}}
             />
           {:else}
@@ -68,7 +69,12 @@
       background: #ffffff !important;
     }
 
+    /* Paper is always the light theme. */
     .print {
+      --ink: #15202b;
+      --surface: #ffffff;
+      --line: #c3cdd6;
+      --symbol-card: transparent;
       display: block;
       color: #000000;
       print-color-adjust: exact;
