@@ -19,19 +19,20 @@ Longer documents:
 
 ## Decisions
 
-| #                                                      | Decision                                            | Status   |
-| ------------------------------------------------------ | --------------------------------------------------- | -------- |
-| [0001](decisions/0001-offline-voice.md)                | Offline voice: Piper in the browser, our own engine | Accepted |
-| [0002](decisions/0002-only-clearly-licensed-voices.md) | Only voices with clearly open licences              | Accepted |
-| [0003](decisions/0003-core-vocabulary.md)              | Core vocabulary from Universal Core                 | Accepted |
-| [0004](decisions/0004-spanish-first-vocabulary.md)     | A Spanish-first vocabulary                          | Accepted |
-| [0005](decisions/0005-phone-layouts.md)                | Phone layouts follow the tablet's order; can be off | Accepted |
-| [0006](decisions/0006-partner-modeling.md)             | Tools for partner modeling                          | Accepted |
-| [0007](decisions/0007-kokoro-for-spanish.md)           | Kokoro for a clearly licensed Spanish voice         | Proposed |
+| #                                                      | Decision                                            | Status      |
+| ------------------------------------------------------ | --------------------------------------------------- | ----------- |
+| [0001](decisions/0001-offline-voice.md)                | Offline voice: Piper in the browser, our own engine | Accepted    |
+| [0002](decisions/0002-only-clearly-licensed-voices.md) | Only voices with clearly open licences              | Accepted    |
+| [0003](decisions/0003-core-vocabulary.md)              | Core vocabulary from Universal Core                 | Accepted    |
+| [0004](decisions/0004-spanish-first-vocabulary.md)     | A Spanish-first vocabulary                          | Accepted    |
+| [0005](decisions/0005-phone-layouts.md)                | Phone layouts follow the tablet's order; can be off | Accepted    |
+| [0006](decisions/0006-partner-modeling.md)             | Tools for partner modeling                          | Accepted    |
+| [0007](decisions/0007-kokoro-for-spanish.md)           | Kokoro for a clearly licensed Spanish voice         | Not adopted |
+| [0008](decisions/0008-train-a-spanish-voice.md)        | Train a clearly licensed Spanish voice              | Proposed    |
 
 Earlier project decisions (licence, framework, name, building fresh, the approved design) are in [plan.md §10](../plan.md#10-decisions).
 
 ## Adding to this folder
 
 - **A finding** goes in the topic file it belongs to (or a new one): what the evidence says, with links, then **What we do**. Say when a source is a vendor or practitioner rather than a study, and mark anything not checked against its source as _(unverified)_.
-- **A decision** gets the next number in `decisions/`: context, the options, the decision, and its consequences. Its status is _proposed_, _accepted_, or _superseded by_ a later number. Link it from the findings it rests on and from this table.
+- **A decision** gets the next number in `decisions/`: context, the options, the decision, and its consequences. Its status is _proposed_, _accepted_, _not adopted_, or _superseded by_ a later number. Link it from the findings it rests on and from this table.

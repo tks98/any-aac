@@ -9,7 +9,8 @@
 
 - A voice's licence comes from its recordings **and from any voice it was fine-tuned from**. Several Piper voices with open recordings were fine-tuned from lessac, whose recordings are research-only ([lessac licence](https://www.cstr.ed.ac.uk/projects/blizzard/2013/lessac_blizzard2013/license.html)); some don't document their training ([0002](../decisions/0002-only-clearly-licensed-voices.md)).
 - Clearly open Piper voices: Linda (LJ Speech), Kristin, Norman, Cori (LibriVox) in English; Carlfm in Spanish (small, low quality). Every Spanish Piper voice of good quality is lessac-derived or undocumented.
-- Kokoro-82M is Apache 2.0, built on the public-domain LJ Speech recordings, with a few voices per language including Spanish ([guide](https://soniqo.audio/guides/kokoro)); see [0007](../decisions/0007-kokoro-for-spanish.md).
+- Kokoro-82M's weights are Apache 2.0 and it has Spanish voices, but it was trained partly on synthetic audio from closed commercial TTS models, with no dataset manifest ([model card](https://huggingface.co/hexgrad/Kokoro-82M)), so it isn't clearly open ([0007](../decisions/0007-kokoro-for-spanish.md)).
+- Openly licensed Spanish recordings exist, such as [OpenSLR 61](https://www.openslr.org/61/) (Argentinian, female and male, CC BY-SA 4.0). The way to a clean Spanish voice is training one with a clean starting point ([0008](../decisions/0008-train-a-spanish-voice.md)).
 
 ## Gaps
 

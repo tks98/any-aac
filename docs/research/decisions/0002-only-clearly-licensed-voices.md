@@ -23,6 +23,6 @@ Offered now: Linda (LJ Speech), Kristin, Norman and Cori (LibriVox) in English, 
 
 ## Consequences
 
-- Spanish has only one Open AAC voice, it's male, and it's low quality. Finding a clean, good Spanish voice comes next: Kokoro-82M is Apache 2.0, built on the public-domain LJ Speech recordings, and lists Spanish voices, including a female one.
+- Spanish has only one Open AAC voice, it's male, and it's low quality. Kokoro was evaluated as a replacement and doesn't meet this standard either ([0007](0007-kokoro-for-spanish.md)); training our own Spanish voice is proposed in [0008](0008-train-a-spanish-voice.md).
 - Every voice added later needs its MODEL_CARD checked for the base model as well as the recordings. `apps/web/src/lib/voice/catalog.ts` says so.
 - Option 3 is still worth doing: if lessac's licensors allow fine-tuned models, Joe, Alba, Davefx and Ald could come back.
