@@ -1,0 +1,8 @@
+pnpm-lock.yaml
+LICENSE
+dist/
+dev-dist/
+coverage/
+playwright-report/
+test-results/
+apps/web/public/

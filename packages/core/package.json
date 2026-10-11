@@ -1,0 +1,21 @@
+{
+  "name": "@open-aac/core",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Board model, Open Board Format (OBF/OBZ) import and export, and message logic for Open AAC.",
+  "license": "AGPL-3.0-or-later",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "fflate": "^0.8.3"
+  },
+  "devDependencies": {
+    "vitest": "^5.0.3"
+  }
+}
