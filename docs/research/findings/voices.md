@@ -4,6 +4,8 @@
 
 - Web Speech voices differ by device, some need the internet, Chrome on Android can fall back to English, and Firefox on Android has none ([foundations.md §4.1](../foundations.md#41-speech-output)). Any AAC warns when the device has no voice for the language in use, or none at all.
 - Neural voices run well in the browser: Piper on an iPhone runs about seven times faster than real time, and prepared words play in 20–45 ms ([0001](../decisions/0001-offline-voice.md)).
+- **iOS mutes Web Speech in silent mode, and a page can't change that.** Tested 2026-10-11 on an iPhone with the ring/silent switch on silent: the device voice was silent, even with `navigator.audioSession.type = 'playback'` and with a silent audio element playing. Web Audio with the `playback` session, and audio elements, were heard. So on iPhone and iPad only app voices speak in silent mode; Any AAC says so in Settings and edit mode.
+- **iOS starts speech only from a tap's `touchend` or `click`.** Speech started on `pointerdown`, where words are chosen, is dropped until speech has started once from one of those events (iOS Simulator, 2026-10-11). Any AAC says such a word again from the end of the same tap.
 
 ## Licences
 

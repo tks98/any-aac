@@ -3,6 +3,7 @@
  * rendered phrases (in memory and in IndexedDB) so they play instantly, and
  * plays audio with Web Audio.
  */
+import { preferPlaybackAudio } from '../speech';
 import { deleteAudioForVoice, loadAudio, saveAudio } from '../storage';
 import type { VoiceEntry } from './catalog';
 import type { WorkerRequest, WorkerResponse } from './voice.worker';
@@ -144,6 +145,8 @@ export class VoiceEngine {
    * allow sound to start in response to the person touching the screen.
    */
   unlock() {
+    // Before the audio exists, so iOS plays it even in silent mode.
+    preferPlaybackAudio();
     this.context ??= new AudioContext();
     if (this.context.state !== 'running') void this.context.resume();
   }

@@ -3,6 +3,7 @@
   import { backups } from '../backup.svelte';
   import { install } from '../install.svelte';
   import { modeling } from '../modeling.svelte';
+  import { silentMode } from '../silent-mode.svelte';
   import { speech } from '../speech';
   import { appVoice } from '../voice/voice.svelte';
   import { editor } from '../editor.svelte';
@@ -21,6 +22,10 @@
   const backupDue = $derived(backups.due(app.set));
   /** No device speech (Firefox on Android) and no app voice: nothing can be said. */
   const mute = $derived(!speech.available && !appVoice.isReady(app.appVoiceId));
+  /** On iPhone and iPad, the device voice is muted in silent mode; app voices aren't. */
+  const silentModeRisk = $derived(
+    silentMode.mutesDeviceVoice && !silentMode.dismissed && !appVoice.isReady(app.appVoiceId),
+  );
 
   function backUpNow() {
     if (app.set) void backups.backUp(app.set, $state.snapshot(app.settings));
@@ -67,6 +72,12 @@
       </span>
       {#if mute}
         <span class="due warning">{t.appIsMute}</span>
+      {:else if silentModeRisk}
+        <span class="due warning">
+          {t.silentModeNotice}
+          <button class="link" onclick={onsettings}>{t.chooseVoice}</button>
+          <button class="link" onclick={() => silentMode.dismiss()}>{t.notNow}</button>
+        </span>
       {:else if backupDue}
         <span class="due">
           {t.backupDue}

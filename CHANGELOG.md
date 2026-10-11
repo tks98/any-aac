@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Fixed: on iPhone and iPad, words tapped before anything else had spoken were silent. iOS only starts speech from the end of a tap, so the first word is now said from there.
+- On iPhone and iPad, Settings and edit mode explain that the device voice can't be heard in silent mode, and offer an app voice, which can.
+- App voices ask iOS for playback audio before their audio starts, so they speak in silent mode from the first word.
+
 ## 0.1.0 (2026-10-11)
 
 The first release. Not yet reviewed by speech-language pathologists or tested with AAC users; see the [README](README.md).

@@ -5,6 +5,8 @@
  * Home Screen.
  */
 
+import { isAppleMobile } from './platform';
+
 interface InstallPromptEvent extends Event {
   prompt(): Promise<void>;
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
@@ -29,11 +31,7 @@ class Install {
       (matchMedia('(display-mode: standalone)').matches ||
         (navigator as { standalone?: boolean }).standalone === true),
   );
-  /** iPhone and iPad (iPadOS says it's a Mac, but has touch). */
-  readonly ios =
-    typeof navigator !== 'undefined' &&
-    (/iPad|iPhone|iPod/.test(navigator.userAgent) ||
-      (navigator.userAgent.includes('Macintosh') && navigator.maxTouchPoints > 1));
+  readonly ios = isAppleMobile;
 
   /** Whether to suggest installing, and how. */
   offer = $derived.by(() => {

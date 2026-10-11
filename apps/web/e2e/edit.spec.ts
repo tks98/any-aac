@@ -267,3 +267,34 @@ test('About lists who made the pictures in the boards', async ({ page }) => {
   await expect(pictures).toContainText('Steve Lee (Mulberry Symbols) · CC BY-SA 4.0');
   await expect(pictures).toContainText('OpenMoji');
 });
+
+test.describe('on an iPhone', () => {
+  test.use({
+    userAgent:
+      'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.0 Mobile/15E148 Safari/604.1',
+  });
+
+  test('says the device voice is silent in silent mode, and offers an app voice', async ({
+    page,
+  }) => {
+    await openEditor(page);
+    const notice = page.getByText("In silent mode, this device can't speak with the device voice.");
+    await expect(notice).toBeVisible();
+
+    await page.getByRole('button', { name: 'Choose a voice' }).click();
+    await expect(
+      page.getByText(/device voice can't be heard when silent mode is on/),
+    ).toBeVisible();
+    await page.getByRole('button', { name: 'Use an app voice' }).click();
+    await expect(page.getByRole('button', { name: 'App voice' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    await page.getByRole('dialog').getByRole('button', { name: 'Done', exact: true }).click();
+
+    // Until an app voice is downloaded, the notice stays, unless dismissed.
+    await expect(notice).toBeVisible();
+    await page.getByRole('button', { name: 'Not now' }).first().click();
+    await expect(notice).toBeHidden();
+  });
+});

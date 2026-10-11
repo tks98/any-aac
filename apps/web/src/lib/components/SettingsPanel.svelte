@@ -1,11 +1,13 @@
 <script lang="ts">
   import { ObfError, type BoardSet } from '@any-aac/core';
+  import { tick } from 'svelte';
   import { backups, exportBoards, readBackup } from '../backup.svelte';
   import { APP_LANGUAGES, type AppLanguage } from '../i18n';
   import { ICONS } from '../icons';
   import { pictureCredits } from '../credits';
   import { capitalize, nameIn, nameInSentence, nativeName } from '../languages';
   import { phrase } from '../phrases';
+  import { isAppleMobile } from '../platform';
   import { baseLanguage, speech, type VoiceInfo } from '../speech';
   import { starterSet, type StarterId } from '../starter';
   import { VOICES, type VoiceEntry } from '../voice/catalog';
@@ -127,6 +129,13 @@
     const parts = [capitalize(nameIn(voice.lang, lang), lang), t[voice.gender]];
     if (voice.small) parts.push(t.smallAndFast);
     return parts.join(', ');
+  }
+
+  /** Switches to app voices and shows the list to download one from. */
+  async function useAppVoice() {
+    app.settings.speech.engine = 'app';
+    await tick();
+    document.getElementById('app-voices')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   async function downloadVoice(voice: VoiceEntry) {
@@ -326,6 +335,16 @@
             s.speech.engine,
             (engine) => (app.settings.speech.engine = engine === 'app' ? 'app' : 'device'),
           )}
+          {#if isAppleMobile && s.speech.engine === 'device'}
+            <div class="row">
+              <div class="warning silent-mode" role="note">
+                <p>{t.silentModeWarning}</p>
+                <button class="action" onclick={useAppVoice}>
+                  {t.useAppVoice}
+                </button>
+              </div>
+            </div>
+          {/if}
           {@render toggle(
             t.speakEachWord,
             t.speakEachWordHelp,
@@ -1380,6 +1399,15 @@
     border-left: 4px solid var(--help);
     background: var(--chip);
     font-weight: 700;
+  }
+
+  .silent-mode {
+    flex: 1;
+    margin: 0;
+  }
+
+  .silent-mode p {
+    margin: 0 0 10px;
   }
 
   details {

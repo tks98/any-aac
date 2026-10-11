@@ -135,6 +135,12 @@ const en = {
   noDeviceVoiceFor: (language: string) =>
     `This device has no ${language} voice, so ${language} words may be read in the wrong accent or not at all. An app voice in ${language} avoids this.`,
   appIsMute: "This browser can't speak yet. Download an app voice in Settings → Speech & voice.",
+  silentModeWarning:
+    "On iPhone and iPad, the device voice can't be heard when silent mode is on. App voices can.",
+  useAppVoice: 'Use an app voice',
+  silentModeNotice:
+    "In silent mode, this device can't speak with the device voice. An app voice speaks anyway.",
+  chooseVoice: 'Choose a voice',
   deviceDefault: 'Device default',
   deviceDefaultHelp: 'Picks an offline voice in your language when there is one',
   otherVoices: (count: number) => `Other voices (${count})`,
@@ -480,6 +486,12 @@ const es: Messages = {
     `Este dispositivo no tiene una voz en ${language}, así que las palabras en ${language} pueden leerse con otro acento o no leerse. Una voz de la aplicación en ${language} lo evita.`,
   appIsMute:
     'Este navegador todavía no puede hablar. Descarga una voz de la aplicación en Ajustes → Habla y voz.',
+  silentModeWarning:
+    'En iPhone y iPad, la voz del dispositivo no se oye con el modo silencio activado. Las voces de la aplicación sí.',
+  useAppVoice: 'Usar una voz de la aplicación',
+  silentModeNotice:
+    'En modo silencio, este dispositivo no puede hablar con la voz del dispositivo. Una voz de la aplicación habla de todos modos.',
+  chooseVoice: 'Elegir una voz',
   deviceDefault: 'Predeterminada del dispositivo',
   deviceDefaultHelp: 'Elige una voz sin conexión en tu idioma si hay alguna',
   otherVoices: (count) => `Otras voces (${count})`,
