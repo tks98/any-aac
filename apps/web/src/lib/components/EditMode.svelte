@@ -1,6 +1,7 @@
 <script lang="ts">
   import { boardName, buttonAt, linkableBoards, type ObfBoard } from '@open-aac/core';
   import { backups } from '../backup.svelte';
+  import { install } from '../install.svelte';
   import { editor } from '../editor.svelte';
   import { ICONS } from '../icons';
   import { app } from '../state.svelte';
@@ -63,6 +64,14 @@
         <span class="due">
           {t.backupDue}
           <button class="link" onclick={backUpNow}>{t.backUpNow}</button>
+        </span>
+      {:else if install.offer}
+        <span class="due">
+          {t.installTitle}. {install.offer === 'ios' ? t.installIos : t.installHelp}
+          {#if install.offer === 'prompt'}
+            <button class="link" onclick={() => install.install()}>{t.install}</button>
+          {/if}
+          <button class="link" onclick={() => install.dismiss()}>{t.notNow}</button>
         </span>
       {/if}
     </div>

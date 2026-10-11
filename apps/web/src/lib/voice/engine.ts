@@ -149,7 +149,7 @@ export class VoiceEngine {
   }
 
   /** Speaks a phrase. A newer call wins: an older phrase still rendering won't play. */
-  async speak(text: string, rate: number): Promise<void> {
+  async speak(text: string, rate: number, volume = 1): Promise<void> {
     this.unlock();
     const turn = ++this.latest;
     const buffer = await this.render(text, rate);
@@ -158,7 +158,9 @@ export class VoiceEngine {
     const context = this.context!;
     const source = context.createBufferSource();
     source.buffer = buffer;
-    source.connect(context.destination);
+    const gain = context.createGain();
+    gain.gain.value = volume;
+    source.connect(gain).connect(context.destination);
     source.start();
     this.playing = source;
   }

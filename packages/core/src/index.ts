@@ -6,3 +6,4 @@ export * from './obf';
 export * from './obz';
 export * from './edit';
 export * from './forms';
+export * from './pronounce';

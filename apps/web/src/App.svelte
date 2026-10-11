@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { behaviorOf, spokenText, type ObfBoard } from '@open-aac/core';
+  import { applyPronunciations, behaviorOf, spokenText, type ObfBoard } from '@open-aac/core';
   import { onMount, untrack } from 'svelte';
   import BoardGrid from './lib/components/BoardGrid.svelte';
   import EditMode from './lib/components/EditMode.svelte';
@@ -8,6 +8,7 @@
   import PrintView from './lib/components/PrintView.svelte';
   import SettingsPanel from './lib/components/SettingsPanel.svelte';
   import { editor } from './lib/editor.svelte';
+  import { install } from './lib/install.svelte';
   import { isOutdatedStarter, starterSet } from './lib/starter';
   import { app } from './lib/state.svelte';
   import { backups } from './lib/backup.svelte';
@@ -70,18 +71,24 @@
     const lang = app.language;
     if (!set || engine !== 'openaac' || !openaacVoice.isReady(app.openaacVoiceId)) return;
     const first = untrack(() => app.view?.buttons ?? []);
+    const pronunciations = app.settings.speech.pronunciations;
     const texts = [...first, ...set.boards.flatMap((board) => board.buttons)]
       .filter((button) => behaviorOf(button).kind === 'word')
-      .map((button) => spokenText(button, lang));
+      .map((button) => applyPronunciations(spokenText(button, lang), pronunciations));
     // Wait for the rate slider to settle before rendering everything again.
     const timer = setTimeout(
-      () => void openaacVoice.prepare([phrase('help', lang), ...texts], rate),
+      () =>
+        void openaacVoice.prepare(
+          [applyPronunciations(phrase('help', lang), pronunciations), ...texts],
+          rate,
+        ),
       600,
     );
     return () => clearTimeout(timer);
   });
 
   onMount(async () => {
+    install.listen();
     void requestPersistentStorage();
     void openaacVoice.refreshDownloaded();
     // Browsers only let audio start from a tap; keep the voice's audio awake.

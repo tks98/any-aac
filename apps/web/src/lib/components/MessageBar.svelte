@@ -18,6 +18,28 @@
     }),
   );
   const text = $derived(messageText(app.message));
+  let copied = $state(false);
+
+  /** Shares the message as text where the device can, and copies it otherwise. */
+  async function share() {
+    if (!text) return;
+    try {
+      if (navigator.share) {
+        await navigator.share({ text });
+        return;
+      }
+    } catch (error) {
+      // Closing the share sheet isn't a failure.
+      if (error instanceof DOMException && error.name === 'AbortError') return;
+    }
+    try {
+      await navigator.clipboard.writeText(text);
+      copied = true;
+      setTimeout(() => (copied = false), 1500);
+    } catch {
+      // No clipboard either; nothing more to do.
+    }
+  }
 
   // Keep the newest word in view.
   $effect(() => {
@@ -51,6 +73,12 @@
   <button class="tool" aria-label={app.t.clearMessage} onclick={() => app.clear()}>
     <Icon path={ICONS.clear} size={40} />
   </button>
+  {#if app.settings.display.showShare}
+    <button class="tool share" aria-label={app.t.shareMessage} onclick={share}>
+      <Icon path={ICONS.share} size={36} />
+      <span class="small" role="status">{copied ? app.t.copiedMessage : app.t.share}</span>
+    </button>
+  {/if}
   <button class="speak" onclick={() => app.speakMessage()}>
     <Icon path={ICONS.speak} size={40} />
     {app.t.speak}
@@ -110,6 +138,17 @@
     font-size: 1.15rem;
     font-weight: 700;
     white-space: nowrap;
+  }
+
+  .share {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .small {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 700;
   }
 
   .chip img {

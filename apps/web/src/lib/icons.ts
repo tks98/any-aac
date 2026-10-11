@@ -32,6 +32,7 @@ export const ICONS = {
   photo: 'M4 8h3l2-3h6l2 3h3v11H4zM12 9.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z',
   plus: 'M12 5v14M5 12h14',
   folder: 'M3 6h6l2 2h10v11H3z',
+  share: 'M12 15V3M8 7l4-4 4 4M5 11v9h14v-9',
   print: 'M7 9V3h10v6M7 17H4V9h16v8h-3M7 14h10v7H7z',
   forms: 'M3 12h5M8 12c4 0 4-6 8-6h5M8 12c4 0 4 6 8 6h5M8 12h13',
 } as const;

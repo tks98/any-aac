@@ -1,3 +1,4 @@
+import type { Pronunciation } from '@open-aac/core';
 import type { TouchSettings } from './access/touch';
 import { isAppLanguage, type AppLanguage } from './i18n';
 
@@ -10,8 +11,12 @@ export interface SpeechSettings {
   openaacVoices: Record<string, string>;
   rate: number;
   pitch: number;
+  /** 0.1–1. */
+  volume: number;
   /** Speak each word as it's tapped, not only when Speak is pressed. */
   speakEachWord: boolean;
+  /** "Say X as Y", for names and words the voices get wrong. */
+  pronunciations: Pronunciation[];
 }
 
 export interface LanguageSettings {
@@ -32,6 +37,8 @@ export interface DisplaySettings {
   buttonGap: number;
   /** A Forms button that changes the last word: want → wants, wanting, wanted. */
   showWordForms: boolean;
+  /** A Share button on the message bar, to send the message as text. */
+  showShare: boolean;
 }
 
 export interface Settings {
@@ -49,10 +56,18 @@ export const DEFAULT_SETTINGS: Settings = {
     openaacVoices: {},
     rate: 1,
     pitch: 1,
+    volume: 1,
     speakEachWord: true,
+    pronunciations: [],
   },
   touch: { holdMs: 0, selectOnRelease: false, ignoreRepeatMs: 0 },
-  display: { labelPosition: 'below', showSymbols: true, buttonGap: 10, showWordForms: true },
+  display: {
+    labelPosition: 'below',
+    showSymbols: true,
+    buttonGap: 10,
+    showWordForms: true,
+    showShare: false,
+  },
 };
 
 const isRecord = (v: unknown): v is Record<string, unknown> =>
@@ -119,7 +134,17 @@ export function withDefaults(saved: unknown): Settings {
       openaacVoices,
       rate: num(speech.rate, d.speech.rate, 0.5, 2),
       pitch: num(speech.pitch, d.speech.pitch, 0.5, 1.5),
+      volume: num(speech.volume, d.speech.volume, 0.1, 1),
       speakEachWord: bool(speech.speakEachWord, d.speech.speakEachWord),
+      pronunciations: Array.isArray(speech.pronunciations)
+        ? speech.pronunciations
+            .filter(
+              (e): e is Pronunciation =>
+                isRecord(e) && typeof e.word === 'string' && typeof e.sayAs === 'string',
+            )
+            .map(({ word, sayAs }) => ({ word, sayAs }))
+            .slice(0, 500)
+        : [],
     },
     touch: {
       holdMs: num(touch.holdMs, d.touch.holdMs, 0, 3000),
@@ -131,6 +156,7 @@ export function withDefaults(saved: unknown): Settings {
       showSymbols: bool(display.showSymbols, d.display.showSymbols),
       buttonGap: num(display.buttonGap, d.display.buttonGap, 0, 32),
       showWordForms: bool(display.showWordForms, d.display.showWordForms),
+      showShare: bool(display.showShare, d.display.showShare),
     },
   };
 }

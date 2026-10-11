@@ -61,6 +61,18 @@ describe('withDefaults', () => {
       showSymbols: true,
       buttonGap: 0,
       showWordForms: true,
+      showShare: false,
     });
+  });
+
+  it('keeps pronunciations and volume, dropping malformed entries', () => {
+    const settings = withDefaults({
+      speech: {
+        volume: 7,
+        pronunciations: [{ word: 'Siobhan', sayAs: 'shiv-awn' }, { word: 3 }, 'x'],
+      },
+    });
+    expect(settings.speech.volume).toBe(1);
+    expect(settings.speech.pronunciations).toEqual([{ word: 'Siobhan', sayAs: 'shiv-awn' }]);
   });
 });

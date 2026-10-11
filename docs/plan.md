@@ -45,7 +45,7 @@ Phases are defined in §6. **P1** is the MVP.
 ### 4.1 Communication view
 
 - [P1] Grid boards with configurable rows and columns, linked boards (folders), and Home and Back.
-- [P1] Message bar: words build a sentence, and the user taps the bar to speak it. Choose whether each button speaks immediately or only adds to the message. Backspace, clear, copy, and share (Web Share API).
+- [P1] Message bar: words build a sentence, and the user taps the bar to speak it. Choose whether each button speaks immediately or only adds to the message. Backspace, clear, copy, and share (Web Share API). _Done:_ Share is an optional button (Display settings); it copies where the device can't share.
 - [P1] Buttons show a symbol, a label, or both. The spoken text can differ from the label. Background colour comes from the part of speech plus a colour theme (Modified Fitzgerald by default, configurable).
 - [P1] Quick phrases and an always-visible "help" or attention button.
 - [P2] A keyboard page (QWERTY or ABC) with word prediction.
@@ -69,7 +69,7 @@ Phases are defined in §6. **P1** is the MVP.
 
 - [P1] TTS layer with two engines: Web Speech (no download) and one neural voice pack (Piper via onnxruntime-web or sherpa-onnx, running in a Web Worker).
 - [P1] Audio for each button is **pre-rendered and cached** and re-rendered when the button is edited.
-- [P1] Rate, pitch, and volume; a pronunciation dictionary ("say X as Y").
+- [P1] Rate, pitch, and volume; a pronunciation dictionary ("say X as Y"). _Done_ (pitch is device voices only).
 - [P2] A recorded audio clip on any button (message banking).
 - [P2] A separate cue voice for auditory scanning; route it to headphones via `setSinkId` where the browser supports it.
 - [P3] More voice packs and languages; evaluate Kokoro for higher quality where WebGPU is available.
@@ -109,7 +109,7 @@ Phases are defined in §6. **P1** is the MVP.
 
 ### 4.7 Data, privacy, and backup
 
-- [P1] Everything is stored locally. `navigator.storage.persist()` is requested. A prompt encourages installing to the Home Screen.
+- [P1] Everything is stored locally. `navigator.storage.persist()` is requested. A prompt encourages installing to the Home Screen. _Done:_ the prompt is in edit mode, so the communicator never sees it.
 - [P1] **Export and import the whole profile** (OBZ plus a settings JSON), with periodic reminders to back up. _Done:_ Back up everything (in Settings, or from the reminder in edit mode) saves one .obz with the settings inside; importing it offers to restore them. Edit mode reminds when edited boards were never backed up, or changed and the last backup is over a week old.
 - [P1] Import and export single boards and sets as OBF/OBZ.
 - [P4] Opt-in usage logging:

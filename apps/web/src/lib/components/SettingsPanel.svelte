@@ -166,6 +166,17 @@
     app.settings.language.usingSecond = lang !== primary;
   }
 
+  function addPronunciation(event: SubmitEvent) {
+    event.preventDefault();
+    const form = event.currentTarget as HTMLFormElement;
+    const data = new FormData(form);
+    const word = String(data.get('word') ?? '').trim();
+    const sayAs = String(data.get('sayAs') ?? '').trim();
+    if (word === '' || sayAs === '') return;
+    app.settings.speech.pronunciations.push({ word, sayAs });
+    form.reset();
+  }
+
   async function reset() {
     if (!confirm(t.confirmReset)) return;
     await replaceBoards(await starterSet(), t.restored);
@@ -326,6 +337,16 @@
             t.times(s.speech.rate),
             (v) => (app.settings.speech.rate = v),
           )}
+          {@render slider(
+            t.volume,
+            '',
+            s.speech.volume,
+            0.1,
+            1,
+            0.1,
+            t.percent(s.speech.volume),
+            (v) => (app.settings.speech.volume = v),
+          )}
           {#if s.speech.engine === 'device'}
             {@render slider(
               t.pitch,
@@ -348,6 +369,46 @@
             </button>
           </div>
         </div>
+
+        <section class="card voices" aria-labelledby="pronunciations-heading">
+          <h4 id="pronunciations-heading" class="legend">{t.pronunciations}</h4>
+          <p class="help">{t.pronunciationsHelp}</p>
+          {#each s.speech.pronunciations as entry, i (i)}
+            <div class="pronunciation">
+              <input
+                aria-label={t.writtenWord}
+                value={entry.word}
+                onchange={(event) =>
+                  (app.settings.speech.pronunciations[i]!.word = event.currentTarget.value)}
+              />
+              <span aria-hidden="true">→</span>
+              <input
+                aria-label={t.sayAs}
+                value={entry.sayAs}
+                onchange={(event) =>
+                  (app.settings.speech.pronunciations[i]!.sayAs = event.currentTarget.value)}
+              />
+              <button
+                aria-label={t.tryPronunciation(entry.word)}
+                onclick={() => app.say(entry.word)}
+              >
+                <Icon path={ICONS.speak} size={20} />
+              </button>
+              <button
+                aria-label={t.deletePronunciation(entry.word)}
+                onclick={() => app.settings.speech.pronunciations.splice(i, 1)}
+              >
+                <Icon path={ICONS.trash} size={20} />
+              </button>
+            </div>
+          {/each}
+          <form class="pronunciation" onsubmit={addPronunciation}>
+            <input name="word" aria-label={t.writtenWord} placeholder={t.writtenWord} />
+            <span aria-hidden="true">→</span>
+            <input name="sayAs" aria-label={t.sayAs} placeholder={t.sayAs} />
+            <button type="submit">{t.add}</button>
+          </form>
+        </section>
 
         {#if s.speech.engine === 'openaac'}
           <section class="card voices" aria-labelledby="openaac-voices">
@@ -555,6 +616,12 @@
             t.showWordFormsHelp,
             s.display.showWordForms,
             (on) => (app.settings.display.showWordForms = on),
+          )}
+          {@render toggle(
+            t.showShare,
+            t.showShareHelp,
+            s.display.showShare,
+            (on) => (app.settings.display.showShare = on),
           )}
         </div>
       {:else if section === 'boards'}
@@ -892,6 +959,39 @@
 
   .voices {
     padding: 16px 20px;
+  }
+
+  .pronunciation {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+    border-top: 1px solid #e4e9ee;
+  }
+
+  .pronunciation input {
+    flex: 1 1 120px;
+    min-width: 0;
+    min-height: 44px;
+    padding: 0 10px;
+    border: 2px solid var(--line);
+    border-radius: 10px;
+    font: inherit;
+  }
+
+  .pronunciation button {
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 12px;
+    border: 2px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+    font-weight: 700;
+    cursor: pointer;
   }
 
   legend {

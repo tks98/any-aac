@@ -207,6 +207,44 @@ test('speaks each word, unless that is turned off', async ({ page }) => {
   expect(await spoken(page)).toEqual(['I', 'I want']);
 });
 
+test('the message can be shared as text, once the Share button is turned on', async ({ page }) => {
+  await expect(page.getByRole('button', { name: 'Share the message' })).toHaveCount(0);
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, 'share', {
+      value: (data: { text: string }) => {
+        Object.assign(window, { shared: data.text });
+        return Promise.resolve();
+      },
+    });
+  });
+  await page.reload();
+  await openSettings(page, 'Display');
+  await page.getByRole('switch', { name: 'Share button' }).click();
+  await closeSettings(page);
+
+  await word(page, 'I').click();
+  await word(page, 'want').click();
+  await page.getByRole('button', { name: 'Share the message' }).click();
+  await expect
+    .poll(() => page.evaluate(() => (window as unknown as { shared?: string }).shared))
+    .toBe('I want');
+});
+
+test('the pronunciation dictionary changes what is said, not what is shown', async ({ page }) => {
+  await openSettings(page, 'Speech & voice');
+  await page.getByPlaceholder('Word').fill('Mom');
+  await page.getByPlaceholder('Say it as').fill('Mommy');
+  await page.getByRole('button', { name: 'Add', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Hear “Mom”' })).toBeVisible();
+  await closeSettings(page);
+
+  await page.getByRole('button', { name: 'People, folder' }).click();
+  await word(page, 'Mom').click();
+  await page.getByRole('button', { name: 'Speak', exact: true }).click();
+  expect(await spoken(page)).toEqual(['Mommy', 'Mommy']);
+  await expect(messageBar(page)).toHaveAccessibleName('Message: Mom. Tap to speak it.');
+});
+
 test('hold to select: a quick tap does nothing, a long press chooses', async ({ page }) => {
   await openSettings(page, 'Touch');
   await page.getByRole('slider', { name: 'Hold to select' }).fill('600');

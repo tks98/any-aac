@@ -1,5 +1,6 @@
 import {
   addWord,
+  applyPronunciations,
   appendText,
   backspace,
   baseLanguage,
@@ -168,20 +169,27 @@ class AppState {
    * Speaks with the Open AAC voice when it's chosen and ready, and with the
    * device voice otherwise, or if the Open AAC voice fails.
    */
-  say(text: string, lang = this.language) {
+  /** What the voice should say for some text, after the pronunciation dictionary. */
+  spoken(text: string) {
+    return applyPronunciations(text, this.settings.speech.pronunciations);
+  }
+
+  say(written: string, lang = this.language) {
     preferPlaybackAudio();
     const options = this.settings.speech;
+    const text = this.spoken(written);
     const device = {
       voice: options.deviceVoices[lang] ?? null,
       rate: options.rate,
       pitch: options.pitch,
+      volume: options.volume,
       lang,
     };
     // The loaded Open AAC voice is the one for the language in use.
     const voiceId = options.openaacVoices[lang] ?? null;
     if (options.engine === 'openaac' && openaacVoice.isReady(voiceId)) {
       speech.stop();
-      openaacVoice.engine.speak(text, options.rate).then(
+      openaacVoice.engine.speak(text, options.rate, options.volume).then(
         () => announce('openaac', text),
         () => {
           speech.speak(text, device);

@@ -19,6 +19,8 @@ export interface SpeakOptions {
   voice: string | null;
   rate: number;
   pitch: number;
+  /** 0–1. */
+  volume: number;
   /** Language of the text; picks the default voice when none is chosen. */
   lang: string;
 }
@@ -143,6 +145,7 @@ class WebSpeech implements SpeechOutput {
     if (voice) utterance.voice = voice;
     utterance.rate = options.rate ?? 1;
     utterance.pitch = options.pitch ?? 1;
+    utterance.volume = options.volume ?? 1;
     speechSynthesis.speak(utterance);
   }
 
