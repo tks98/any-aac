@@ -3,6 +3,7 @@
   import { backups, exportBoards, readBackup } from '../backup.svelte';
   import { APP_LANGUAGES, type AppLanguage } from '../i18n';
   import { ICONS } from '../icons';
+  import { pictureCredits } from '../credits';
   import { capitalize, nameIn, nativeName } from '../languages';
   import { phrase } from '../phrases';
   import { baseLanguage, speech, type VoiceInfo } from '../speech';
@@ -714,6 +715,37 @@
         {/if}
       {:else}
         <h3>{t.sectionAbout}</h3>
+        {#if app.set}
+          {@const { credits, ownPictures } = pictureCredits(app.set)}
+          <section class="card prose" aria-labelledby="pictures-heading">
+            <h4 id="pictures-heading">{t.picturesHeading}</h4>
+            <ul class="credits">
+              {#each credits as credit (credit.author + credit.license)}
+                <li>
+                  {#if credit.url}
+                    <a href={credit.url} target="_blank" rel="noreferrer">{credit.author}</a>
+                  {:else}
+                    {credit.author}
+                  {/if}
+                  {#if credit.license}
+                    ·
+                    {#if credit.licenseUrl}
+                      <a href={credit.licenseUrl} target="_blank" rel="noreferrer"
+                        >{credit.license}</a
+                      >
+                    {:else}
+                      {credit.license}
+                    {/if}
+                  {/if}
+                  · {t.pictureCount(credit.count)}
+                </li>
+              {/each}
+              {#if ownPictures > 0}
+                <li>{t.ownPictures(ownPictures)}</li>
+              {/if}
+            </ul>
+          </section>
+        {/if}
         {#if app.appLanguage === 'es'}
           <div class="card prose">
             <p>
@@ -1190,6 +1222,15 @@
   .prose {
     padding: 4px 20px;
     line-height: 1.5;
+  }
+
+  .prose h4 {
+    margin: 14px 0 4px;
+  }
+
+  .credits {
+    margin: 0 0 14px;
+    padding-left: 20px;
   }
 
   button:focus-visible,

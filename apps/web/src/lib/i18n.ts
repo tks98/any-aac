@@ -38,6 +38,10 @@ const en = {
   sectionDisplay: 'Display',
   sectionBoards: 'Boards & backup',
   sectionAbout: 'About',
+  picturesHeading: 'Pictures in these boards',
+  pictureCount: (count: number) => (count === 1 ? '1 picture' : `${count} pictures`),
+  ownPictures: (count: number) =>
+    count === 1 ? '1 picture added on this device' : `${count} pictures added on this device`,
 
   voice: 'Voice',
   voiceHelp: 'Open AAC voices sound the same on every device and work offline once downloaded.',
@@ -225,6 +229,13 @@ const en = {
   boardNameLabel: 'Board name',
   boardNameIn: (language: string) => `Board name in ${language}`,
   boardHelp: 'Choose a button to change it, or an empty cell to add one.',
+  rows: 'Rows',
+  columns: 'Columns',
+  addRow: 'Add a row',
+  removeRow: 'Remove a row',
+  addColumn: 'Add a column',
+  removeColumn: 'Remove a column',
+  resizeBlocked: 'Only empty rows and columns can be removed. Move or delete their words first.',
   searchSymbols: 'Search symbols',
   symbolResults: (count: number) => (count === 1 ? '1 symbol' : `${count} symbols`),
   noSymbolsFound: 'No symbols found.',
@@ -293,6 +304,12 @@ const es: Messages = {
   sectionDisplay: 'Pantalla',
   sectionBoards: 'Tableros y copias',
   sectionAbout: 'Acerca de',
+  picturesHeading: 'Imágenes de estos tableros',
+  pictureCount: (count) => (count === 1 ? '1 imagen' : `${count} imágenes`),
+  ownPictures: (count) =>
+    count === 1
+      ? '1 imagen añadida en este dispositivo'
+      : `${count} imágenes añadidas en este dispositivo`,
 
   voice: 'Voz',
   voiceHelp:
@@ -483,6 +500,14 @@ const es: Messages = {
   boardNameLabel: 'Nombre del tablero',
   boardNameIn: (language) => `Nombre del tablero en ${language}`,
   boardHelp: 'Elige un botón para cambiarlo, o una casilla vacía para añadir uno.',
+  rows: 'Filas',
+  columns: 'Columnas',
+  addRow: 'Añadir una fila',
+  removeRow: 'Quitar una fila',
+  addColumn: 'Añadir una columna',
+  removeColumn: 'Quitar una columna',
+  resizeBlocked:
+    'Solo se pueden quitar filas y columnas vacías. Primero mueve o borra sus palabras.',
   searchSymbols: 'Buscar símbolos',
   symbolResults: (count) => (count === 1 ? '1 símbolo' : `${count} símbolos`),
   noSymbolsFound: 'No se encontraron símbolos.',

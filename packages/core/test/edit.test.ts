@@ -11,6 +11,7 @@ import {
   linkedLayout,
   placeButton,
   replaceBoard,
+  resizeGrid,
   setTranslatedLabel,
   setTranslatedName,
   swapCells,
@@ -130,5 +131,22 @@ describe('withoutUnusedFiles', () => {
     const files = { 'images/want.svg': new Uint8Array([1]), 'images/old.jpg': new Uint8Array([2]) };
     const set = withoutUnusedFiles({ rootId: 'core', boards: [b], files });
     expect(Object.keys(set.files)).toEqual(['images/want.svg']);
+  });
+});
+
+describe('resizeGrid', () => {
+  it('adds rows and columns at the bottom and right, moving nothing', () => {
+    const resized = resizeGrid(board(), 3, 3)!;
+    expect(resized.grid.order).toEqual([
+      ['want', 'more', null],
+      [null, null, null],
+      [null, null, null],
+    ]);
+  });
+
+  it('removes only empty rows and columns', () => {
+    expect(resizeGrid(board(), 1, 2)!.grid.order).toEqual([['want', 'more']]);
+    expect(resizeGrid(board(), 2, 1)).toBeNull();
+    expect(resizeGrid(board(), 0, 2)).toBeNull();
   });
 });

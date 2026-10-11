@@ -238,3 +238,32 @@ test('backs up boards and settings, reminds when due, and restores both', async 
   await done(page);
   await expect(word(page, 'need')).toBeVisible();
 });
+
+test('rows and columns can be added, and removed only when empty', async ({ page }) => {
+  await page.getByRole('button', { name: 'Food, folder' }).click();
+  await openEditor(page);
+  const wantAt = await word(page, 'want').boundingBox();
+  await panel(page).getByRole('button', { name: 'Add a column' }).click();
+  await expect(panel(page).locator('.count').nth(1)).toHaveText('9');
+  await expect(page.getByRole('button', { name: 'Empty cell, row 1, column 9' })).toBeVisible();
+  // Nothing moved (the cells got narrower, but kept their order).
+  expect((await word(page, 'want').boundingBox())!.x).toBeLessThanOrEqual(wantAt!.x);
+  await panel(page).getByRole('button', { name: 'Remove a column' }).click();
+  await expect(panel(page).locator('.count').nth(1)).toHaveText('8');
+
+  // The last row of the Food board has words in it.
+  await panel(page).getByRole('button', { name: 'Remove a row' }).click();
+  await expect(page.getByRole('status')).toHaveText(
+    'Only empty rows and columns can be removed. Move or delete their words first.',
+  );
+  await expect(panel(page).locator('.count').first()).toHaveText('6');
+});
+
+test('About lists who made the pictures in the boards', async ({ page }) => {
+  await openEditor(page);
+  await page.getByRole('toolbar').getByRole('button', { name: 'Settings' }).click();
+  await page.getByRole('button', { name: 'About' }).click();
+  const pictures = page.getByRole('region', { name: 'Pictures in these boards' });
+  await expect(pictures).toContainText('Steve Lee (Mulberry Symbols) · CC BY-SA 4.0');
+  await expect(pictures).toContainText('OpenMoji');
+});

@@ -210,3 +210,23 @@ export function withoutUnusedFiles(set: BoardSet): BoardSet {
   const files = Object.fromEntries(Object.entries(set.files).filter(([path]) => used.has(path)));
   return Object.keys(files).length === Object.keys(set.files).length ? set : { ...set, files };
 }
+
+/** The most rows and columns a board can have. */
+export const MAX_ROWS = 12;
+export const MAX_COLUMNS = 16;
+
+/**
+ * Changes the grid size. New rows go at the bottom and new columns at the
+ * right, so nothing moves. Rows and columns are only removed when empty;
+ * otherwise this returns null.
+ */
+export function resizeGrid(board: ObfBoard, rows: number, columns: number): ObfBoard | null {
+  if (rows < 1 || columns < 1 || rows > MAX_ROWS || columns > MAX_COLUMNS) return null;
+  const order = board.grid.order;
+  const dropped = order.flatMap((row, r) => row.filter((id, c) => r >= rows || c >= columns));
+  if (dropped.some((id) => id !== null)) return null;
+  const resized = Array.from({ length: rows }, (_, r) =>
+    Array.from({ length: columns }, (_, c) => order[r]?.[c] ?? null),
+  );
+  return { ...board, grid: { ...board.grid, rows, columns, order: resized } };
+}

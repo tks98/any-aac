@@ -12,6 +12,7 @@
     PARTS_OF_SPEECH,
     partOfSpeech,
     replaceBoard,
+    resizeGrid,
     setTranslatedLabel,
     setTranslatedName,
     translatedLabel,
@@ -140,6 +141,17 @@
     }
   }
 
+  function resize(rows: number, columns: number) {
+    const current = editor.board;
+    if (!current) return;
+    const resized = resizeGrid(current, rows, columns);
+    if (!resized) {
+      editor.notice = t.resizeBlocked;
+      return;
+    }
+    editor.change((set) => replaceBoard(set, resized));
+  }
+
   function renameBoard(lang: string, value: string) {
     const full = app.board;
     if (!full || value.trim() === '') return;
@@ -187,6 +199,14 @@
           onchange={(event) => renameBoard(lang, event.currentTarget.value)}
         />
       </label>
+    {/each}
+    {#each [{ name: t.rows, value: board.grid.rows, less: t.removeRow, more: t.addRow, change: (n: number) => resize(n, board.grid.columns) }, { name: t.columns, value: board.grid.columns, less: t.removeColumn, more: t.addColumn, change: (n: number) => resize(board.grid.rows, n) }] as size (size.name)}
+      <div class="stepper">
+        <span class="label">{size.name}</span>
+        <button aria-label={size.less} onclick={() => size.change(size.value - 1)}>−</button>
+        <span class="count" aria-live="polite">{size.value}</span>
+        <button aria-label={size.more} onclick={() => size.change(size.value + 1)}>+</button>
+      </div>
     {/each}
     <p class="help">{t.boardHelp}</p>
     {#if editor.linked}<p class="help">{t.linkedNote}</p>{/if}
@@ -494,6 +514,34 @@
 
   .danger {
     color: var(--help);
+  }
+
+  .stepper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .stepper .label {
+    flex: 1;
+  }
+
+  .stepper button {
+    width: 48px;
+    height: 48px;
+    border: 2px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+    font-size: 1.5rem;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  .count {
+    min-width: 2ch;
+    font-size: 1.2rem;
+    font-weight: 800;
+    text-align: center;
   }
 
   .chips {

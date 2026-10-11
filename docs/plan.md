@@ -44,7 +44,7 @@ Phases are defined in §6. **P1** is the MVP.
 
 ### 4.1 Communication view
 
-- [P1] Grid boards with configurable rows and columns, linked boards (folders), and Home and Back.
+- [P1] Grid boards with configurable rows and columns, linked boards (folders), and Home and Back. _Done:_ rows and columns are changed in edit mode (added at the bottom and right; removed only when empty).
 - [P1] Message bar: words build a sentence, and the user taps the bar to speak it. Choose whether each button speaks immediately or only adds to the message. Backspace, clear, copy, and share (Web Share API). _Done:_ Share is an optional button (Display settings); it copies where the device can't share.
 - [P1] Buttons show a symbol, a label, or both. The spoken text can differ from the label. Background colour comes from the part of speech plus a colour theme (Modified Fitzgerald by default, configurable).
 - [P1] Quick phrases and an always-visible "help" or attention button. _Done:_ a Phrases button opens a board of phrases that are said at once (they don't join the message); they're edited like any board.
@@ -58,7 +58,7 @@ Phases are defined in §6. **P1** is the MVP.
 ### 4.2 Vocabulary content
 
 - [P1] One starter core-vocabulary set (to be designed with SLPs) at **3 sizes that share motor plans**. Sizes around 24, 48, and 84+ cells are placeholders.
-- [P1] Mulberry and OpenMoji symbols bundled. Licence and attribution metadata is stored on every image, and an attributions screen is generated from it.
+- [P1] Mulberry and OpenMoji symbols bundled. Licence and attribution metadata is stored on every image, and an attributions screen is generated from it. _Done:_ Settings → About lists every picture source in the boards.
 - [P1] Custom images from the camera or files, cropped and compressed on the device.
 - [P2] Symbol search across optional packs: ARASAAC as an opt-in download because of its NC licence; Global Symbols and OpenSymbols search when online.
 - [P2] Vocabulary masking: hide or show buttons without moving them, plus a "reveal next level" workflow for teaching.
