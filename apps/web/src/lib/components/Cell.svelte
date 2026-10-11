@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { buttonWords, type ObfButton } from '@open-aac/core';
+  import { buttonWords, type ObfButton } from '@any-aac/core';
   import { app } from '../state.svelte';
   import { cellColors, type Theme } from '../theme';
 

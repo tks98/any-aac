@@ -1,4 +1,4 @@
-import { createBoard, type BoardSet, type ObfImage } from '@open-aac/core';
+import { createBoard, type BoardSet, type ObfImage } from '@any-aac/core';
 import { describe, expect, it } from 'vitest';
 import { pictureCredits } from '../src/lib/credits';
 

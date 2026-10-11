@@ -1,4 +1,4 @@
-import { readObf, readObz, type BoardSet, type Issue } from '@open-aac/core';
+import { readObf, readObz, type BoardSet, type Issue } from '@any-aac/core';
 
 /** Reads an .obz package or a single .obf board, telling them apart by content. */
 export async function readBoardFile(file: Blob): Promise<{ set: BoardSet; issues: Issue[] }> {

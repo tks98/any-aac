@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ObfError, type BoardSet } from '@open-aac/core';
+  import { ObfError, type BoardSet } from '@any-aac/core';
   import { backups, exportBoards, readBackup } from '../backup.svelte';
   import { APP_LANGUAGES, type AppLanguage } from '../i18n';
   import { ICONS } from '../icons';
@@ -9,7 +9,7 @@
   import { baseLanguage, speech, type VoiceInfo } from '../speech';
   import { starterSet, type StarterId } from '../starter';
   import { VOICES, type VoiceEntry } from '../voice/catalog';
-  import { openaacVoice } from '../voice/voice.svelte';
+  import { appVoice } from '../voice/voice.svelte';
   import { app } from '../state.svelte';
   import { saveBoards } from '../storage';
   import Icon from './Icon.svelte';
@@ -37,8 +37,8 @@
   const isMain = (v: VoiceInfo) =>
     !v.novelty && baseLanguage(v.lang) === baseLanguage(app.language);
   const myVoices = $derived(voices.filter(isMain));
-  /** Open AAC voices in the language in use, the recommended one first. */
-  const openaacVoices = $derived(
+  /** App voices in the language in use, the recommended one first. */
+  const appVoices = $derived(
     VOICES.filter((v) => baseLanguage(v.lang) === baseLanguage(app.language)).sort(
       (a, b) => Number(b.recommended === true) - Number(a.recommended === true),
     ),
@@ -63,7 +63,7 @@
 
   $effect(() => {
     if (!open) return;
-    void openaacVoice.refreshDownloaded();
+    void appVoice.refreshDownloaded();
     const lang = app.language;
     voices = speech.voices(lang);
     return speech.onVoicesChanged(() => (voices = speech.voices(lang)));
@@ -114,8 +114,8 @@
   }
 
   function progressText() {
-    const { loaded, total } = openaacVoice.progress;
-    if (openaacVoice.status === 'downloading' && total > 0 && loaded < total) {
+    const { loaded, total } = appVoice.progress;
+    if (appVoice.status === 'downloading' && total > 0 && loaded < total) {
       return t.downloading(Math.round(loaded / 1e6), Math.round(total / 1e6));
     }
     return t.startingVoice;
@@ -130,22 +130,22 @@
   }
 
   async function downloadVoice(voice: VoiceEntry) {
-    if (await openaacVoice.use(voice, { download: true })) {
-      app.settings.speech.openaacVoices[baseLanguage(voice.lang)] = voice.id;
-      app.settings.speech.engine = 'openaac';
+    if (await appVoice.use(voice, { download: true })) {
+      app.settings.speech.appVoices[baseLanguage(voice.lang)] = voice.id;
+      app.settings.speech.engine = 'app';
     }
   }
 
   // The app starts the chosen voice from the files on this device.
   function chooseVoice(voice: VoiceEntry) {
-    app.settings.speech.openaacVoices[baseLanguage(voice.lang)] = voice.id;
-    app.settings.speech.engine = 'openaac';
+    app.settings.speech.appVoices[baseLanguage(voice.lang)] = voice.id;
+    app.settings.speech.engine = 'app';
   }
 
   async function removeVoice(voice: VoiceEntry) {
     if (!confirm(t.confirmDeleteVoice(voice.name))) return;
-    await openaacVoice.remove(voice);
-    const voices = app.settings.speech.openaacVoices;
+    await appVoice.remove(voice);
+    const voices = app.settings.speech.appVoices;
     const lang = baseLanguage(voice.lang);
     if (voices[lang] === voice.id) delete voices[lang];
   }
@@ -320,11 +320,11 @@
             t.voice,
             t.voiceHelp,
             [
-              { value: 'openaac', name: t.openaacVoice },
+              { value: 'app', name: t.appVoice },
               { value: 'device', name: t.deviceVoice },
             ],
             s.speech.engine,
-            (engine) => (app.settings.speech.engine = engine === 'openaac' ? 'openaac' : 'device'),
+            (engine) => (app.settings.speech.engine = engine === 'app' ? 'app' : 'device'),
           )}
           {@render toggle(
             t.speakEachWord,
@@ -415,21 +415,20 @@
           </form>
         </section>
 
-        {#if s.speech.engine === 'openaac'}
-          <section class="card voices" aria-labelledby="openaac-voices">
-            <h4 id="openaac-voices" class="legend">{t.openaacVoices}</h4>
-            {#if openaacVoices.length === 0}
-              <p class="help">{t.noOpenaacVoice(nameInSentence(app.language, app.appLanguage))}</p>
+        {#if s.speech.engine === 'app'}
+          <section class="card voices" aria-labelledby="app-voices">
+            <h4 id="app-voices" class="legend">{t.appVoices}</h4>
+            {#if appVoices.length === 0}
+              <p class="help">{t.noAppVoice(nameInSentence(app.language, app.appLanguage))}</p>
             {:else}
-              <p class="help">{t.openaacVoicesHelp}</p>
+              <p class="help">{t.appVoicesHelp}</p>
             {/if}
-            {#each openaacVoices as voice (voice.id)}
-              {@const anyBusy =
-                openaacVoice.status === 'downloading' || openaacVoice.status === 'loading'}
+            {#each appVoices as voice (voice.id)}
+              {@const anyBusy = appVoice.status === 'downloading' || appVoice.status === 'loading'}
               {@const busy =
-                openaacVoice.voiceId === voice.id &&
-                (openaacVoice.status === 'downloading' || openaacVoice.status === 'loading')}
-              {@const inUse = s.speech.openaacVoices[baseLanguage(voice.lang)] === voice.id}
+                appVoice.voiceId === voice.id &&
+                (appVoice.status === 'downloading' || appVoice.status === 'loading')}
+              {@const inUse = s.speech.appVoices[baseLanguage(voice.lang)] === voice.id}
               <div class="voice offline">
                 <div class="voice-text">
                   <span class="voice-name"
@@ -441,17 +440,15 @@
                   >
                   {#if busy}
                     <span class="voice-meta" role="status">{progressText()}</span>
-                    <progress
-                      max={openaacVoice.progress.total || 1}
-                      value={openaacVoice.progress.loaded}
+                    <progress max={appVoice.progress.total || 1} value={appVoice.progress.loaded}
                     ></progress>
                   {/if}
-                  {#if openaacVoice.voiceId === voice.id && openaacVoice.status === 'error'}
-                    <span class="error" role="alert">{t.voiceError(openaacVoice.error)}</span>
+                  {#if appVoice.voiceId === voice.id && appVoice.status === 'error'}
+                    <span class="error" role="alert">{t.voiceError(appVoice.error)}</span>
                   {/if}
                 </div>
                 <div class="voice-actions">
-                  {#if openaacVoice.downloaded[voice.id]}
+                  {#if appVoice.downloaded[voice.id]}
                     <button
                       aria-pressed={inUse}
                       class:selected={inUse}
@@ -475,12 +472,12 @@
                 </div>
               </div>
             {/each}
-            {#if openaacVoice.isReady(app.openaacVoiceId) && openaacVoice.preparing.done < openaacVoice.preparing.total}
+            {#if appVoice.isReady(app.appVoiceId) && appVoice.preparing.done < appVoice.preparing.total}
               <p class="help" role="status">
-                {t.gettingReady(openaacVoice.preparing.done, openaacVoice.preparing.total)}
+                {t.gettingReady(appVoice.preparing.done, appVoice.preparing.total)}
               </p>
             {/if}
-            {#if openaacVoices.length > 0 && !openaacVoice.isReady(app.openaacVoiceId)}
+            {#if appVoices.length > 0 && !appVoice.isReady(app.appVoiceId)}
               <p class="help">{t.deviceSpeaksUntilReady}</p>
             {/if}
           </section>
@@ -915,12 +912,12 @@
         {#if app.appLanguage === 'es'}
           <div class="card prose">
             <p>
-              Open AAC es software libre y de código abierto, con licencia
+              Any AAC es software libre y de código abierto, con licencia
               <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noreferrer"
                 >GNU AGPL v3 o posterior</a
               >. El código está en
-              <a href="https://github.com/tks98/open-aac" target="_blank" rel="noreferrer"
-                >github.com/tks98/open-aac</a
+              <a href="https://github.com/tks98/any-aac" target="_blank" rel="noreferrer"
+                >github.com/tks98/any-aac</a
               >.
             </p>
             <p>
@@ -947,32 +944,32 @@
               del Center for Literacy and Disability Studies (UNC-Chapel Hill, CC BY 4.0), con algunas
               palabras añadidas. El vocabulario inicial es provisional hasta que lo revisen terapeutas
               del lenguaje. Su organización, sus traducciones y los pocos pictogramas de línea que quedan
-              son de colaboradores de Open AAC, con licencia CC BY-SA 4.0.
+              son de colaboradores de Any AAC, con licencia CC BY-SA 4.0.
             </p>
             <p>El texto usa Atkinson Hyperlegible Next (SIL Open Font License).</p>
             <p>
-              Las voces de Open AAC son modelos de Piper entrenados con grabaciones de dominio
+              Las voces de la aplicación son modelos de Piper entrenados con grabaciones de dominio
               público, y funcionan con ONNX Runtime (MIT) y eSpeak NG (GPL-3.0). Las licencias de
-              todo lo que usa Open AAC están en
+              todo lo que usa Any AAC están en
               <a
-                href="https://github.com/tks98/open-aac/blob/main/THIRD_PARTY.md"
+                href="https://github.com/tks98/any-aac/blob/main/THIRD_PARTY.md"
                 target="_blank"
                 rel="noreferrer">THIRD_PARTY.md</a
               >.
             </p>
             <p>
-              Open AAC no recoge ningún dato. Tus tableros y ajustes se quedan en este dispositivo.
+              Any AAC no recoge ningún dato. Tus tableros y ajustes se quedan en este dispositivo.
             </p>
           </div>
         {:else}
           <div class="card prose">
             <p>
-              Open AAC is free, open-source software, licensed under the
+              Any AAC is free, open-source software, licensed under the
               <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noreferrer"
                 >GNU AGPL v3 or later</a
               >. The source is at
-              <a href="https://github.com/tks98/open-aac" target="_blank" rel="noreferrer"
-                >github.com/tks98/open-aac</a
+              <a href="https://github.com/tks98/any-aac" target="_blank" rel="noreferrer"
+                >github.com/tks98/any-aac</a
               >.
             </p>
             <p>
@@ -999,19 +996,19 @@
               vocabulary from the Center for Literacy and Disability Studies (UNC-Chapel Hill, CC BY 4.0),
               with a few words added. The starter vocabulary is a draft until speech-language pathologists
               have reviewed it. Its arrangement, translations and the few remaining line-drawing pictograms
-              are by Open AAC contributors, licensed CC BY-SA 4.0.
+              are by Any AAC contributors, licensed CC BY-SA 4.0.
             </p>
             <p>Text is set in Atkinson Hyperlegible Next (SIL Open Font License).</p>
             <p>
-              Open AAC voices are Piper models trained on public-domain recordings, run with ONNX
-              Runtime (MIT) and eSpeak NG (GPL-3.0). The licences of everything Open AAC uses are in
+              App voices are Piper models trained on public-domain recordings, run with ONNX Runtime
+              (MIT) and eSpeak NG (GPL-3.0). The licences of everything Any AAC uses are in
               <a
-                href="https://github.com/tks98/open-aac/blob/main/THIRD_PARTY.md"
+                href="https://github.com/tks98/any-aac/blob/main/THIRD_PARTY.md"
                 target="_blank"
                 rel="noreferrer">THIRD_PARTY.md</a
               >.
             </p>
-            <p>Open AAC collects nothing. Your boards and settings stay on this device.</p>
+            <p>Any AAC collects nothing. Your boards and settings stay on this device.</p>
           </div>
         {/if}
       {/if}

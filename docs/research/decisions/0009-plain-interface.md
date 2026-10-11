@@ -4,7 +4,7 @@ Status: accepted. 2026-10-11.
 
 ## Context
 
-The question was whether Open AAC needs a distinctive, stylised look, or one that's simply easy to use. The evidence ([findings/interface.md](../findings/interface.md)) favours ease of use: consistent placement, clear labels, feedback, legible text, large targets and low visual clutter. Appeal matters for children, but it comes from personal content and choice (photos, themes, the voice), not decoration.
+The question was whether Any AAC needs a distinctive, stylised look, or one that's simply easy to use. The evidence ([findings/interface.md](../findings/interface.md)) favours ease of use: consistent placement, clear labels, feedback, legible text, large targets and low visual clutter. Appeal matters for children, but it comes from personal content and choice (photos, themes, the voice), not decoration.
 
 ## Decision
 

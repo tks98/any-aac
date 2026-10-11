@@ -58,7 +58,7 @@ test('exports boards and imports them back', async ({ page }) => {
   const downloading = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Export boards only (to share)' }).click();
   const download = await downloading;
-  expect(download.suggestedFilename()).toMatch(/^open-aac-boards-\d{4}-\d{2}-\d{2}\.obz$/);
+  expect(download.suggestedFilename()).toMatch(/^any-aac-boards-\d{4}-\d{2}-\d{2}\.obz$/);
 
   page.once('dialog', (dialog) => dialog.accept());
   await page.getByLabel('Import boards').setInputFiles(await download.path());
@@ -388,7 +388,7 @@ test.describe('languages', () => {
   });
 });
 
-test.describe('Open AAC voice', () => {
+test.describe('App voice', () => {
   const spokenBy = (page: Page) =>
     page.evaluate(
       () => (window as unknown as { voiceLog: { engine: string; text: string }[] }).voiceLog,
@@ -398,7 +398,7 @@ test.describe('Open AAC voice', () => {
     await page.addInitScript(() => {
       const voiceLog: { engine: string; text: string }[] = [];
       Object.assign(window, { voiceLog });
-      addEventListener('openaac:speak', (event) =>
+      addEventListener('anyaac:speak', (event) =>
         voiceLog.push((event as CustomEvent<{ engine: string; text: string }>).detail),
       );
     });
@@ -410,7 +410,7 @@ test.describe('Open AAC voice', () => {
     page,
   }) => {
     await openSettings(page, 'Speech & voice');
-    await page.getByRole('button', { name: 'Open AAC voice' }).click();
+    await page.getByRole('button', { name: 'App voice' }).click();
     const voices = page.locator('.voice.offline');
     await expect(voices).toHaveCount(4);
     await expect(voices.filter({ hasText: /CC BY-NC|lessac|hfc/ })).toHaveCount(0);
@@ -420,7 +420,7 @@ test.describe('Open AAC voice', () => {
     await expect(voices.first()).toContainText('Recommended');
     await expect(voices.filter({ hasText: 'Recommended' })).toHaveCount(1);
     await expect(
-      page.getByText('Until an Open AAC voice is ready, the device voice speaks.'),
+      page.getByText('Until an app voice is ready, the device voice speaks.'),
     ).toBeVisible();
     // Pitch only applies to device voices.
     await expect(page.getByRole('slider', { name: 'Pitch' })).toHaveCount(0);
@@ -431,25 +431,25 @@ test.describe('Open AAC voice', () => {
   });
 
   // Downloads a real 63 MB voice from Hugging Face, so it only runs when asked:
-  // OPENAAC_E2E_VOICE=1 pnpm test:e2e --project=chromium
+  // ANYAAC_E2E_VOICE=1 pnpm test:e2e --project=chromium
   test('downloads a voice, speaks with it, and starts it again offline', async ({
     page,
     context,
     browserName,
   }) => {
-    test.skip(!process.env.OPENAAC_E2E_VOICE, 'Set OPENAAC_E2E_VOICE=1 to run.');
+    test.skip(!process.env.ANYAAC_E2E_VOICE, 'Set ANYAAC_E2E_VOICE=1 to run.');
     test.skip(browserName !== 'chromium', 'Offline check needs Chromium.');
     test.setTimeout(300_000);
     await openSettings(page, 'Speech & voice');
-    await page.getByRole('button', { name: 'Open AAC voice' }).click();
+    await page.getByRole('button', { name: 'App voice' }).click();
     const linda = page.locator('.voice.offline').filter({ hasText: 'Linda' });
     await linda.getByRole('button', { name: 'Download' }).click();
     await expect(linda.getByRole('button', { name: 'In use' })).toBeVisible({ timeout: 240_000 });
-    await expect(page.getByText(/Getting words ready|Until an Open AAC voice/)).toHaveCount(1);
+    await expect(page.getByText(/Getting words ready|Until an app voice/)).toHaveCount(1);
     await closeSettings(page);
 
     await word(page, 'want').click();
-    await expect.poll(() => spokenBy(page)).toEqual([{ engine: 'openaac', text: 'want' }]);
+    await expect.poll(() => spokenBy(page)).toEqual([{ engine: 'app', text: 'want' }]);
 
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
     await context.setOffline(true);
@@ -463,7 +463,7 @@ test.describe('Open AAC voice', () => {
         },
         { timeout: 30_000 },
       )
-      .toBe('openaac');
+      .toBe('app');
   });
 });
 
@@ -544,7 +544,7 @@ test.describe('word forms', () => {
 test.describe('research checks', () => {
   test('only voices with clearly open licences are offered', async ({ page }) => {
     await openSettings(page, 'Speech & voice');
-    await page.getByRole('button', { name: 'Open AAC voice' }).click();
+    await page.getByRole('button', { name: 'App voice' }).click();
     const voices = page.locator('.voice.offline');
     await expect(voices).toHaveText([/Linda/, /Kristin/, /Norman/, /Cori/]);
     // Fine-tuned from a research-only voice, or training not documented.

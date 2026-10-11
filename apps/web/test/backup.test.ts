@@ -1,4 +1,4 @@
-import { createBoard, type BoardSet } from '@open-aac/core';
+import { createBoard, type BoardSet } from '@any-aac/core';
 import { describe, expect, it } from 'vitest';
 import { backups } from '../src/lib/backup.svelte';
 
@@ -8,7 +8,7 @@ const set = (placeholder: boolean): BoardSet => ({
   boards: [
     {
       ...createBoard({ id: 'b', name: 'B', rows: 1, columns: 1 }),
-      ext_openaac_placeholder: placeholder,
+      ext_anyaac_placeholder: placeholder,
     },
   ],
   files: {},

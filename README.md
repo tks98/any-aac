@@ -1,21 +1,21 @@
-# Open AAC
+# Any AAC
 
 A free, open-source AAC (augmentative and alternative communication) app. It runs in the browser on iPad, iPhone, Android, Chromebook, Windows and Mac, keeps working with no internet connection once installed, and can be self-hosted from a folder of static files.
 
-**Try it: [tks98.github.io/open-aac](https://tks98.github.io/open-aac/).** On an iPad or iPhone, open it in Safari and tap Share → **Add to Home Screen**. On Android, use Chrome's ⋮ menu → **Install app**. [Setting up a device](docs/setup.md) covers the rest.
+**Try it: [tks98.github.io/any-aac](https://tks98.github.io/any-aac/).** On an iPad or iPhone, open it in Safari and tap Share → **Add to Home Screen**. On Android, use Chrome's ⋮ menu → **Install app**. [Setting up a device](docs/setup.md) covers the rest.
 
 <p align="center">
   <img src="docs/screenshots/ipad-board.png" alt="The core word board on an iPad: 42 words in columns by word type and six topic folders down the right, with the message “I like it” above" width="420">
   <img src="docs/screenshots/iphone-board.png" alt="The phone layout on an iPhone: 22 of the core words and the six folders in a 4 by 7 grid, with the message “I want more”" width="283">
 </p>
 
-> **Status: 0.1.0, the first release.** The vocabulary is built on published research (Project Core's Universal Core, and Soto and Cooper's early Spanish vocabulary), but it hasn't yet been reviewed by speech-language pathologists or tested with AAC users. Use it alongside the advice of an SLP, and keep a backup way to communicate: Open AAC can print its boards on paper.
+> **Status: 0.1.0, the first release.** The vocabulary is built on published research (Project Core's Universal Core, and Soto and Cooper's early Spanish vocabulary), but it hasn't yet been reviewed by speech-language pathologists or tested with AAC users. Use it alongside the advice of an SLP, and keep a backup way to communicate: Any AAC can print its boards on paper.
 
 ## What it does
 
 - **Speaks from a word board.** Core words stay in the same place on every board, coloured by word type, with topic folders (People, Food, Places, Feelings, Body, Things) and quick phrases. Phones get their own smaller layout with the words in the same order.
 - **Works offline.** Once installed, everything works with no connection: boards, symbols and speech.
-- **Voices that work offline.** The device's own voice works straight away. Open AAC voices (Piper, running on the device) sound the same everywhere and play each word in about 20–45 ms. We only offer voices whose licences are clearly open.
+- **Voices that work offline.** The device's own voice works straight away. App voices, which come with Any AAC (Piper, running on the device), sound the same everywhere and play each word in about 20–45 ms. We only offer voices whose licences are clearly open.
 - **English and Spanish.** Two starter vocabularies: English-first with Spanish translations, and Spanish-first, with words chosen in Spanish. Bilingual communicators switch languages with one tap, and the app's own menus come in both.
 - **Word forms.** A Forms button changes the last word to another form: want → wanted, cansado → cansada.
 - **Editing in place**, behind a press-and-hold on Edit: words, symbols (the whole Mulberry library, or a photo), colours, hidden words, locked positions, new boards, undo.
@@ -34,7 +34,7 @@ A free, open-source AAC (augmentative and alternative communication) app. It run
     <td align="center">Modeling, with Find a word</td>
   </tr>
   <tr>
-    <td><img src="docs/screenshots/ipad-settings.png" alt="Speech settings on an iPad, listing the Open AAC voices with their licences and download sizes"></td>
+    <td><img src="docs/screenshots/ipad-settings.png" alt="Speech settings on an iPad, listing the app voices with their licences and download sizes"></td>
     <td align="center"><img src="docs/screenshots/iphone-topic.png" alt="The Food topic board on an iPhone: the core words I, want, more, not, eat, drink, help and all done keep their places among the food words" width="300"></td>
   </tr>
   <tr>
@@ -45,7 +45,7 @@ A free, open-source AAC (augmentative and alternative communication) app. It run
 
 ## Privacy
 
-Open AAC collects nothing: no accounts, no analytics, no third-party scripts. Boards, settings and voices are stored in the browser on the device. The hosted app makes no requests to anyone else: voice files come from the same site, and are only downloaded when someone presses Download.
+Any AAC collects nothing: no accounts, no analytics, no third-party scripts. Boards, settings and voices are stored in the browser on the device. The hosted app makes no requests to anyone else: voice files come from the same site, and are only downloaded when someone presses Download.
 
 Data stays with the web address it was saved under. If you move to a different address (your own server, say), use **Settings → Boards & backup → Back up everything** first, then restore the backup there.
 
@@ -80,7 +80,7 @@ Offline mode and "Add to Home Screen" need HTTPS. On plain `http://` over the LA
 
 ```bash
 pnpm build
-pnpm --filter @open-aac/web preview --host 127.0.0.1
+pnpm --filter @any-aac/web preview --host 127.0.0.1
 tailscale serve 4173
 ```
 
@@ -92,7 +92,7 @@ Then open `https://<machine>.<tailnet>.ts.net` on the phone. Only devices on you
 pnpm lint        # ESLint and Prettier
 pnpm typecheck   # tsc and svelte-check
 pnpm test        # unit tests (Vitest)
-pnpm test:e2e    # browser tests in Chromium, WebKit and Firefox (Playwright; run `pnpm --filter @open-aac/web exec playwright install` once)
+pnpm test:e2e    # browser tests in Chromium, WebKit and Firefox (Playwright; run `pnpm --filter @any-aac/web exec playwright install` once)
 ```
 
 ### Layout
@@ -103,12 +103,12 @@ apps/web        the installable web app (Svelte 5, Vite, IndexedDB, service work
 docs/           research, decisions, plan, design, and guides
 ```
 
-Open AAC's own fields in OBF files use the `ext_openaac_` prefix.
+Any AAC's own fields in OBF files use the `ext_anyaac_` prefix.
 
 ## Docs
 
 - [Setting up a device](docs/setup.md): installing, locking, voices, switches, modeling, backups
-- [Feature match](docs/feature-match.md): Open AAC's features in the categories SLPs compare
+- [Feature match](docs/feature-match.md): Any AAC's features in the categories SLPs compare
 - [Research](docs/research/README.md): what the evidence says, and the decisions it led to
 - [Plan](docs/plan.md): principles, features, architecture and roadmap
 - [Design](docs/design.md): the interface rules and design tokens
@@ -116,8 +116,8 @@ Open AAC's own fields in OBF files use the `ext_openaac_` prefix.
 
 ## Licences and credits
 
-The code is licensed under the [GNU AGPL v3 or later](LICENSE). Open AAC's vocabulary arrangements and translations are licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).
+The code is licensed under the [GNU AGPL v3 or later](LICENSE). Any AAC's vocabulary arrangements and translations are licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).
 
-Symbols are from [Mulberry Symbols](https://mulberrysymbols.org) © Steve Lee and [OpenMoji](https://openmoji.org), both CC BY-SA 4.0. The core words are Project Core's [Universal Core vocabulary](https://www.med.unc.edu/ahs/clds/universal-core-vocabulary/) (Center for Literacy and Disability Studies, UNC-Chapel Hill, CC BY 4.0). Voices, the speech engine, the typeface and the libraries Open AAC is built on are listed with their licences in [THIRD_PARTY.md](THIRD_PARTY.md).
+Symbols are from [Mulberry Symbols](https://mulberrysymbols.org) © Steve Lee and [OpenMoji](https://openmoji.org), both CC BY-SA 4.0. The core words are Project Core's [Universal Core vocabulary](https://www.med.unc.edu/ahs/clds/universal-core-vocabulary/) (Center for Literacy and Disability Studies, UNC-Chapel Hill, CC BY 4.0). Voices, the speech engine, the typeface and the libraries Any AAC is built on are listed with their licences in [THIRD_PARTY.md](THIRD_PARTY.md).
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) to get involved. If you use AAC, or work with people who do, your advice is the most useful contribution of all.

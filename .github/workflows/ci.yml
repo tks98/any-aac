@@ -44,7 +44,7 @@ jobs:
         with:
           path: apps/web/.cache
           key: symbol-library-${{ hashFiles('apps/web/scripts/symbol-library.mjs') }}
-      - run: pnpm --filter @open-aac/web exec playwright install --with-deps chromium webkit firefox
+      - run: pnpm --filter @any-aac/web exec playwright install --with-deps chromium webkit firefox
       - run: pnpm test:e2e
       - uses: actions/upload-artifact@v7
         if: failure()

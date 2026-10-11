@@ -1,4 +1,4 @@
-import { boardName, buttonWords, setLanguages } from '@open-aac/core';
+import { boardName, buttonWords, setLanguages } from '@any-aac/core';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { starterOf, starterSet } from '../src/lib/starter';
 

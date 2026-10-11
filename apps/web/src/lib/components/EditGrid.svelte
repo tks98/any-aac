@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { cells, type CellRef, type ObfBoard } from '@open-aac/core';
+  import { cells, type CellRef, type ObfBoard } from '@any-aac/core';
   import { editor } from '../editor.svelte';
   import { ICONS } from '../icons';
   import { imageSrc } from '../images';

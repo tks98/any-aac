@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { boardName, buttonAt, linkableBoards, type ObfBoard } from '@open-aac/core';
+  import { boardName, buttonAt, linkableBoards, type ObfBoard } from '@any-aac/core';
   import { backups } from '../backup.svelte';
   import { install } from '../install.svelte';
   import { modeling } from '../modeling.svelte';
   import { speech } from '../speech';
-  import { openaacVoice } from '../voice/voice.svelte';
+  import { appVoice } from '../voice/voice.svelte';
   import { editor } from '../editor.svelte';
   import { ICONS } from '../icons';
   import { app } from '../state.svelte';
@@ -19,8 +19,8 @@
   const allBoards = $derived(app.set ? linkableBoards(app.set) : []);
 
   const backupDue = $derived(backups.due(app.set));
-  /** No device speech (Firefox on Android) and no Open AAC voice: nothing can be said. */
-  const mute = $derived(!speech.available && !openaacVoice.isReady(app.openaacVoiceId));
+  /** No device speech (Firefox on Android) and no app voice: nothing can be said. */
+  const mute = $derived(!speech.available && !appVoice.isReady(app.appVoiceId));
 
   function backUpNow() {
     if (app.set) void backups.backUp(app.set, $state.snapshot(app.settings));

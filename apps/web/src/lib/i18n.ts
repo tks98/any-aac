@@ -87,8 +87,9 @@ const en = {
     count === 1 ? '1 picture added on this device' : `${count} pictures added on this device`,
 
   voice: 'Voice',
-  voiceHelp: 'Open AAC voices sound the same on every device and work offline once downloaded.',
-  openaacVoice: 'Open AAC voice',
+  voiceHelp:
+    'App voices come with Any AAC. They sound the same on every device and work offline once downloaded.',
+  appVoice: 'App voice',
   deviceVoice: 'Device voice',
   speakEachWord: 'Speak each word when tapped',
   speakEachWordHelp: 'Off: words only build the message until Speak is pressed.',
@@ -106,11 +107,11 @@ const en = {
   deletePronunciation: (word: string) => `Delete “${word}”`,
   tryIt: 'Try it',
   testVoice: 'Test voice',
-  openaacVoices: 'Open AAC voices',
-  openaacVoicesHelp:
+  appVoices: 'App voices',
+  appVoicesHelp:
     'These run on this device. The first download is about 80 MB (the voice and the speech engine); after that they work offline.',
-  noOpenaacVoice: (language: string) =>
-    `There's no Open AAC voice in ${language} yet, so the device voice speaks.`,
+  noAppVoice: (language: string) =>
+    `There's no app voice in ${language} yet, so the device voice speaks.`,
   female: 'female',
   male: 'male',
   smallAndFast: 'small and fast',
@@ -126,15 +127,14 @@ const en = {
   download: 'Download',
   recommended: 'Recommended',
   gettingReady: (done: number, total: number) => `Getting words ready: ${done} of ${total}`,
-  deviceSpeaksUntilReady: 'Until an Open AAC voice is ready, the device voice speaks.',
+  deviceSpeaksUntilReady: 'Until an app voice is ready, the device voice speaks.',
   deviceVoicesHelp:
     'The voices this device offers. Voices that work offline keep speaking without internet.',
   noDeviceSpeech:
-    "This browser can't speak with device voices. Download an Open AAC voice so the app can speak.",
+    "This browser can't speak with device voices. Download an app voice so the app can speak.",
   noDeviceVoiceFor: (language: string) =>
-    `This device has no ${language} voice, so ${language} words may be read in the wrong accent or not at all. An Open AAC voice in ${language} avoids this.`,
-  appIsMute:
-    "This browser can't speak yet. Download an Open AAC voice in Settings → Speech & voice.",
+    `This device has no ${language} voice, so ${language} words may be read in the wrong accent or not at all. An app voice in ${language} avoids this.`,
+  appIsMute: "This browser can't speak yet. Download an app voice in Settings → Speech & voice.",
   deviceDefault: 'Device default',
   deviceDefaultHelp: 'Picks an offline voice in your language when there is one',
   otherVoices: (count: number) => `Other voices (${count})`,
@@ -304,7 +304,7 @@ const en = {
   printAllBoards: (count: number) => `All boards (${count})`,
   printHelp: 'To keep a PDF, choose “Save as PDF” in the print window.',
   printCredit: (date: string) =>
-    `Printed from Open AAC on ${date}. Symbols: Mulberry Symbols © Steve Lee and OpenMoji, CC BY-SA 4.0.`,
+    `Printed from Any AAC on ${date}. Symbols: Mulberry Symbols © Steve Lee and OpenMoji, CC BY-SA 4.0.`,
 
   // Modeling
   model: 'Model',
@@ -341,7 +341,7 @@ const en = {
   copiedMessage: 'Copied',
   showShare: 'Share button',
   showShareHelp: 'Adds a Share button to the message bar, to send the message as text.',
-  installTitle: 'Install Open AAC on this device',
+  installTitle: 'Install Any AAC on this device',
   installHelp:
     'Installed, it opens full screen, works offline, and the browser keeps its boards safe.',
   installIos: 'In Safari, tap Share, then “Add to Home Screen”.',
@@ -431,8 +431,8 @@ const es: Messages = {
 
   voice: 'Voz',
   voiceHelp:
-    'Las voces de Open AAC suenan igual en todos los dispositivos y, una vez descargadas, funcionan sin internet.',
-  openaacVoice: 'Voz de Open AAC',
+    'Las voces de la aplicación vienen con Any AAC. Suenan igual en todos los dispositivos y, una vez descargadas, funcionan sin internet.',
+  appVoice: 'Voz de la aplicación',
   deviceVoice: 'Voz del dispositivo',
   speakEachWord: 'Decir cada palabra al tocarla',
   speakEachWordHelp: 'Desactivado: las palabras solo forman el mensaje hasta pulsar Hablar.',
@@ -450,11 +450,11 @@ const es: Messages = {
   deletePronunciation: (word) => `Borrar «${word}»`,
   tryIt: 'Probar',
   testVoice: 'Probar la voz',
-  openaacVoices: 'Voces de Open AAC',
-  openaacVoicesHelp:
+  appVoices: 'Voces de la aplicación',
+  appVoicesHelp:
     'Funcionan en este dispositivo. La primera descarga ocupa unos 80 MB (la voz y el motor de habla); después funcionan sin internet.',
-  noOpenaacVoice: (language) =>
-    `Todavía no hay una voz de Open AAC en ${language}, así que habla la voz del dispositivo.`,
+  noAppVoice: (language) =>
+    `Todavía no hay una voz de la aplicación en ${language}, así que habla la voz del dispositivo.`,
   female: 'femenina',
   male: 'masculina',
   smallAndFast: 'ligera y rápida',
@@ -470,15 +470,16 @@ const es: Messages = {
   download: 'Descargar',
   recommended: 'Recomendada',
   gettingReady: (done, total) => `Preparando palabras: ${done} de ${total}`,
-  deviceSpeaksUntilReady: 'Hasta que una voz de Open AAC esté lista, habla la voz del dispositivo.',
+  deviceSpeaksUntilReady:
+    'Hasta que una voz de la aplicación esté lista, habla la voz del dispositivo.',
   deviceVoicesHelp:
     'Las voces que ofrece este dispositivo. Las que funcionan sin internet siguen hablando sin conexión.',
   noDeviceSpeech:
-    'Este navegador no puede hablar con voces del dispositivo. Descarga una voz de Open AAC para que la aplicación pueda hablar.',
+    'Este navegador no puede hablar con voces del dispositivo. Descarga una voz de la aplicación para que pueda hablar.',
   noDeviceVoiceFor: (language) =>
-    `Este dispositivo no tiene una voz en ${language}, así que las palabras en ${language} pueden leerse con otro acento o no leerse. Una voz de Open AAC en ${language} lo evita.`,
+    `Este dispositivo no tiene una voz en ${language}, así que las palabras en ${language} pueden leerse con otro acento o no leerse. Una voz de la aplicación en ${language} lo evita.`,
   appIsMute:
-    'Este navegador todavía no puede hablar. Descarga una voz de Open AAC en Ajustes → Habla y voz.',
+    'Este navegador todavía no puede hablar. Descarga una voz de la aplicación en Ajustes → Habla y voz.',
   deviceDefault: 'Predeterminada del dispositivo',
   deviceDefaultHelp: 'Elige una voz sin conexión en tu idioma si hay alguna',
   otherVoices: (count) => `Otras voces (${count})`,
@@ -651,7 +652,7 @@ const es: Messages = {
   printAllBoards: (count) => `Todos los tableros (${count})`,
   printHelp: 'Para guardar un PDF, elige «Guardar como PDF» en la ventana de impresión.',
   printCredit: (date) =>
-    `Impreso desde Open AAC el ${date}. Símbolos: Mulberry Symbols © Steve Lee y OpenMoji, CC BY-SA 4.0.`,
+    `Impreso desde Any AAC el ${date}. Símbolos: Mulberry Symbols © Steve Lee y OpenMoji, CC BY-SA 4.0.`,
 
   model: 'Modelar',
   modeling: 'Modelado',
@@ -688,7 +689,7 @@ const es: Messages = {
   copiedMessage: 'Copiado',
   showShare: 'Botón de compartir',
   showShareHelp: 'Añade un botón a la barra del mensaje para enviarlo como texto.',
-  installTitle: 'Instala Open AAC en este dispositivo',
+  installTitle: 'Instala Any AAC en este dispositivo',
   installHelp:
     'Instalada, se abre a pantalla completa, funciona sin internet y el navegador protege sus tableros.',
   installIos: 'En Safari, toca Compartir y luego «Agregar a inicio».',

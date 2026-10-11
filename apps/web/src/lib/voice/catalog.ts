@@ -28,6 +28,7 @@ export interface VoiceEntry {
 }
 
 /** Cache Storage bucket that holds downloaded voice files. */
+/** Keeps the app's first name, so voices downloaded before the rename are found. */
 export const VOICE_CACHE = 'open-aac-voices-v1';
 
 /**

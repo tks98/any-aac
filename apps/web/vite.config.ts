@@ -42,8 +42,8 @@ export default defineConfig({
       injectRegister: 'script-defer',
       includeAssets: ['icon.svg', 'favicon.ico', 'apple-touch-icon-180x180.png'],
       manifest: {
-        name: 'Open AAC',
-        short_name: 'Open AAC',
+        name: 'Any AAC',
+        short_name: 'Any AAC',
         description: 'Free, open-source AAC that works offline.',
         lang: 'en',
         theme_color: '#E6EAEE',
@@ -75,6 +75,8 @@ export default defineConfig({
           // Voices are optional downloads the app caches itself.
           'voices/**',
         ],
+        // Cache names keep the app's first name (Open AAC), so a device that's
+        // offline still finds the voice engine it downloaded before the rename.
         runtimeCaching: [
           {
             urlPattern: /\/assets\/(ort|piper|voice\.worker)[^/]*\.(m?js|wasm|data)$/,

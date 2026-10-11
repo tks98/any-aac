@@ -19,7 +19,7 @@ function sampleSet(): BoardSet {
     home,
     0,
     0,
-    { id: 'i', label: 'I', image_id: 'img-i', ext_openaac_part_of_speech: 'pronoun' },
+    { id: 'i', label: 'I', image_id: 'img-i', ext_anyaac_part_of_speech: 'pronoun' },
     { id: 'img-i', path: 'images/i.png', content_type: 'image/png' },
   );
   home = placeButton(home, 0, 1, { id: 'food', label: 'Food', load_board: { id: 'food' } });
@@ -42,7 +42,7 @@ describe('writeObz and readObz', () => {
       id: 'food',
       path: 'boards/food.obf',
     });
-    expect(home.buttons[0]?.ext_openaac_part_of_speech).toBe('pronoun');
+    expect(home.buttons[0]?.ext_anyaac_part_of_speech).toBe('pronoun');
     expect(home.images).toEqual(original.boards[0]!.images);
   });
 

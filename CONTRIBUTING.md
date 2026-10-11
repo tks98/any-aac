@@ -17,7 +17,7 @@ pnpm lint && pnpm typecheck && pnpm test && pnpm test:e2e
 
 ## Releases
 
-Every commit on `main` that passes CI is deployed to [tks98.github.io/open-aac](https://tks98.github.io/open-aac/) ([decision 0010](docs/research/decisions/0010-hosting.md)), so `main` must always be safe to use. People get an update the next time they open the app. Note user-facing changes in [CHANGELOG.md](CHANGELOG.md), and bump the version in the three `package.json` files for a release.
+Every commit on `main` that passes CI is deployed to [tks98.github.io/any-aac](https://tks98.github.io/any-aac/) ([decision 0010](docs/research/decisions/0010-hosting.md)), so `main` must always be safe to use. People get an update the next time they open the app. Note user-facing changes in [CHANGELOG.md](CHANGELOG.md), and bump the version in the three `package.json` files for a release.
 
 ## Content and licensing
 

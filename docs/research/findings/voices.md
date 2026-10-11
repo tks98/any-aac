@@ -2,7 +2,7 @@
 
 ## Browser speech
 
-- Web Speech voices differ by device, some need the internet, Chrome on Android can fall back to English, and Firefox on Android has none ([foundations.md §4.1](../foundations.md#41-speech-output)). Open AAC warns when the device has no voice for the language in use, or none at all.
+- Web Speech voices differ by device, some need the internet, Chrome on Android can fall back to English, and Firefox on Android has none ([foundations.md §4.1](../foundations.md#41-speech-output)). Any AAC warns when the device has no voice for the language in use, or none at all.
 - Neural voices run well in the browser: Piper on an iPhone runs about seven times faster than real time, and prepared words play in 20–45 ms ([0001](../decisions/0001-offline-voice.md)).
 
 ## Licences

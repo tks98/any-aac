@@ -1,4 +1,4 @@
-import { partOfSpeech, type ObfButton, type PartOfSpeech } from '@open-aac/core';
+import { partOfSpeech, type ObfButton, type PartOfSpeech } from '@any-aac/core';
 
 export type Theme = 'light' | 'dark' | 'contrast';
 /** How word types show their colour: a pale fill with a coloured edge, the edge alone, or not at all. */

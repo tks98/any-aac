@@ -167,5 +167,5 @@ export const ENGLISH: Vocabulary = {
   translations: STARTER_TRANSLATIONS,
   credit:
     '<p>Core words from the <a href="https://www.med.unc.edu/ahs/clds/universal-core-vocabulary/">Universal Core vocabulary</a> ' +
-    '(Center for Literacy and Disability Studies, UNC-Chapel Hill, CC BY 4.0), with a few additions, arranged by Open AAC contributors.</p>',
+    '(Center for Literacy and Disability Studies, UNC-Chapel Hill, CC BY 4.0), with a few additions, arranged by Any AAC contributors.</p>',
 };

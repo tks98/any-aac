@@ -5,7 +5,7 @@ The UI direction was approved on 2026-10-10 from an interactive mockup canvas co
 ## Approved decisions
 
 1. **Layout.** The message bar runs across the top, with a large Speak button at its right. Navigation is a fixed rail on the left on tablets and a bar along the bottom on phones. Help is always visible. Editing sits behind a press-and-hold.
-2. **Colour by word type.** The Modified Fitzgerald Key is the default, drawn as pale fills with a coloured edge. Colours come from each button's word type (`ext_openaac_part_of_speech`), so a theme can change them. Folders are marked by a tab shape, not a colour.
+2. **Colour by word type.** The Modified Fitzgerald Key is the default, drawn as pale fills with a coloured edge. Colours come from each button's word type (`ext_anyaac_part_of_speech`), so a theme can change them. Folders are marked by a tab shape, not a colour.
 3. **Core words never move.** On topic boards (Food, Feelings, …) the core words that appear there sit in exactly the same cell as on the home board.
 4. **Typeface.** Atkinson Hyperlegible Next, self-hosted so it works offline.
 5. **Scanning highlight.** A thick yellow outline, with everything outside the scan dimmed. It defaults to a high-contrast theme.
@@ -47,7 +47,7 @@ Settings → Display offers the approved design's three themes (Light, Dark, Hig
 
 ## Phone layouts
 
-Screens narrower than 600px show a board's compact layout when it has one. A board names its compact layout in `ext_openaac_compact_board`, and links always point at the full board, so Back and navigation behave the same on every device. The starter set has a phone layout for every board. The phone core board has 22 of the core words in the tablet's left-to-right order and, where possible, the same rows, plus a row for the folders; it still fits an iPhone SE. Phone layouts can be turned off so every device shows the same board ([decision 0005](research/decisions/0005-phone-layouts.md)). Core words keep fixed cells within each layout, but a phone cell is not in the same place as the tablet cell. How motor plans should carry between phone and tablet is a question for the vocabulary work with SLPs.
+Screens narrower than 600px show a board's compact layout when it has one. A board names its compact layout in `ext_anyaac_compact_board`, and links always point at the full board, so Back and navigation behave the same on every device. The starter set has a phone layout for every board. The phone core board has 22 of the core words in the tablet's left-to-right order and, where possible, the same rows, plus a row for the folders; it still fits an iPhone SE. Phone layouts can be turned off so every device shows the same board ([decision 0005](research/decisions/0005-phone-layouts.md)). Core words keep fixed cells within each layout, but a phone cell is not in the same place as the tablet cell. How motor plans should carry between phone and tablet is a question for the vocabulary work with SLPs.
 
 Labels wrap between words and never mid-word. A word too long for its cell shrinks until it fits (down to 0.6rem), rather than being cut off or split. Each button uses CSS size containment, so nothing inside it can resize the grid; symbol and label sizes come from the cell (container query units).
 
@@ -55,13 +55,13 @@ Labels wrap between words and never mid-word. A word too long for its cell shrin
 
 Languages come in three layers, which can each be set separately:
 
-1. **Board words.** A board's own words are in its language (`locale`); other languages come from each button's OBF `translations`, and board names from `ext_openaac_name_translations`. Every language uses the same boards with every word in the same cell, so a bilingual communicator's motor plans carry over. The starter boards come in English and Spanish (`apps/web/src/lib/starter/`). Following Soto and Cooper's early Spanish vocabulary for AAC (2021), the verbs young Spanish speakers use most are conjugated (_quiero_, _puedo_, _tengo_, _voy_, _dame_, _mira_, _para_) and the rest are infinitives that follow them (_quiero comer_); the Forms button gives the other forms. Translating an English layout suits bilingual communicators; Spanish-dominant communicators get the **Spanish-first** starter vocabulary, chosen in Spanish ([decision 0004](research/decisions/0004-spanish-first-vocabulary.md)). Devices set to Spanish start with it, and either can be chosen when starting over.
-2. **Speech.** Each language has its own chosen voice, device or Open AAC, and speaks with the right language tag.
+1. **Board words.** A board's own words are in its language (`locale`); other languages come from each button's OBF `translations`, and board names from `ext_anyaac_name_translations`. Every language uses the same boards with every word in the same cell, so a bilingual communicator's motor plans carry over. The starter boards come in English and Spanish (`apps/web/src/lib/starter/`). Following Soto and Cooper's early Spanish vocabulary for AAC (2021), the verbs young Spanish speakers use most are conjugated (_quiero_, _puedo_, _tengo_, _voy_, _dame_, _mira_, _para_) and the rest are infinitives that follow them (_quiero comer_); the Forms button gives the other forms. Translating an English layout suits bilingual communicators; Spanish-dominant communicators get the **Spanish-first** starter vocabulary, chosen in Spanish ([decision 0004](research/decisions/0004-spanish-first-vocabulary.md)). Devices set to Spanish start with it, and either can be chosen when starting over.
+2. **Speech.** Each language has its own chosen voice, device or Any AAC, and speaks with the right language tag.
 3. **Buttons and menus.** The app's own words are in `apps/web/src/lib/i18n.ts` (English and Spanish). "Automatic" follows the board words when the app is translated into their language, then the browser's languages.
 
 Settings → Language picks the words' language, an optional second language and the app's language. With a second language, a button with a globe and the other language's name appears next to Home and Back; one tap switches the words, the voice and, on Automatic, the buttons and menus. The message keeps the words already in it, so mixing languages works.
 
-Still to do: a second language's own layout where word order or vocabulary needs it, and word forms and gender agreement (Spanish adjectives are masculine until there's a setting for the communicator's gender). Switching languages with Open AAC voices in both loads the other voice, which takes a second or two, while the device voice fills in. Import problems and some voice licence names are still shown in English. Every translation needs review by native-speaking SLPs.
+Still to do: a second language's own layout where word order or vocabulary needs it, and word forms and gender agreement (Spanish adjectives are masculine until there's a setting for the communicator's gender). Switching languages with app voices in both loads the other voice, which takes a second or two, while the device voice fills in. Import problems and some voice licence names are still shown in English. Every translation needs review by native-speaking SLPs.
 
 ## Edit mode
 
@@ -90,7 +90,7 @@ The timing logic (`apps/web/src/lib/access/scan.ts`) is pure and tested with a f
 
 ## Quick phrases
 
-The Phrases button (on the rail, beside Forms; it can be turned off) opens a board marked with `ext_openaac_phrases`. Its buttons are whole phrases, said at once without joining the message. Because it's an ordinary board, phrases are added, changed, printed, exported and backed up like any other words; in edit mode, a new button on the phrases board starts with the current message filled in. Boards from before phrases existed get the starter phrases the first time Phrases is opened.
+The Phrases button (on the rail, beside Forms; it can be turned off) opens a board marked with `ext_anyaac_phrases`. Its buttons are whole phrases, said at once without joining the message. Because it's an ordinary board, phrases are added, changed, printed, exported and backed up like any other words; in edit mode, a new button on the phrases board starts with the current message filled in. Boards from before phrases existed get the starter phrases the first time Phrases is opened.
 
 ## Word forms
 

@@ -20,7 +20,7 @@
     without,
     type ObfButton,
     type PartOfSpeech,
-  } from '@open-aac/core';
+  } from '@any-aac/core';
   import { editor } from '../editor.svelte';
   import { ICONS } from '../icons';
   import { imageSrc } from '../images';

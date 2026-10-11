@@ -8,7 +8,7 @@ import { isRecord, type ObfBoard, type ObfButton } from './obf';
 import type { BoardSet } from './obz';
 
 /** Board names in other languages. OBF translates buttons but not board names. */
-export const EXT_NAME_TRANSLATIONS = 'ext_openaac_name_translations';
+export const EXT_NAME_TRANSLATIONS = 'ext_anyaac_name_translations';
 
 /** "es-MX" → "es". */
 export function baseLanguage(locale: string): string {

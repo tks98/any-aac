@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { wordForms } from '@open-aac/core';
+  import { wordForms } from '@any-aac/core';
   import { onMount } from 'svelte';
   import { app } from '../state.svelte';
 

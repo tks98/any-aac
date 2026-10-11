@@ -3,12 +3,12 @@
  * highlight, says cues, and turns keys, game controllers, taps and mouse
  * buttons into switch presses. The timing logic is in scan.ts.
  */
-import { cells } from '@open-aac/core';
+import { cells } from '@any-aac/core';
 import { editor } from '../editor.svelte';
 import { modeling } from '../modeling.svelte';
 import { speech } from '../speech';
 import { app } from '../state.svelte';
-import { openaacVoice } from '../voice/voice.svelte';
+import { appVoice } from '../voice/voice.svelte';
 import { Scanner, type ScanNode } from './scan';
 
 export interface Box {
@@ -154,7 +154,7 @@ class Scanning {
 
   /** Says the highlighted item, unless the message is being spoken. */
   private cue(label: string) {
-    if (!label || speech.speaking || openaacVoice.engine.speaking) return;
+    if (!label || speech.speaking || appVoice.engine.speaking) return;
     speech.speak(label, {
       lang: app.language,
       rate: app.settings.speech.rate,

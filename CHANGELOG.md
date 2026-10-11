@@ -4,6 +4,8 @@
 
 The first release. Not yet reviewed by speech-language pathologists or tested with AAC users; see the [README](README.md).
 
+Developed as Open AAC, and renamed Any AAC before release ([decision 0011](docs/research/decisions/0011-name.md)). Boards, backups and settings from before the rename still load.
+
 ### Communicating
 
 - Word boards with a message bar: tap words to build a message, then Speak. Delete, Clear and Share.
@@ -17,7 +19,7 @@ The first release. Not yet reviewed by speech-language pathologists or tested wi
 ### Speech
 
 - The device's own voices, with rate, pitch and volume.
-- Open AAC voices that run on the device and work offline: Linda (recommended), Kristin, Norman and Cori in English, and Carlfm in Spanish. Every word's audio is prepared ahead, so taps play in about 20–45 ms.
+- App voices that come with Any AAC, run on the device and work offline: Linda (recommended), Kristin, Norman and Cori in English, and Carlfm in Spanish. Every word's audio is prepared ahead, so taps play in about 20–45 ms.
 - A pronunciation dictionary.
 - Only voices with clearly open licences are offered.
 

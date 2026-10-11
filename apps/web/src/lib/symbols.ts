@@ -3,7 +3,7 @@
  * asset files so they stay out of the JavaScript bundle and the service worker
  * caches them for offline use.
  */
-import type { ObfLicense } from '@open-aac/core';
+import type { ObfLicense } from '@any-aac/core';
 import sources from '../assets/symbols/sources.json';
 
 const urls = import.meta.glob<string>('../assets/symbols/*/*.svg', {

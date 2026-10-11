@@ -214,7 +214,7 @@ test('backs up boards and settings, reminds when due, and restores both', async 
   const downloading = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Back up now' }).click();
   const backup = await downloading;
-  expect(backup.suggestedFilename()).toMatch(/^open-aac-backup-\d{4}-\d{2}-\d{2}\.obz$/);
+  expect(backup.suggestedFilename()).toMatch(/^any-aac-backup-\d{4}-\d{2}-\d{2}\.obz$/);
   await expect(page.getByText('The boards have changed since the last backup.')).toBeHidden();
 
   // Change a word and a setting after the backup…

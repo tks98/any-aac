@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { applyPronunciations, behaviorOf, spokenText, type ObfBoard } from '@open-aac/core';
+  import { applyPronunciations, behaviorOf, spokenText, type ObfBoard } from '@any-aac/core';
   import { onMount, untrack } from 'svelte';
   import BoardGrid from './lib/components/BoardGrid.svelte';
   import EditMode from './lib/components/EditMode.svelte';
@@ -28,7 +28,7 @@
   } from './lib/storage';
   import { phrase } from './lib/phrases';
   import { tidyVoiceFiles, voiceById } from './lib/voice/catalog';
-  import { openaacVoice } from './lib/voice/voice.svelte';
+  import { appVoice } from './lib/voice/voice.svelte';
 
   /** Must match the phone breakpoint in the components' CSS. */
   const PHONE = '(max-width: 599px)';
@@ -103,15 +103,15 @@
     saveSettings(settings).catch(() => (notSaved = true));
   });
 
-  // Start the chosen Open AAC voice from the files on this device. This never
+  // Start the chosen app voice from the files on this device. This never
   // downloads: downloading only happens when someone asks for it in Settings.
   $effect(() => {
     const engine = app.settings.speech.engine;
-    const id = app.openaacVoiceId;
-    if (!settingsLoaded || engine !== 'openaac') return;
+    const id = app.appVoiceId;
+    if (!settingsLoaded || engine !== 'app') return;
     const voice = voiceById(id);
-    if (!voice || openaacVoice.voiceId === id) return;
-    void openaacVoice.use(voice, { download: false });
+    if (!voice || appVoice.voiceId === id) return;
+    void appVoice.use(voice, { download: false });
   });
 
   // Once the voice is ready, render every word's audio in the background
@@ -120,7 +120,7 @@
     const set = app.set;
     const { engine, rate } = app.settings.speech;
     const lang = app.language;
-    if (!set || engine !== 'openaac' || !openaacVoice.isReady(app.openaacVoiceId)) return;
+    if (!set || engine !== 'app' || !appVoice.isReady(app.appVoiceId)) return;
     const first = untrack(() => app.view?.buttons ?? []);
     const pronunciations = app.settings.speech.pronunciations;
     const texts = [...first, ...set.boards.flatMap((board) => board.buttons)]
@@ -129,7 +129,7 @@
     // Wait for the rate slider to settle before rendering everything again.
     const timer = setTimeout(
       () =>
-        void openaacVoice.prepare(
+        void appVoice.prepare(
           [applyPronunciations(phrase('help', lang), pronunciations), ...texts],
           rate,
         ),
@@ -141,10 +141,10 @@
   onMount(async () => {
     install.listen();
     void requestPersistentStorage();
-    void openaacVoice.refreshDownloaded();
+    void appVoice.refreshDownloaded();
     // Browsers only let audio start from a tap; keep the voice's audio awake.
     const wake = () => {
-      if (app.settings.speech.engine === 'openaac') openaacVoice.engine.unlock();
+      if (app.settings.speech.engine === 'app') appVoice.engine.unlock();
     };
     addEventListener('pointerup', wake, { capture: true });
     addEventListener('keydown', wake, { capture: true });
@@ -155,8 +155,8 @@
     }
     // Voices withdrawn (e.g. for their licence) give way to the device voice,
     // and their files and prepared audio are deleted.
-    for (const [lang, id] of Object.entries(app.settings.speech.openaacVoices)) {
-      if (!voiceById(id)) delete app.settings.speech.openaacVoices[lang];
+    for (const [lang, id] of Object.entries(app.settings.speech.appVoices)) {
+      if (!voiceById(id)) delete app.settings.speech.appVoices[lang];
     }
     void tidyVoiceFiles().then((ids) =>
       Promise.all(ids.map((id) => deleteAudioForVoice(id).catch(() => undefined))),

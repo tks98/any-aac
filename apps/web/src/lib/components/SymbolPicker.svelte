@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { ObfImage } from '@open-aac/core';
+  import type { ObfImage } from '@any-aac/core';
   import { onMount } from 'svelte';
   import { app } from '../state.svelte';
   import { loadSymbols, searchSymbols, symbolImage, type LibrarySymbol } from '../symbol-library';

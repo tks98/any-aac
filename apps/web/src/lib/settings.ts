@@ -1,16 +1,16 @@
-import type { Pronunciation } from '@open-aac/core';
+import type { Pronunciation } from '@any-aac/core';
 import type { TouchSettings } from './access/touch';
 import type { ScanMethod } from './access/scan';
 import type { ColorStyle, Theme } from './theme';
 import { isAppLanguage, type AppLanguage } from './i18n';
 
 export interface SpeechSettings {
-  /** The device's own voices, or an Open AAC voice that runs offline. */
-  engine: 'device' | 'openaac';
+  /** The device's own voices, or an app voice that runs offline. */
+  engine: 'device' | 'app';
   /** Chosen device voice per language (base code → voiceKey in speech.ts); none = default. */
   deviceVoices: Record<string, string>;
-  /** Chosen Open AAC voice per language (base code → id in voice/catalog.ts). */
-  openaacVoices: Record<string, string>;
+  /** Chosen app voice per language (base code → id in voice/catalog.ts). */
+  appVoices: Record<string, string>;
   rate: number;
   pitch: number;
   /** 0.1–1. */
@@ -92,7 +92,7 @@ export const DEFAULT_SETTINGS: Settings = {
   speech: {
     engine: 'device',
     deviceVoices: {},
-    openaacVoices: {},
+    appVoices: {},
     rate: 1,
     pitch: 1,
     volume: 1,
@@ -180,9 +180,11 @@ export function withDefaults(saved: unknown): Settings {
   if (typeof speech.voice === 'string' && speech.voice.includes('|')) {
     deviceVoices[languageOf(speech.voice.split('|')[1]!)] ??= speech.voice;
   }
-  const openaacVoices = voiceMap(speech.openaacVoices);
+  // App voices were "Open AAC voices" (openaacVoices, engine 'openaac') before
+  // the app was renamed, and earlier still one voice (openaacVoice).
+  const appVoices = voiceMap(speech.appVoices ?? speech.openaacVoices);
   if (typeof speech.openaacVoice === 'string') {
-    openaacVoices[languageOf(speech.openaacVoice)] ??= speech.openaacVoice;
+    appVoices[languageOf(speech.openaacVoice)] ??= speech.openaacVoice;
   }
 
   return {
@@ -196,9 +198,9 @@ export function withDefaults(saved: unknown): Settings {
           : d.language.app,
     },
     speech: {
-      engine: speech.engine === 'openaac' ? 'openaac' : 'device',
+      engine: speech.engine === 'app' || speech.engine === 'openaac' ? 'app' : 'device',
       deviceVoices,
-      openaacVoices,
+      appVoices,
       rate: num(speech.rate, d.speech.rate, 0.5, 2),
       pitch: num(speech.pitch, d.speech.pitch, 0.5, 1.5),
       volume: num(speech.volume, d.speech.volume, 0.1, 1),

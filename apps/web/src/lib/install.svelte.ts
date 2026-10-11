@@ -10,6 +10,7 @@ interface InstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
 }
 
+// Keeps the app's first name, like the other storage names.
 const DISMISSED = 'open-aac-install-dismissed';
 
 function storedDismissal(): boolean {

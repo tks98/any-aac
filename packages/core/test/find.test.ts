@@ -10,7 +10,7 @@ function set(): BoardSet {
     label: 'more apples',
     translations: { es: { label: 'más manzanas' } },
   });
-  core = { ...core, ext_openaac_compact_board: 'core-phone' };
+  core = { ...core, ext_anyaac_compact_board: 'core-phone' };
   let phone = createBoard({ id: 'core-phone', name: 'Core (phone)', rows: 1, columns: 2 });
   phone = placeButton(phone, 0, 0, { id: 'food', label: 'Food', load_board: { id: 'food' } });
   phone = placeButton(phone, 0, 1, { id: 'want', label: 'want' });

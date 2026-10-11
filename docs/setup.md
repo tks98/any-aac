@@ -1,6 +1,6 @@
 # Setting up a device
 
-For families, teachers and speech-language pathologists (SLPs) setting up Open AAC for someone. Open AAC is at **[tks98.github.io/open-aac](https://tks98.github.io/open-aac/)**. This is its first release, and its vocabulary hasn't yet been reviewed by SLPs; see the [README](../README.md).
+For families, teachers and speech-language pathologists (SLPs) setting up Any AAC for someone. Any AAC is at **[tks98.github.io/any-aac](https://tks98.github.io/any-aac/)**. This is its first release, and its vocabulary hasn't yet been reviewed by SLPs; see the [README](../README.md).
 
 ## 1. Install it
 
@@ -14,7 +14,7 @@ Edit mode reminds you if the app isn't installed. Updates download in the backgr
 
 ## 2. Choose one main device
 
-Each word has one place on the board, and people learn where words are by moving to them, much as speakers learn to say words. That only works if the places don't change. On phone-sized screens Open AAC shows a smaller board with fewer words in different places, which is a second set of places to learn.
+Each word has one place on the board, and people learn where words are by moving to them, much as speakers learn to say words. That only works if the places don't change. On phone-sized screens Any AAC shows a smaller board with fewer words in different places, which is a second set of places to learn.
 
 - For someone **starting out**, use a tablet or larger screen with big buttons as the main device. Vocabulary designers recommend this ([PRC-Saltillo](https://prc-saltillo.com/blog/LAMPWFL-iPhone)).
 - If they use a **phone and a tablet**, consider turning off **Settings → Display → Smaller layouts on phones**, so both show the same board. The buttons will be small on the phone.
@@ -25,16 +25,16 @@ Devices set to Spanish start with the **Spanish** starter boards, chosen in Span
 
 ## 4. Choose a voice
 
-**Settings → Speech & voice.** The device's own voice works straight away. An **Open AAC voice** sounds the same on every device and works offline; it's a one-time download of about 80 MB. **Linda** is recommended for English. Open AAC only offers voices whose licences are clearly open; for Spanish that's one small, lower-quality voice for now ([decision 0002](research/decisions/0002-only-clearly-licensed-voices.md)).
+**Settings → Speech & voice.** The device's own voice works straight away. An **app voice**, which comes with Any AAC, sounds the same on every device and works offline; it's a one-time download of about 80 MB. **Linda** is recommended for English. Any AAC only offers voices whose licences are clearly open; for Spanish that's one small, lower-quality voice for now ([decision 0002](research/decisions/0002-only-clearly-licensed-voices.md)).
 
-Firefox on Android can't speak with device voices; use Chrome, or download an Open AAC voice.
+Firefox on Android can't speak with device voices; use Chrome, or download an app voice.
 
 ## 5. Lock the device
 
-Open AAC's own lock keeps editing behind a press-and-hold on **Edit**. To keep someone in the app, use the device's lock as well:
+Any AAC's own lock keeps editing behind a press-and-hold on **Edit**. To keep someone in the app, use the device's lock as well:
 
-- **iPhone or iPad: Guided Access.** Settings → Accessibility → **Guided Access** → turn it on and set a passcode. Open Open AAC, triple-click the side button (or the Home button), and tap **Start**. Triple-click again and enter the passcode to end it.
-- **Android: App pinning.** Settings → Security (on some phones, Security & privacy → More security settings) → **App pinning** → turn it on. Open Open AAC, open the recent-apps view, tap the app's icon and choose **Pin**. How to unpin varies by phone; it's usually holding Back and Overview, or swiping up and holding.
+- **iPhone or iPad: Guided Access.** Settings → Accessibility → **Guided Access** → turn it on and set a passcode. Open Any AAC, triple-click the side button (or the Home button), and tap **Start**. Triple-click again and enter the passcode to end it.
+- **Android: App pinning.** Settings → Security (on some phones, Security & privacy → More security settings) → **App pinning** → turn it on. Open Any AAC, open the recent-apps view, tap the app's icon and choose **Pin**. How to unpin varies by phone; it's usually holding Back and Overview, or swiping up and holding.
 - **Windows: Kiosk.** Settings → Accounts → Other users → **Set up a kiosk**, choose Microsoft Edge, and give it the app's address.
 - **Chromebooks:** kiosk mode needs a managed device (Google Admin console).
 

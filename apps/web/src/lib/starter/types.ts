@@ -1,4 +1,4 @@
-import type { PartOfSpeech } from '@open-aac/core';
+import type { PartOfSpeech } from '@any-aac/core';
 
 export interface Word {
   label: string;

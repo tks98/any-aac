@@ -15,14 +15,14 @@ import {
   type BoardSet,
   type Message,
   type ObfButton,
-} from '@open-aac/core';
+} from '@any-aac/core';
 import { MESSAGES, pickAppLanguage } from './i18n';
 import { DEFAULT_SETTINGS, type Settings } from './settings';
 import { phrase } from './phrases';
 import { saveBoards } from './storage';
 import { starterOf, starterPhrases } from './starter';
 import { preferPlaybackAudio, speech } from './speech';
-import { openaacVoice } from './voice/voice.svelte';
+import { appVoice } from './voice/voice.svelte';
 
 class AppState {
   set = $state.raw<BoardSet | null>(null);
@@ -182,12 +182,12 @@ class AppState {
     if (settings.second) settings.usingSecond = !settings.usingSecond;
   }
 
-  /** The Open AAC voice chosen for the language in use. */
-  openaacVoiceId = $derived(this.settings.speech.openaacVoices[this.language] ?? null);
+  /** The app voice chosen for the language in use. */
+  appVoiceId = $derived(this.settings.speech.appVoices[this.language] ?? null);
 
   /**
-   * Speaks with the Open AAC voice when it's chosen and ready, and with the
-   * device voice otherwise, or if the Open AAC voice fails.
+   * Speaks with the app voice when it's chosen and ready, and with the
+   * device voice otherwise, or if the app voice fails.
    */
   /** What the voice should say for some text, after the pronunciation dictionary. */
   spoken(text: string) {
@@ -205,12 +205,12 @@ class AppState {
       volume: options.volume,
       lang,
     };
-    // The loaded Open AAC voice is the one for the language in use.
-    const voiceId = options.openaacVoices[lang] ?? null;
-    if (options.engine === 'openaac' && openaacVoice.isReady(voiceId)) {
+    // The loaded app voice is the one for the language in use.
+    const voiceId = options.appVoices[lang] ?? null;
+    if (options.engine === 'app' && appVoice.isReady(voiceId)) {
       speech.stop();
-      openaacVoice.engine.speak(text, options.rate, options.volume).then(
-        () => announce('openaac', text),
+      appVoice.engine.speak(text, options.rate, options.volume).then(
+        () => announce('app', text),
         () => {
           speech.speak(text, device);
           announce('device', text);
@@ -218,16 +218,16 @@ class AppState {
       );
       return;
     }
-    openaacVoice.engine.stop();
+    appVoice.engine.stop();
     speech.speak(text, device);
     announce('device', text);
   }
 }
 
 /** Tells listeners (tests, for now) which voice said what. */
-function announce(engine: 'device' | 'openaac', text: string) {
+function announce(engine: 'device' | 'app', text: string) {
   if (text.trim() === '') return;
-  dispatchEvent(new CustomEvent('openaac:speak', { detail: { engine, text } }));
+  dispatchEvent(new CustomEvent('anyaac:speak', { detail: { engine, text } }));
 }
 
 export const app = new AppState();

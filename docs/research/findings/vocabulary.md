@@ -1,6 +1,6 @@
 # Findings: vocabulary and layout
 
-What the evidence says about which words to offer and where to put them, and what Open AAC does with it. Background: [foundations.md §2.1–2.3](../foundations.md#2-what-an-aac-system-needs-field-consensus).
+What the evidence says about which words to offer and where to put them, and what Any AAC does with it. Background: [foundations.md §2.1–2.3](../foundations.md#2-what-an-aac-system-needs-field-consensus).
 
 ## Core and fringe
 

@@ -155,7 +155,7 @@ describe('replaceLastWord', () => {
     let message = addWord([], { id: 'i', label: 'I' });
     message = addWord(
       message,
-      { id: 'w', label: 'want', image_id: 'img', ext_openaac_part_of_speech: 'verb' },
+      { id: 'w', label: 'want', image_id: 'img', ext_anyaac_part_of_speech: 'verb' },
       'core',
       'en',
     );

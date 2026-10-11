@@ -1,6 +1,6 @@
 # Third-party content and software
 
-Open AAC's own code is licensed under the [GNU AGPL v3 or later](LICENSE), and its vocabulary arrangements and translations under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). It includes the work of others, listed here with their licences. The app's **Settings → About** shows the same credits, and counts the pictures from each source on the boards in use.
+Any AAC's own code is licensed under the [GNU AGPL v3 or later](LICENSE), and its vocabulary arrangements and translations under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). It includes the work of others, listed here with their licences. The app's **Settings → About** shows the same credits, and counts the pictures from each source on the boards in use.
 
 ## Symbols
 
@@ -8,7 +8,7 @@ Open AAC's own code is licensed under the [GNU AGPL v3 or later](LICENSE), and i
 | ---------------------------------------------- | --------------------------------------------------------------- | -------------------------------------------------- |
 | Mulberry Symbols v3.6.1, © 2018–2026 Steve Lee | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) | [mulberrysymbols.org](https://mulberrysymbols.org) |
 | OpenMoji 17.0.0                                | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) | [openmoji.org](https://openmoji.org)               |
-| A few line-drawn pictograms                    | CC BY-SA 4.0                                                    | Open AAC contributors                              |
+| A few line-drawn pictograms                    | CC BY-SA 4.0                                                    | Any AAC contributors                               |
 
 Each picture on the starter boards carries its author and licence in its OBF `license` field, so the credit travels with exported boards. Versions are pinned in [`apps/web/src/assets/symbols/sources.json`](apps/web/src/assets/symbols/sources.json) and [`apps/web/scripts/symbol-library.mjs`](apps/web/scripts/symbol-library.mjs).
 
@@ -19,7 +19,7 @@ Each picture on the starter boards carries its author and licence in its OBF `li
 
 ## Voices
 
-Open AAC voices are optional downloads. They're [Piper](https://github.com/rhasspy/piper) models from the [rhasspy/piper-voices v1.0.0](https://huggingface.co/rhasspy/piper-voices/tree/v1.0.0) release, and we only offer voices trained from scratch on public-domain recordings ([decision 0002](docs/research/decisions/0002-only-clearly-licensed-voices.md)):
+App voices, the voices that come with Any AAC, are optional downloads. They're [Piper](https://github.com/rhasspy/piper) models from the [rhasspy/piper-voices v1.0.0](https://huggingface.co/rhasspy/piper-voices/tree/v1.0.0) release, and we only offer voices trained from scratch on public-domain recordings ([decision 0002](docs/research/decisions/0002-only-clearly-licensed-voices.md)):
 
 | Voice   | Language         | Recordings                                                          |
 | ------- | ---------------- | ------------------------------------------------------------------- |
@@ -39,7 +39,7 @@ Each voice's model card is in its folder of the Piper release. The files and the
 | [piper-wasm](https://github.com/diffusion-studio/piper-wasm) 1.0.0 (`piper_phonemize.wasm`), which turns text into phonemes                                                                          | MIT, and it contains eSpeak NG (below)                                                |
 | [eSpeak NG](https://github.com/rhasspy/espeak-ng) (rhasspy's fork) and its language data, compiled into `piper_phonemize.wasm` with [piper-phonemize](https://github.com/wide-video/piper-phonemize) | [GPL-3.0-or-later](https://www.gnu.org/licenses/gpl-3.0.html); piper-phonemize is MIT |
 
-eSpeak NG is GPL-3.0-or-later, which is compatible with Open AAC's AGPL. Its source code is at the links above, and the build steps are in piper-wasm's README.
+eSpeak NG is GPL-3.0-or-later, which is compatible with Any AAC's AGPL. Its source code is at the links above, and the build steps are in piper-wasm's README.
 
 ## Typeface
 

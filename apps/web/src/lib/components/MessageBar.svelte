@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { messageText } from '@open-aac/core';
+  import { messageText } from '@any-aac/core';
   import { ICONS } from '../icons';
   import { imageSrc } from '../images';
   import { app } from '../state.svelte';

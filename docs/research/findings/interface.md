@@ -1,6 +1,6 @@
 # Findings: interface design
 
-What makes an AAC interface easy to use, and how Open AAC's measures up. The short answer from the evidence: plain, consistent and legible, with personalisation for appeal, not decoration.
+What makes an AAC interface easy to use, and how Any AAC's measures up. The short answer from the evidence: plain, consistent and legible, with personalisation for appeal, not decoration.
 
 ## AAC displays
 
@@ -10,9 +10,9 @@ What makes an AAC interface easy to use, and how Open AAC's measures up. The sho
 
 ## Cognitive accessibility
 
-W3C's [Making Content Usable for People with Cognitive and Learning Disabilities](https://www.w3.org/TR/coga-usable/) (COGA) gives design patterns that fit AAC users and their partners closely. How Open AAC meets them:
+W3C's [Making Content Usable for People with Cognitive and Learning Disabilities](https://www.w3.org/TR/coga-usable/) (COGA) gives design patterns that fit AAC users and their partners closely. How Any AAC meets them:
 
-| Pattern (abridged)                                       | Open AAC                                                                                                  |
+| Pattern (abridged)                                       | Any AAC                                                                                                   |
 | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
 | Use a consistent visual design; familiar hierarchy       | One layout everywhere: message bar on top, navigation at the side (bottom on phones), board in the middle |
 | Ensure controls and content don't move unexpectedly      | Words locked in place; hidden words keep their cell; optional buttons only appear when turned on          |

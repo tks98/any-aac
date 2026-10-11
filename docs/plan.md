@@ -1,4 +1,4 @@
-# Open AAC: product and technical plan
+# Any AAC: product and technical plan
 
 This plan is for a free, open-source AAC app that runs in any modern browser, keeps working with no connection, and can be self-hosted by serving one folder. The evidence behind it is in [foundations.md](research/foundations.md).
 
@@ -179,7 +179,7 @@ Phases are defined in §6. **P1** is the MVP.
 | Local data    | IndexedDB via Dexie; OPFS for large files                                                             | Mature, and works in Safari                                                                                                  |
 | TTS           | onnxruntime-web + Piper voices (evaluate sherpa-onnx WASM as the single runtime); Web Speech fallback | Offline and consistent                                                                                                       |
 | Head tracking | `@mediapipe/tasks-vision` Face Landmarker                                                             | Runs in WASM, gives blendshapes for gestures                                                                                 |
-| Board format  | OBF/OBZ, with extras under `ext_openaac_*`                                                            | Interoperability                                                                                                             |
+| Board format  | OBF/OBZ, with extras under `ext_anyaac_*`                                                             | Interoperability                                                                                                             |
 | Tests         | Vitest (unit), Playwright (Chromium, WebKit, Firefox), axe-core                                       | Cross-engine end-to-end tests matter here                                                                                    |
 | Sync (P4)     | Decide in P3: CouchDB/PouchDB (the AsTeRICS route) or a CRDT (Yjs/Automerge) with a thin relay        | Keep the data model sync-ready from P1                                                                                       |
 
@@ -203,12 +203,12 @@ docs/
 - **Board:** `id`, `name`, `locale`, `grid {rows, cols, order[][]}`, `buttons[]`, `version`, `updatedAt`.
 - **Button:** `id`, `label`, `vocalization?`, `imageId?`, `soundId?`, `action` (speak · append · navigate · back · home · special), `partOfSpeech?`, `wordForms?`, `hidden` (masking), `locked` (motor plan).
 - **Asset:** content-addressed by hash (`image`, `sound`, `voice model`), with `license {type, author, source_url}`.
-- **The model maps 1:1 to OBF.** Anything extra goes in `ext_openaac_*`, and CI tests that boards round-trip without loss.
+- **The model maps 1:1 to OBF.** Anything extra goes in `ext_anyaac_*`, and CI tests that boards round-trip without loss.
 - All IDs are stable UUIDs, and each record carries a version so sync can be added later without a migration that rewrites everything.
 
 ### 5.5 Offline and self-hosting modes
 
-1. **Hosted:** use our public instance once and install it; after that it runs offline. It's on GitHub Pages at [tks98.github.io/open-aac](https://tks98.github.io/open-aac/), with the voices on the same site ([decision 0010](research/decisions/0010-hosting.md)).
+1. **Hosted:** use our public instance once and install it; after that it runs offline. It's on GitHub Pages at [tks98.github.io/any-aac](https://tks98.github.io/any-aac/), with the voices on the same site ([decision 0010](research/decisions/0010-hosting.md)).
 2. **Static self-host:** `dist/` is plain static files, servable by nginx, Caddy, GitHub Pages, or a school web server. HTTPS is required for offline mode (or `localhost`). Document Caddy's automatic TLS and an internal CA for LAN setups.
 3. **Docker:** static app plus optional sync server in one `docker compose up` (P4).
 4. **Desktop wrapper:** Tauri for kiosks or air-gapped installs (P5).
@@ -295,7 +295,7 @@ Phases end when their exit criteria are met, not on a calendar.
 | The NC licence on ARASAAC blocks commercial redistribution               | Ship ARASAAC as an optional download only, and track the licence on every asset                                                                                  |
 | Copying proprietary layouts invites legal trouble                        | Design our own vocabulary from scratch; contributors confirm their content is original                                                                           |
 | Inaccurate webcam tracking frustrates users                              | Prefer head pointing over eye gaze; big targets; label eye gaze experimental                                                                                     |
-| The name clashes with the existing "OpenAAC" initiative (openaac.org)    | Check before going public; consider another name or ask to join forces                                                                                           |
+| The name clashed with the existing "OpenAAC" non-profit (openaac.org)    | Renamed to Any AAC before release ([decision 0011](research/decisions/0011-name.md))                                                                             |
 | Maintainers burn out (like Cboard's apparent slowdown)                   | Keep scope tight per phase; seek grant funding (AsTeRICS is grant-funded through 2028); consider collaborating with AsTeRICS and Ace Centre instead of competing |
 
 ## 10. Decisions
@@ -304,7 +304,7 @@ Phases end when their exit criteria are met, not on a calendar.
 
 - **Licence:** AGPL-3.0-or-later for the code; CC BY-SA 4.0 for vocabulary content.
 - **UI framework:** Svelte 5 with TypeScript and Vite.
-- **Name:** keep "Open AAC" for now. Check for a clash with openaac.org before any public launch.
+- **Name:** "Open AAC" at first; renamed **Any AAC** before release, to avoid confusion with the OpenAAC non-profit ([decision 0011](research/decisions/0011-name.md)).
 - **Build fresh** rather than fork AsTeRICS Grid. Still worth talking to them and to Ace Centre.
 - **UI design:** approved from the mockups. See [design.md](design.md).
 - **Spanish is the first language after English.** Board words, speech, and the app's own buttons and menus are separate layers, so each can be added on its own. See [design.md](design.md#languages).

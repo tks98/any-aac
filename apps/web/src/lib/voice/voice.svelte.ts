@@ -1,5 +1,5 @@
 /**
- * The Open AAC voice as app state: which voices are downloaded, download and
+ * The app voice as app state: which voices are downloaded, download and
  * load progress, and preparing every button's audio in the background.
  */
 import { deleteVoiceFiles, isDownloaded, VOICES, type VoiceEntry } from './catalog';
@@ -7,7 +7,7 @@ import { VoiceEngine } from './engine';
 
 type Status = 'off' | 'downloading' | 'loading' | 'ready' | 'error';
 
-class OpenAacVoice {
+class AppVoice {
   readonly engine = new VoiceEngine();
 
   /** What's happening with `voiceId`. */
@@ -97,4 +97,4 @@ class OpenAacVoice {
   }
 }
 
-export const openaacVoice = new OpenAacVoice();
+export const appVoice = new AppVoice();

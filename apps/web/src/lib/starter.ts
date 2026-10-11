@@ -21,7 +21,7 @@ import {
   type ObfButton,
   type ObfImage,
   type ObfLicense,
-} from '@open-aac/core';
+} from '@any-aac/core';
 import { hasPictogram, pictogramDataUri } from './pictograms';
 import { ENGLISH } from './starter/english';
 import { SPANISH } from './starter/spanish';
@@ -40,8 +40,8 @@ export function defaultStarter(): StarterId {
 const LICENSE: ObfLicense = {
   type: 'CC BY-SA 4.0',
   copyright_notice_url: 'https://creativecommons.org/licenses/by-sa/4.0/',
-  author_name: 'Open AAC contributors',
-  source_url: 'https://github.com/tks98/open-aac',
+  author_name: 'Any AAC contributors',
+  source_url: 'https://github.com/tks98/any-aac',
 };
 
 const slug = (label: string) =>
@@ -55,10 +55,10 @@ const slug = (label: string) =>
  * Bump when the starter boards change. Saved starter boards from an older
  * version are replaced on next launch, as long as nobody has edited them.
  */
-export const STARTER_VERSION = 8;
-const EXT_STARTER_VERSION = 'ext_openaac_starter_version';
+export const STARTER_VERSION = 9;
+const EXT_STARTER_VERSION = 'ext_anyaac_starter_version';
 /** Which starter vocabulary a set came from, so an update keeps it. */
-const EXT_STARTER = 'ext_openaac_starter';
+const EXT_STARTER = 'ext_anyaac_starter';
 
 /** A label or board name in every other language the vocabulary comes in. */
 function translated(vocab: Vocabulary, label: string): Record<string, string> {

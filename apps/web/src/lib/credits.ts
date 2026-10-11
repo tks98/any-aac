@@ -2,7 +2,7 @@
  * Who made the pictures in a set of boards, from the licence each image
  * carries, so the credits that CC BY-SA asks for are always complete.
  */
-import { EXT_PLACEHOLDER, type BoardSet } from '@open-aac/core';
+import { EXT_PLACEHOLDER, type BoardSet } from '@any-aac/core';
 
 export interface Credit {
   author: string;

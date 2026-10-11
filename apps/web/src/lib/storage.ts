@@ -2,7 +2,7 @@
  * Local storage in IndexedDB. The device is the only copy until backup and sync
  * exist, so we ask the browser not to evict it.
  */
-import type { BoardSet } from '@open-aac/core';
+import { renameOldFields, type BoardSet } from '@any-aac/core';
 import Dexie, { type EntityTable } from 'dexie';
 import { withDefaults, type Settings } from './settings';
 
@@ -17,7 +17,7 @@ interface StoredSettings {
   settings: Settings;
 }
 
-/** A phrase rendered by an Open AAC voice, kept so it plays instantly next time. */
+/** A phrase rendered by an app voice, kept so it plays instantly next time. */
 export interface StoredAudio {
   /** voice id | rate | text */
   key: string;
@@ -39,6 +39,8 @@ class Database extends Dexie {
   audio!: EntityTable<StoredAudio, 'key'>;
 
   constructor() {
+    // Storage names keep the app's first name (Open AAC), so everything saved
+    // before it was renamed is still found.
     super('open-aac');
     this.version(1).stores({ sets: 'key' });
     this.version(2).stores({ sets: 'key', settings: 'key' });
@@ -51,7 +53,8 @@ const db = new Database();
 const CURRENT = 'current';
 
 export async function loadBoards(): Promise<BoardSet | undefined> {
-  return (await db.sets.get(CURRENT))?.set;
+  const set = (await db.sets.get(CURRENT))?.set;
+  return set && { ...set, boards: set.boards.map(renameOldFields) };
 }
 
 export async function saveBoards(set: BoardSet): Promise<void> {

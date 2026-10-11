@@ -9,7 +9,7 @@
 
 ## Just-in-time vocabulary and visual scenes
 
-Adding vocabulary in the moment increased symbolic communication ([AJSLP 2017](https://pubs.asha.org/doi/10.1044/2017_AJSLP-15-0197), [2025](https://pubs.asha.org/doi/10.1044/2025_AJSLP-24-00450)). Open AAC lets a word with a photo be added in edit mode; visual scene displays are planned for phase 3.
+Adding vocabulary in the moment increased symbolic communication ([AJSLP 2017](https://pubs.asha.org/doi/10.1044/2017_AJSLP-15-0197), [2025](https://pubs.asha.org/doi/10.1044/2025_AJSLP-24-00450)). Any AAC lets a word with a photo be added in edit mode; visual scene displays are planned for phase 3.
 
 ## Abandonment
 

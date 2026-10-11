@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { cells, type ObfBoard } from '@open-aac/core';
+  import { cells, type ObfBoard } from '@any-aac/core';
   import { TouchSelector } from '../access/touch';
   import { imageSrc } from '../images';
   import { app } from '../state.svelte';

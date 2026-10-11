@@ -4,7 +4,7 @@
  * don't build the person's message. Find word shows the path to any word,
  * one step at a time. See docs/research/decisions/0006-partner-modeling.md.
  */
-import { behaviorOf, findWord, spokenText, type ObfButton } from '@open-aac/core';
+import { behaviorOf, findWord, spokenText, type ObfButton } from '@any-aac/core';
 import { app } from './state.svelte';
 
 class Modeling {

@@ -1,13 +1,15 @@
 /**
  * Open Board Format (OBF) types and parsing.
  *
- * Open AAC keeps boards in OBF shape, so import and export are lossless: fields we
+ * Any AAC keeps boards in OBF shape, so import and export are lossless: fields we
  * don't understand, including other apps' `ext_*` fields, are carried through as-is.
- * Our own extensions use the `ext_openaac_` prefix (see ext.ts).
+ * Our own extensions use the `ext_anyaac_` prefix (see ext.ts).
  *
  * Field names follow the spec at https://www.openboardformat.org/docs and the
  * reference implementation in https://github.com/CoughDrop/obf.
  */
+
+import { renameOldFields } from './ext';
 
 export const OBF_FORMAT = 'open-board-0.1';
 
@@ -235,8 +237,9 @@ export function parseObf(
   input: unknown,
   options: ParseOptions = {},
 ): { board: ObfBoard; issues: Issue[] } {
-  const json = typeof input === 'string' ? parseJson(input, 'The board') : input;
-  if (!isRecord(json)) throw new ObfError('A board must be a JSON object.');
+  const parsed = typeof input === 'string' ? parseJson(input, 'The board') : input;
+  if (!isRecord(parsed)) throw new ObfError('A board must be a JSON object.');
+  const json = renameOldFields(parsed);
 
   const issues: Issue[] = [];
   const makeId = options.makeId ?? defaultMakeId;

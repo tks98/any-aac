@@ -2,7 +2,7 @@
 
 ## Touch
 
-Hold-to-select, select-on-release, ignoring repeated taps, and gaps for keyguards are standard ([foundations.md §2.7](../foundations.md#27-access-methods)). Open AAC has all of them.
+Hold-to-select, select-on-release, ignoring repeated taps, and gaps for keyguards are standard ([foundations.md §2.7](../foundations.md#27-access-methods)). Any AAC has all of them.
 
 ## Switch scanning
 

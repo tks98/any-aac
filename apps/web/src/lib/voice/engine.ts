@@ -1,5 +1,5 @@
 /**
- * Main-thread side of the Open AAC voice: talks to the voice worker, keeps
+ * Main-thread side of the app voice: talks to the voice worker, keeps
  * rendered phrases (in memory and in IndexedDB) so they play instantly, and
  * plays audio with Web Audio.
  */

@@ -10,13 +10,13 @@ describe('withDefaults', () => {
   it('reads voices chosen per language', () => {
     const settings = withDefaults({
       speech: {
-        engine: 'openaac',
-        openaacVoices: { en: 'en_US-joe-medium', es: 'es_MX-ald-medium', 'not a lang': 'x' },
+        engine: 'app',
+        appVoices: { en: 'en_US-joe-medium', es: 'es_MX-ald-medium', 'not a lang': 'x' },
         deviceVoices: { es: 'Paulina|es-MX', en: 42 },
       },
     });
-    expect(settings.speech.engine).toBe('openaac');
-    expect(settings.speech.openaacVoices).toEqual({
+    expect(settings.speech.engine).toBe('app');
+    expect(settings.speech.appVoices).toEqual({
       en: 'en_US-joe-medium',
       es: 'es_MX-ald-medium',
     });
@@ -29,7 +29,15 @@ describe('withDefaults', () => {
       speech: { voice: 'Samantha|en-US', openaacVoice: 'en_US-joe-medium' },
     });
     expect(settings.speech.deviceVoices).toEqual({ en: 'Samantha|en-US' });
-    expect(settings.speech.openaacVoices).toEqual({ en: 'en_US-joe-medium' });
+    expect(settings.speech.appVoices).toEqual({ en: 'en_US-joe-medium' });
+  });
+
+  it('carries over app voices saved under the Open AAC name', () => {
+    const settings = withDefaults({
+      speech: { engine: 'openaac', openaacVoices: { en: 'en_US-ljspeech-medium' } },
+    });
+    expect(settings.speech.engine).toBe('app');
+    expect(settings.speech.appVoices).toEqual({ en: 'en_US-ljspeech-medium' });
   });
 
   it('reads language choices and rejects malformed ones', () => {

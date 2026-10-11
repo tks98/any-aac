@@ -4,7 +4,7 @@ Status: not adopted. 2026-10-11.
 
 ## Context
 
-After [0002](0002-only-clearly-licensed-voices.md), the only Open AAC voice in Spanish is Carlfm: male, small and low quality. Kokoro-82M has Apache 2.0 weights and Spanish voices, including a female one, so it was the first candidate.
+After [0002](0002-only-clearly-licensed-voices.md), the only app voice in Spanish is Carlfm: male, small and low quality. Kokoro-82M has Apache 2.0 weights and Spanish voices, including a female one, so it was the first candidate.
 
 ## Evaluation
 

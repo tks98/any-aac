@@ -93,8 +93,8 @@ describe('boards in a set', () => {
   const set = (): BoardSet => {
     const core = {
       ...board(),
-      ext_openaac_compact_board: 'core-phone',
-      ext_openaac_placeholder: true,
+      ext_anyaac_compact_board: 'core-phone',
+      ext_anyaac_placeholder: true,
     };
     const phone = createBoard({ id: 'core-phone', name: 'Core (phone)', rows: 1, columns: 1 });
     return { rootId: 'core', boards: [core, phone], files: {} };
@@ -111,7 +111,7 @@ describe('boards in a set', () => {
     const s = set();
     const edited = replaceBoard(s, { ...s.boards[0]!, name: 'Mine' });
     expect(edited.boards[0]!.name).toBe('Mine');
-    expect(edited.boards[0]!.ext_openaac_placeholder).toBeUndefined();
+    expect(edited.boards[0]!.ext_anyaac_placeholder).toBeUndefined();
   });
 
   it('adds an empty board the same size as another', () => {

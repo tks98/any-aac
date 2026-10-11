@@ -199,7 +199,7 @@ Switch interfaces usually present themselves as keyboard keys (Space or Enter by
 - App-specific data goes in `ext_`-prefixed fields; Voxa, for example, stores motor-plan locks and part of speech there.
 - An `.obl` logging format exists too.
 - Field-level details (`format`, `grid.order`, `load_board`, the special actions) _(need checking against the spec at openboardformat.org, which didn't render for me)_.
-- **Implication:** make OBF/OBZ our native import and export format, store our extras in `ext_openaac_*`, and test that every board round-trips without loss.
+- **Implication:** make OBF/OBZ our native import and export format, store our extras in `ext_anyaac_*`, and test that every board round-trips without loss.
 
 ### 4.6 Locking down the device
 

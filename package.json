@@ -1,5 +1,5 @@
 {
-  "name": "open-aac",
+  "name": "any-aac",
   "version": "0.1.0",
   "private": true,
   "description": "A free, open-source AAC (augmentative and alternative communication) app that runs in the browser and works offline.",
@@ -10,13 +10,13 @@
     "node": ">=24"
   },
   "scripts": {
-    "dev": "pnpm --filter @open-aac/web dev",
-    "dev:lan": "pnpm --filter @open-aac/web dev --host",
-    "build": "pnpm --filter @open-aac/web build",
-    "preview": "pnpm --filter @open-aac/web preview",
-    "preview:lan": "pnpm --filter @open-aac/web preview --host",
+    "dev": "pnpm --filter @any-aac/web dev",
+    "dev:lan": "pnpm --filter @any-aac/web dev --host",
+    "build": "pnpm --filter @any-aac/web build",
+    "preview": "pnpm --filter @any-aac/web preview",
+    "preview:lan": "pnpm --filter @any-aac/web preview --host",
     "test": "pnpm -r --if-present test",
-    "test:e2e": "pnpm --filter @open-aac/web test:e2e",
+    "test:e2e": "pnpm --filter @any-aac/web test:e2e",
     "typecheck": "pnpm -r --if-present typecheck",
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write ."

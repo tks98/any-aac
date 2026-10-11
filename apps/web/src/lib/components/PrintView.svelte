@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { boardName, cells, type ObfBoard } from '@open-aac/core';
+  import { boardName, cells, type ObfBoard } from '@any-aac/core';
   import { onMount, tick } from 'svelte';
   import { imageSrc } from '../images';
   import { app } from '../state.svelte';

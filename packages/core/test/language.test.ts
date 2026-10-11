@@ -53,10 +53,10 @@ describe('addWord in a language', () => {
 });
 
 describe('boards and sets', () => {
-  it('translates board names through ext_openaac_name_translations', () => {
+  it('translates board names through ext_anyaac_name_translations', () => {
     const board = {
       ...createBoard({ id: 'food', name: 'Food', rows: 1, columns: 1 }),
-      ext_openaac_name_translations: { es: 'Comida' },
+      ext_anyaac_name_translations: { es: 'Comida' },
     };
     expect(boardName(board, 'es')).toBe('Comida');
     expect(boardName(board, 'en')).toBe('Food');
@@ -82,8 +82,8 @@ describe('translatedLabel and translatedName', () => {
     expect(translatedLabel(button, 'fr')).toBeUndefined();
     const board = { ...createBoard({ id: 'b', name: 'Food', rows: 1, columns: 1 }) };
     expect(translatedName(board, 'es')).toBeUndefined();
-    expect(
-      translatedName({ ...board, ext_openaac_name_translations: { es: 'Comida' } }, 'es'),
-    ).toBe('Comida');
+    expect(translatedName({ ...board, ext_anyaac_name_translations: { es: 'Comida' } }, 'es')).toBe(
+      'Comida',
+    );
   });
 });

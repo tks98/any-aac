@@ -4,7 +4,7 @@
     {
       "name": "web",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@open-aac/web", "dev", "--port", "5173", "--strictPort"],
+      "runtimeArgs": ["--filter", "@any-aac/web", "dev", "--port", "5173", "--strictPort"],
       "port": 5173
     },
     {
@@ -12,7 +12,7 @@
       "runtimeExecutable": "pnpm",
       "runtimeArgs": [
         "--filter",
-        "@open-aac/web",
+        "@any-aac/web",
         "dev",
         "--host",
         "--port",
@@ -26,7 +26,7 @@
       "runtimeExecutable": "pnpm",
       "runtimeArgs": [
         "--filter",
-        "@open-aac/web",
+        "@any-aac/web",
         "preview",
         "--host",
         "127.0.0.1",

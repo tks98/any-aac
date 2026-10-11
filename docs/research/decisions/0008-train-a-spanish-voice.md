@@ -4,7 +4,7 @@ Status: deferred: a possible future plan, not scheduled. 2026-10-11.
 
 ## Context
 
-Spanish needs a good Open AAC voice, and a female one ([0002](0002-only-clearly-licensed-voices.md), [0007](0007-kokoro-for-spanish.md)). Every good-quality Spanish Piper voice was fine-tuned from the research-only lessac voice or doesn't document its training. The licence problem is the lineage, not the Spanish recordings: Daniela (Argentinian, female), for example, was trained on [OpenSLR 61](https://www.openslr.org/61/), which is CC BY-SA 4.0, but fine-tuned from lessac.
+Spanish needs a good app voice, and a female one ([0002](0002-only-clearly-licensed-voices.md), [0007](0007-kokoro-for-spanish.md)). Every good-quality Spanish Piper voice was fine-tuned from the research-only lessac voice or doesn't document its training. The licence problem is the lineage, not the Spanish recordings: Daniela (Argentinian, female), for example, was trained on [OpenSLR 61](https://www.openslr.org/61/), which is CC BY-SA 4.0, but fine-tuned from lessac.
 
 ## Possible plan
 

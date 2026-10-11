@@ -319,5 +319,5 @@ export const SPANISH: Vocabulary = {
     "<p>Words chosen in Spanish from Soto and Cooper's early Spanish vocabulary for AAC " +
     '(<a href="https://doi.org/10.1080/07434618.2021.1881822">2021</a>) and the concepts of the ' +
     '<a href="https://www.med.unc.edu/ahs/clds/universal-core-vocabulary/">Universal Core vocabulary</a> ' +
-    '(Center for Literacy and Disability Studies, UNC-Chapel Hill, CC BY 4.0), arranged by Open AAC contributors. A draft for review by Spanish-speaking SLPs.</p>',
+    '(Center for Literacy and Disability Studies, UNC-Chapel Hill, CC BY 4.0), arranged by Any AAC contributors. A draft for review by Spanish-speaking SLPs.</p>',
 };

@@ -25,7 +25,7 @@ import {
   type ObfBoard,
   type ObfButton,
   type ObfImage,
-} from '@open-aac/core';
+} from '@any-aac/core';
 import { backups } from './backup.svelte';
 import { app } from './state.svelte';
 import { saveBoards } from './storage';
@@ -37,7 +37,7 @@ const SHARED = [
   'translations',
   'image_id',
   'load_board',
-  'ext_openaac_part_of_speech',
+  'ext_anyaac_part_of_speech',
 ] as const;
 
 /** How many versions Undo can go back through. */

@@ -1,4 +1,4 @@
-import type { BoardSet, ObfBoard } from '@open-aac/core';
+import type { BoardSet, ObfBoard } from '@any-aac/core';
 
 const objectUrls = new WeakMap<Uint8Array, string>();
 
