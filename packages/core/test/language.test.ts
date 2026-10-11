@@ -8,6 +8,8 @@ import {
   placeButton,
   setLanguages,
   spokenText,
+  translatedLabel,
+  translatedName,
   type ObfButton,
 } from '../src';
 
@@ -70,5 +72,18 @@ describe('boards and sets', () => {
     );
     expect(setLanguages({ rootId: 'b', boards: [board], files: {} })).toEqual(['en', 'es', 'fr']);
     expect(baseLanguage('pt_BR')).toBe('pt');
+  });
+});
+
+describe('translatedLabel and translatedName', () => {
+  it('give only a real translation, never the fallback', () => {
+    const button = { id: 'pizza', label: 'pizza', translations: { es: { label: 'pizza' } } };
+    expect(translatedLabel(button, 'es-MX')).toBe('pizza');
+    expect(translatedLabel(button, 'fr')).toBeUndefined();
+    const board = { ...createBoard({ id: 'b', name: 'Food', rows: 1, columns: 1 }) };
+    expect(translatedName(board, 'es')).toBeUndefined();
+    expect(
+      translatedName({ ...board, ext_openaac_name_translations: { es: 'Comida' } }, 'es'),
+    ).toBe('Comida');
   });
 });

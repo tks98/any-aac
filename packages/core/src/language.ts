@@ -71,3 +71,17 @@ export function setLanguages(set: BoardSet): string[] {
   }
   return [...found].filter((lang) => lang !== '').sort();
 }
+
+/** A button's label in a language, only if it has its own translation (no fallback). */
+export function translatedLabel(button: ObfButton, lang: string): string | undefined {
+  const translation = pick<unknown>(button.translations, lang);
+  return isRecord(translation) && typeof translation.label === 'string'
+    ? translation.label
+    : undefined;
+}
+
+/** A board's name in a language, only if it has its own translation (no fallback). */
+export function translatedName(board: ObfBoard, lang: string): string | undefined {
+  const name = pick<unknown>(board[EXT_NAME_TRANSLATIONS], lang);
+  return typeof name === 'string' ? name : undefined;
+}

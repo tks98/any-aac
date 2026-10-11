@@ -2,9 +2,11 @@
   import { behaviorOf, spokenText } from '@open-aac/core';
   import { onMount, untrack } from 'svelte';
   import BoardGrid from './lib/components/BoardGrid.svelte';
+  import EditMode from './lib/components/EditMode.svelte';
   import MessageBar from './lib/components/MessageBar.svelte';
   import NavRail from './lib/components/NavRail.svelte';
   import SettingsPanel from './lib/components/SettingsPanel.svelte';
+  import { editor } from './lib/editor.svelte';
   import { isOutdatedStarter, starterSet } from './lib/starter';
   import { app } from './lib/state.svelte';
   import {
@@ -108,21 +110,25 @@
   });
 </script>
 
-<div class="app">
-  <MessageBar />
-  <div class="body">
-    <NavRail onunlock={() => (settingsOpen = true)} />
-    <main>
-      <p class="trail">
-        {app.trail.join('  ›  ')}
-        {#if notSaved}<span class="warning">· {app.t.notSaved}</span>{/if}
-      </p>
-      {#if app.view}
-        <BoardGrid board={app.view} />
-      {/if}
-    </main>
+{#if editor.active}
+  <EditMode onsettings={() => (settingsOpen = true)} />
+{:else}
+  <div class="app">
+    <MessageBar />
+    <div class="body">
+      <NavRail onunlock={() => editor.open()} />
+      <main>
+        <p class="trail">
+          {app.trail.join('  ›  ')}
+          {#if notSaved}<span class="warning">· {app.t.notSaved}</span>{/if}
+        </p>
+        {#if app.view}
+          <BoardGrid board={app.view} />
+        {/if}
+      </main>
+    </div>
   </div>
-</div>
+{/if}
 
 <SettingsPanel bind:open={settingsOpen} />
 

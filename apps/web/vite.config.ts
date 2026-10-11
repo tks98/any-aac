@@ -58,12 +58,31 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,svg,png,ico,woff2}'],
         // The offline voice is an optional download: cache its code when first
         // used, rather than making every install fetch it.
-        globIgnores: ['**/ort*.js', '**/piper*.js', '**/voice.worker*.js'],
+        globIgnores: [
+          '**/ort*.js',
+          '**/piper*.js',
+          '**/voice.worker*.js',
+          // The symbol library is fetched as symbols are looked at, not up front.
+          'symbol-library/**',
+        ],
         runtimeCaching: [
           {
             urlPattern: /\/assets\/(ort|piper|voice\.worker)[^/]*\.(m?js|wasm|data)$/,
             handler: 'CacheFirst',
             options: { cacheName: 'open-aac-voice-runtime' },
+          },
+          {
+            urlPattern: /\/symbol-library\/index\.json$/,
+            handler: 'StaleWhileRevalidate',
+            options: { cacheName: 'open-aac-symbol-index' },
+          },
+          {
+            urlPattern: /\/symbol-library\/.+\.svg$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'open-aac-symbols',
+              expiration: { maxEntries: 4000 },
+            },
           },
         ],
         clientsClaim: true,

@@ -6,8 +6,8 @@
   "license": "AGPL-3.0-or-later",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "dev": "node scripts/symbol-library.mjs && vite",
+    "build": "node scripts/symbol-library.mjs && vite build",
     "preview": "vite preview",
     "typecheck": "svelte-check --tsconfig ./tsconfig.json --fail-on-warnings",
     "test:e2e": "playwright test",

@@ -12,18 +12,21 @@ const urls = import.meta.glob<string>('../assets/symbols/*/*.svg', {
   eager: true,
 });
 
-type SetName = 'mulberry' | 'openmoji';
+export type SetName = 'mulberry' | 'openmoji';
 
 export interface StarterSymbol {
   /** Where the app can load it from. */
   url: string;
   set: SetName;
+  /** Its name in its set (a Mulberry file name or an OpenMoji code). */
+  name: string;
   license: ObfLicense;
 }
 
 const CC_BY_SA = 'https://creativecommons.org/licenses/by-sa/4.0/';
 
-function license(set: SetName, name: string): ObfLicense {
+/** Licence metadata for a symbol, recorded on every image that uses it. */
+export function symbolLicense(set: SetName, name: string): ObfLicense {
   return set === 'mulberry'
     ? {
         type: 'CC BY-SA 4.0',
@@ -41,11 +44,16 @@ function license(set: SetName, name: string): ObfLicense {
       };
 }
 
+/** Every starter word key that has a real symbol. */
+export const STARTER_SYMBOL_KEYS = Object.keys(sources.symbols);
+
 /** The real symbol for a starter word key, if there is one. */
 export function starterSymbol(key: string): StarterSymbol | undefined {
   const source = (sources.symbols as Record<string, { set: string; name: string }>)[key];
   if (!source) return undefined;
   const set = source.set as SetName;
   const url = urls[`../assets/symbols/${set}/${key}.svg`];
-  return url ? { url, set, license: license(set, source.name) } : undefined;
+  return url
+    ? { url, set, name: source.name, license: symbolLicense(set, source.name) }
+    : undefined;
 }

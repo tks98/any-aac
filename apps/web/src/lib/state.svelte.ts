@@ -75,6 +75,21 @@ class AppState {
     this.message = [];
   }
 
+  /** Swaps in an edited version of the boards, staying on the same board where it still exists. */
+  replaceSet(set: BoardSet) {
+    const exists = (id: string) => set.boards.some((b) => b.id === id);
+    this.set = set;
+    this.history = this.history.filter(exists);
+    if (!exists(this.boardId)) this.boardId = set.rootId;
+  }
+
+  /** Opens a board, remembering where we came from for Back. */
+  open(id: string) {
+    if (!this.boardById(id) || id === this.boardId) return;
+    this.history = [...this.history, this.boardId];
+    this.boardId = id;
+  }
+
   boardById(id: string | undefined) {
     return id === undefined ? undefined : this.set?.boards.find((b) => b.id === id);
   }
@@ -82,14 +97,9 @@ class AppState {
   press(button: ObfButton) {
     const behavior = behaviorOf(button);
     switch (behavior.kind) {
-      case 'navigate': {
-        const target = this.boardById(behavior.target.id);
-        if (target) {
-          this.history = [...this.history, this.boardId];
-          this.boardId = target.id;
-        }
+      case 'navigate':
+        if (behavior.target.id !== undefined) this.open(behavior.target.id);
         return;
-      }
       case 'special':
         if (behavior.action === 'clear') this.clear();
         else if (behavior.action === 'backspace') this.deleteLast();

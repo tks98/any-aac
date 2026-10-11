@@ -19,6 +19,11 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      # The symbol library's pinned Mulberry release (52 MB), fetched by the build.
+      - uses: actions/cache@v6
+        with:
+          path: apps/web/.cache
+          key: symbol-library-${{ hashFiles('apps/web/scripts/symbol-library.mjs') }}
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test
@@ -34,6 +39,11 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      # The symbol library's pinned Mulberry release (52 MB), fetched by the build.
+      - uses: actions/cache@v6
+        with:
+          path: apps/web/.cache
+          key: symbol-library-${{ hashFiles('apps/web/scripts/symbol-library.mjs') }}
       - run: pnpm --filter @open-aac/web exec playwright install --with-deps chromium webkit firefox
       - run: pnpm test:e2e
       - uses: actions/upload-artifact@v7

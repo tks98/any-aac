@@ -59,6 +59,19 @@ Settings → Language picks the words' language, an optional second language and
 
 Still to do: a second language's own layout where word order or vocabulary needs it, and word forms and gender agreement (Spanish adjectives are masculine until there's a setting for the communicator's gender). Switching languages with Open AAC voices in both loads the other voice, which takes a second or two, while the device voice fills in. Import problems and some voice licence names are still shown in English. Every translation needs review by native-speaking SLPs.
 
+## Edit mode
+
+Holding Edit for a second opens edit mode, laid out as in the approved mockup: a toolbar (Done, Back, Undo, Redo, Swap, Show hidden, Settings), the board, and a panel for the selected cell. Settings now opens from the edit toolbar. In edit mode a tap selects a cell and nothing is spoken. On phones the panel opens as a full-screen sheet over the board.
+
+- **A button:** its label in each of the boards' languages, what it says, its symbol (from the symbol library or a photo), its word type (which sets its colour), whether it adds a word or opens a board (an existing one or a new one), whether the communicator can see it, and whether its position is locked. It can be copied into an empty cell, or deleted.
+- **An empty cell:** add a button, or paste a copied one.
+- **Nothing selected:** the board's name in each language.
+- **Motor plans:** starter buttons are locked in place. A locked button can't be swapped or deleted until it's unlocked. Hidden buttons keep their cell.
+- **Two layouts, one vocabulary:** a board and its phone layout share words but not positions. Changing a word changes it on both; adding or deleting one does too where there's room; swapping only changes the layout being edited. A new board made from a board with a phone layout gets a phone layout too.
+- **Saving:** every change is saved at once, and Undo goes back up to 100 changes (Ctrl/⌘-Z works too). Edited boards are no longer starter boards, so starter updates never replace them. Files nothing uses any more are dropped.
+- **Symbols:** the library is the whole Mulberry set (3,436 symbols), built from the pinned release by `apps/web/scripts/symbol-library.mjs` and served as static files. The service worker doesn't precache it; symbols are cached as they're seen, and a chosen symbol is copied into the boards, so boards stay complete offline and in exports. Search covers names, categories and tags; Spanish search only finds the starter words for now. Photos are shrunk to 512 px on the device.
+
 ## Known gaps
 
 - **Phones in landscape** get the tablet board, which is very short at phone height.
+- **Edit mode** can't yet resize a board, drag to swap, print boards, or record a sound for a button. On phones, a board's name can only be changed on a tablet-sized screen. Symbol search finds English words only, apart from the starter words.

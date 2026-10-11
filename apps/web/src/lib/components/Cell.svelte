@@ -11,6 +11,8 @@
     labelAbove = false,
     showSymbol = true,
     lang,
+    hidden = false,
+    pressed,
     onactivate,
   }: {
     button: ObfButton;
@@ -23,6 +25,10 @@
     showSymbol?: boolean;
     /** Language to show the button in, when it has a translation. */
     lang?: string;
+    /** Edit mode: a button the communicator doesn't see. */
+    hidden?: boolean;
+    /** Edit mode: whether this is the selected cell. */
+    pressed?: boolean;
     /** Activation that doesn't come from a pointer (keyboard, screen reader). */
     onactivate: () => void;
   } = $props();
@@ -42,7 +48,9 @@
   style:--fill={colors.fill}
   style:--edge={colors.edge}
   style:--longest={longest}
-  aria-label={isFolder ? app.t.folder(label) : undefined}
+  class:hidden
+  aria-label={hidden ? app.t.hiddenButton(label) : isFolder ? app.t.folder(label) : undefined}
+  aria-pressed={pressed}
   onclick={onactivate}
 >
   {#if isFolder}
@@ -77,6 +85,11 @@
     background: var(--fill);
     cursor: pointer;
     touch-action: manipulation;
+  }
+
+  .cell.hidden {
+    opacity: 0.45;
+    border-style: dashed;
   }
 
   .cell:active {
