@@ -77,8 +77,8 @@ Phases are defined in §6. **P1** is the MVP.
 
 ### 4.4 Access
 
-- [P1] Touch accommodations: hold-to-select time, select on release, debounce repeats, adjustable cell gap and padding for keyguards, and a choice of visual and audio feedback.
-- [P1] Keyboard navigation for the whole app.
+- [P1] Touch accommodations: hold-to-select time, select on release, debounce repeats, adjustable cell gap and padding for keyguards, and a choice of visual and audio feedback. _Done:_ visual feedback (the chosen word is outlined, optional) and spoken feedback (each word said as it's tapped, optional).
+- [P1] Keyboard navigation for the whole app. _Partly checked:_ controls are real buttons and every screen passes axe-core's WCAG 2.2 AA rules ([0009](research/decisions/0009-plain-interface.md)); a full keyboard walkthrough is still to do.
 - [P2] **Switch scanning:** _Started:_ auto, two-switch step and hold-to-move scanning; rows, columns or one at a time; speed, first-item delay, loops, auto-restart, the message bar and buttons, three highlight styles; keys, game controllers, tap anywhere and mouse buttons. See [design.md](design.md#switch-scanning). Still to do: block scanning, scanning settings and edit mode, switch-press timing beyond repeat filtering, and testing with switch users.
   - 1 or 2 switches
   - Auto, step, or inverse (hold-to-move) scanning

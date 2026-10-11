@@ -11,6 +11,9 @@
   let { onunlock }: { onunlock: () => void } = $props();
 
   let holding = $state(false);
+  /** Shown after a tap on Edit that was too short: it needs a hold. */
+  let hint = $state(false);
+  let hintTimer: ReturnType<typeof setTimeout> | undefined;
   let showingForms = $state(false);
 
   /** The other language of a bilingual communicator, which the switch button changes to. */
@@ -31,6 +34,12 @@
   }
 
   function cancelHold() {
+    if (holding) {
+      // Let go too soon: say how Edit works, rather than doing nothing.
+      hint = true;
+      clearTimeout(hintTimer);
+      hintTimer = setTimeout(() => (hint = false), 2500);
+    }
     holding = false;
     clearTimeout(timer);
   }
@@ -101,6 +110,7 @@
     <Icon path={ICONS.lock} size={28} />
     {app.t.edit}
   </button>
+  <span class="edit-hint" class:shown={hint} role="status">{hint ? app.t.holdToEdit : ''}</span>
 </nav>
 
 {#if showingForms}
@@ -108,7 +118,28 @@
 {/if}
 
 <style>
+  .edit-hint {
+    position: absolute;
+    z-index: 5;
+    padding: 8px 12px;
+    border-radius: 10px;
+    background: var(--ink);
+    color: var(--surface);
+    font-weight: 700;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    /* Beside the Edit button: right of the rail, or above the phone's nav bar. */
+    bottom: 12px;
+    left: calc(100% + 10px);
+  }
+
+  .edit-hint.shown {
+    opacity: 1;
+  }
+
   .rail {
+    position: relative;
     width: 104px;
     flex-shrink: 0;
     display: flex;
@@ -192,6 +223,12 @@
 
     .spacer {
       display: none;
+    }
+
+    .edit-hint {
+      left: auto;
+      right: 0;
+      bottom: calc(100% + 10px);
     }
   }
 </style>

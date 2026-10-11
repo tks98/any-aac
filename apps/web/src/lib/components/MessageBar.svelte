@@ -67,14 +67,17 @@
       </span>
     {/each}
   </button>
+  <!-- Icons with words: clearer than icons alone (W3C cognitive accessibility guidance). -->
   <button class="tool" aria-label={app.t.deleteLast} onclick={() => app.deleteLast()}>
-    <Icon path={ICONS.backspace} size={40} />
+    <Icon path={ICONS.backspace} size={34} />
+    <span class="small" aria-hidden="true">{app.t.delete}</span>
   </button>
   <button class="tool" aria-label={app.t.clearMessage} onclick={() => app.clear()}>
-    <Icon path={ICONS.clear} size={40} />
+    <Icon path={ICONS.clear} size={34} />
+    <span class="small" aria-hidden="true">{app.t.clear}</span>
   </button>
   {#if app.settings.display.showShare}
-    <button class="tool share" aria-label={app.t.shareMessage} onclick={share}>
+    <button class="tool" aria-label={app.t.shareMessage} onclick={share}>
       <Icon path={ICONS.share} size={36} />
       <span class="small" role="status">{copied ? app.t.copiedMessage : app.t.share}</span>
     </button>
@@ -140,11 +143,6 @@
     white-space: nowrap;
   }
 
-  .share {
-    flex-direction: column;
-    gap: 2px;
-  }
-
   .small {
     display: block;
     font-size: 0.85rem;
@@ -163,8 +161,10 @@
     width: clamp(64px, 8vw, 96px);
     flex-shrink: 0;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 2px;
   }
 
   .speak {
@@ -184,7 +184,7 @@
 
   @media (max-width: 599px) {
     .tool {
-      width: 52px;
+      width: 56px;
     }
 
     .speak {

@@ -12,10 +12,22 @@
   /** Clicks right after a pointer lifts came from that pointer, which we already handled. */
   let lastPointerUp = -Infinity;
 
+  /** The word just chosen, outlined for a moment so it's clear what counted. */
+  let chosen = $state<number | null>(null);
+  let chosenTimer: ReturnType<typeof setTimeout> | undefined;
+  function showChosen(index: number) {
+    if (!app.settings.display.selectionFlash) return;
+    chosen = index;
+    clearTimeout(chosenTimer);
+    chosenTimer = setTimeout(() => (chosen = null), 400);
+  }
+
   const selector = new TouchSelector<number>(() => app.settings.touch, {
     select: (index) => {
       const button = grid[index]?.button;
-      if (button) app.press(button);
+      if (!button) return;
+      app.press(button);
+      showChosen(index);
     },
     holdStart: (index, ms) => (holding = { index, ms }),
     holdEnd: () => (holding = null),
@@ -81,6 +93,7 @@
         labelAbove={app.settings.display.labelPosition === 'above'}
         showSymbol={app.settings.display.showSymbols}
         lang={app.language}
+        chosen={chosen === index}
         onactivate={() => onclick(index)}
       />
     {:else}

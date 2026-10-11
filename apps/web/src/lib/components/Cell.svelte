@@ -14,6 +14,7 @@
     hidden = false,
     pressed,
     theme,
+    chosen = false,
     onactivate,
   }: {
     button: ObfButton;
@@ -32,6 +33,8 @@
     pressed?: boolean;
     /** A theme other than the one in settings (printing is always light). */
     theme?: Theme;
+    /** Just chosen: outlined for a moment. */
+    chosen?: boolean;
     /** Activation that doesn't come from a pointer (keyboard, screen reader). */
     onactivate: () => void;
   } = $props();
@@ -55,6 +58,7 @@
   style:--edge-width="{colors.width}px"
   style:--longest={longest}
   class:hidden
+  class:chosen
   aria-label={hidden ? app.t.hiddenButton(label) : isFolder ? app.t.folder(label) : undefined}
   aria-pressed={pressed}
   onclick={onactivate}
@@ -96,6 +100,11 @@
   .cell.hidden {
     opacity: 0.45;
     border-style: dashed;
+  }
+
+  .cell.chosen {
+    outline: 5px solid var(--accent);
+    outline-offset: 2px;
   }
 
   .cell:active {

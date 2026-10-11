@@ -48,6 +48,8 @@ export interface DisplaySettings {
   showShare: boolean;
   /** A Phrases button for quick phrases, spoken at once. */
   showPhrases: boolean;
+  /** Outline a word for a moment when it's chosen. */
+  selectionFlash: boolean;
   /**
    * Phone-sized screens show boards' smaller phone layouts. Off: every device
    * shows the same layout, so every word keeps one place everywhere.
@@ -108,6 +110,7 @@ export const DEFAULT_SETTINGS: Settings = {
     showWordForms: true,
     showShare: false,
     showPhrases: true,
+    selectionFlash: true,
     phoneLayouts: true,
   },
   scan: {
@@ -229,6 +232,7 @@ export function withDefaults(saved: unknown): Settings {
       showWordForms: bool(display.showWordForms, d.display.showWordForms),
       showShare: bool(display.showShare, d.display.showShare),
       showPhrases: bool(display.showPhrases, d.display.showPhrases),
+      selectionFlash: bool(display.selectionFlash, d.display.selectionFlash),
       phoneLayouts: bool(display.phoneLayouts, d.display.phoneLayouts),
     },
     scan: {

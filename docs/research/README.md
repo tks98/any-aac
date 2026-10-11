@@ -11,6 +11,7 @@ By topic, with sources and what Open AAC does about each:
 - [Voices](findings/voices.md): browser speech, neural voices, voice licences
 - [Access](findings/access.md): touch, switch scanning, auditory scanning, high contrast and CVI
 - [Teaching](findings/teaching.md): aided language modeling, just-in-time vocabulary, abandonment
+- [Interface](findings/interface.md): AAC display research, cognitive accessibility, legibility, contrast and target size
 
 Longer documents:
 
@@ -19,16 +20,17 @@ Longer documents:
 
 ## Decisions
 
-| #                                                      | Decision                                            | Status      |
-| ------------------------------------------------------ | --------------------------------------------------- | ----------- |
-| [0001](decisions/0001-offline-voice.md)                | Offline voice: Piper in the browser, our own engine | Accepted    |
-| [0002](decisions/0002-only-clearly-licensed-voices.md) | Only voices with clearly open licences              | Accepted    |
-| [0003](decisions/0003-core-vocabulary.md)              | Core vocabulary from Universal Core                 | Accepted    |
-| [0004](decisions/0004-spanish-first-vocabulary.md)     | A Spanish-first vocabulary                          | Accepted    |
-| [0005](decisions/0005-phone-layouts.md)                | Phone layouts follow the tablet's order; can be off | Accepted    |
-| [0006](decisions/0006-partner-modeling.md)             | Tools for partner modeling                          | Accepted    |
-| [0007](decisions/0007-kokoro-for-spanish.md)           | Kokoro for a clearly licensed Spanish voice         | Not adopted |
-| [0008](decisions/0008-train-a-spanish-voice.md)        | Train a clearly licensed Spanish voice              | Proposed    |
+| #                                                      | Decision                                                               | Status      |
+| ------------------------------------------------------ | ---------------------------------------------------------------------- | ----------- |
+| [0001](decisions/0001-offline-voice.md)                | Offline voice: Piper in the browser, our own engine                    | Accepted    |
+| [0002](decisions/0002-only-clearly-licensed-voices.md) | Only voices with clearly open licences                                 | Accepted    |
+| [0003](decisions/0003-core-vocabulary.md)              | Core vocabulary from Universal Core                                    | Accepted    |
+| [0004](decisions/0004-spanish-first-vocabulary.md)     | A Spanish-first vocabulary                                             | Accepted    |
+| [0005](decisions/0005-phone-layouts.md)                | Phone layouts follow the tablet's order; can be off                    | Accepted    |
+| [0006](decisions/0006-partner-modeling.md)             | Tools for partner modeling                                             | Accepted    |
+| [0007](decisions/0007-kokoro-for-spanish.md)           | Kokoro for a clearly licensed Spanish voice                            | Not adopted |
+| [0008](decisions/0008-train-a-spanish-voice.md)        | Train a clearly licensed Spanish voice                                 | Deferred    |
+| [0009](decisions/0009-plain-interface.md)              | A plain, consistent interface, checked against accessibility standards | Accepted    |
 
 Earlier project decisions (licence, framework, name, building fresh, the approved design) are in [plan.md §10](../plan.md#10-decisions).
 

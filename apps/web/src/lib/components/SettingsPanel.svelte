@@ -729,6 +729,12 @@
             t.seconds(s.touch.ignoreRepeatMs),
             (v) => (app.settings.touch.ignoreRepeatMs = v),
           )}
+          {@render toggle(
+            t.selectionFlash,
+            t.selectionFlashHelp,
+            s.display.selectionFlash,
+            (on) => (app.settings.display.selectionFlash = on),
+          )}
           {@render slider(
             t.buttonGap,
             t.buttonGapHelp,

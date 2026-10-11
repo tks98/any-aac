@@ -66,6 +66,7 @@ describe('withDefaults', () => {
       showWordForms: true,
       showShare: false,
       showPhrases: true,
+      selectionFlash: true,
       phoneLayouts: true,
     });
   });
