@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { pickDefaultVoice, rankVoices, WebSpeech, type RawVoice } from '../src/lib/speech';
+import { asWord, pickDefaultVoice, rankVoices, WebSpeech, type RawVoice } from '../src/lib/speech';
 
 const voice = (name: string, lang: string, localService = true, isDefault = false): RawVoice => ({
   name,
@@ -122,10 +122,10 @@ describe('WebSpeech on iOS', () => {
 
   it('says the first word from the end of the tap, then speaks straight away', () => {
     const { said, tap } = iosSpeech();
-    tap('I');
-    expect(said).toEqual(['I']);
     tap('want');
-    expect(said).toEqual(['I', 'want']);
+    expect(said).toEqual(['want']);
+    tap('more');
+    expect(said).toEqual(['want', 'more']);
   });
 
   it('unlocks speech with silence when a tap has nothing to say', () => {
@@ -150,5 +150,22 @@ describe('WebSpeech on iOS', () => {
     vi.advanceTimersByTime(5000);
     tap();
     expect(said).toEqual(['(silent)']);
+  });
+});
+
+describe('asWord', () => {
+  it('lowercases a lone capital letter, so iOS says "I" rather than "capital I"', () => {
+    expect(asWord('I', 'en-US')).toBe('i');
+    expect(asWord(' A ', 'en-US')).toBe('a');
+    expect(asWord('I want more', 'en-US')).toBe('I want more');
+    expect(asWord('OK', 'en-US')).toBe('OK');
+    expect(asWord('yo', 'es-MX')).toBe('yo');
+  });
+
+  it('is used for the device voice', () => {
+    const { speech, said, tap } = iosSpeech();
+    tap();
+    speech.speak('I');
+    expect(said).toEqual(['(silent)', 'i']);
   });
 });

@@ -61,7 +61,7 @@ test('the message bar and buttons are scanned after the board', async ({ page })
   await page.keyboard.press(' ');
   await expect.poll(() => highlighted(page)).toEqual(['Speak']);
   await page.keyboard.press('Enter');
-  expect((await spoken(page)).at(-1)).toBe('I');
+  expect((await spoken(page)).at(-1)).toBe('i');
 
   // Then the navigation buttons, without Edit.
   for (let i = 0; i < 8; i++) await page.keyboard.press(' ');

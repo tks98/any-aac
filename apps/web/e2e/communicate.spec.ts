@@ -195,16 +195,17 @@ test('keeps working offline after the first visit', async ({ page, context, brow
 
 test('speaks each word, unless that is turned off', async ({ page }) => {
   await word(page, 'I').click();
-  expect(await spoken(page)).toEqual(['I']);
+  // A lone capital letter goes to the device voice in lower case, or iOS says "capital I".
+  expect(await spoken(page)).toEqual(['i']);
 
   await openSettings(page, 'Speech & voice');
   await page.getByRole('switch', { name: 'Speak each word when tapped' }).click();
   await closeSettings(page);
 
   await word(page, 'want').click();
-  expect(await spoken(page)).toEqual(['I']);
+  expect(await spoken(page)).toEqual(['i']);
   await page.getByRole('button', { name: 'Speak', exact: true }).click();
-  expect(await spoken(page)).toEqual(['I', 'I want']);
+  expect(await spoken(page)).toEqual(['i', 'I want']);
 });
 
 test('the message can be shared as text, once the Share button is turned on', async ({ page }) => {

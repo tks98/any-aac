@@ -128,6 +128,15 @@ export function preferPlaybackAudio() {
   if (session && session.type !== 'playback') session.type = 'playback';
 }
 
+/**
+ * iOS reads a capital letter on its own as a character ("capital I"). In
+ * lower case it's read as the letter, which for "I" is the word.
+ */
+export function asWord(text: string, lang: string): string {
+  const word = text.trim();
+  return /^\p{Lu}$/u.test(word) ? word.toLocaleLowerCase(lang) : text;
+}
+
 /** Events every browser counts as a tap or key press that may start speech. */
 const GESTURES = ['touchend', 'click', 'keydown', 'mouseup'] as const;
 /** How long a word that didn't start waits for the rest of its tap. */
@@ -187,7 +196,7 @@ export class WebSpeech implements SpeechOutput {
       options.voice != null ? voices.find((v) => voiceKey(v) === options.voice) : undefined;
     const lang = options.lang ?? this.lang;
     const voice = chosen ?? pickDefaultVoice(voices, lang);
-    const utterance = new SpeechSynthesisUtterance(text);
+    const utterance = new SpeechSynthesisUtterance(asWord(text, voice?.lang ?? lang));
     utterance.lang = voice?.lang ?? lang;
     if (voice) utterance.voice = voice;
     utterance.rate = options.rate ?? 1;
