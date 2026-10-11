@@ -172,8 +172,8 @@ test('every symbol loads, on the core board and a topic board', async ({ page })
 test.describe('on a phone', () => {
   test.use({ viewport: { width: 390, height: 844 }, hasTouch: true });
 
-  test('shows the 24-word phone board, and it fits', async ({ page }) => {
-    await expect(page.locator('button.cell')).toHaveCount(24);
+  test('shows the phone board: 24 words and a row of topics, and it fits', async ({ page }) => {
+    await expect(page.locator('button.cell')).toHaveCount(28);
     await expect(word(page, 'is')).toHaveCount(0);
     await expectBoardFits(page);
   });
@@ -189,6 +189,23 @@ test.describe('on a phone', () => {
     await expect(messageBar(page)).toHaveAccessibleName('Message: apple. Tap to speak it.');
   });
 
+  test('every topic has a phone layout', async ({ page }) => {
+    for (const [topic, first] of [
+      ['People', 'Mom'],
+      ['Food', 'apple'],
+      ['Places', 'home'],
+      ['Feelings', 'happy'],
+      ['Body', 'head'],
+      ['Things', 'ball'],
+    ]) {
+      await page.getByRole('button', { name: `${topic}, folder` }).tap();
+      await expect(word(page, first!)).toBeVisible();
+      await expect(page.getByText(`Core words (phone)  ›  ${topic} (phone)`)).toHaveCount(0);
+      await expectBoardFits(page);
+      await page.getByRole('button', { name: 'Home', exact: true }).tap();
+    }
+  });
+
   test('Spanish words fit too', async ({ page }) => {
     await openSettings(page, 'Language');
     await page
@@ -197,10 +214,7 @@ test.describe('on a phone', () => {
       .click();
     await page.getByRole('button', { name: 'Listo', exact: true }).click();
     await expectBoardFits(page);
-    await page
-      .getByRole('button', { name: /, carpeta$/ })
-      .last()
-      .tap();
+    await page.getByRole('button', { name: 'Emociones, carpeta' }).tap();
     await expect(word(page, 'feliz')).toBeVisible();
     await expectBoardFits(page);
   });

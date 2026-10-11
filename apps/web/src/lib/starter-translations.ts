@@ -13,13 +13,11 @@ export const STARTER_TRANSLATIONS: Record<string, Record<string, string>> = {
   es: {
     // Boards
     'Core words': 'Palabras básicas',
-    'Core words (phone)': 'Palabras básicas (teléfono)',
+    '(phone)': '(teléfono)',
     People: 'Personas',
     Food: 'Comida',
-    'Food (phone)': 'Comida (teléfono)',
     Places: 'Lugares',
     Feelings: 'Emociones',
-    'Feelings (phone)': 'Emociones (teléfono)',
     Body: 'Cuerpo',
     Things: 'Cosas',
 

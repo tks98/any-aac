@@ -43,7 +43,7 @@ The dark and high-contrast themes from the mockups are not built yet.
 
 ## Phone layouts
 
-Screens narrower than 600px show a board's compact layout when it has one. A board names its compact layout in `ext_openaac_compact_board`, and links always point at the full board, so Back and navigation behave the same on every device. The starter set has phone layouts for the core board (24 words, from the approved phone mockup) plus Food and Feelings. Core words keep fixed cells within each layout, but a phone cell is not in the same place as the tablet cell. How motor plans should carry between phone and tablet is a question for the vocabulary work with SLPs.
+Screens narrower than 600px show a board's compact layout when it has one. A board names its compact layout in `ext_openaac_compact_board`, and links always point at the full board, so Back and navigation behave the same on every device. The starter set has a phone layout for every board. The phone core board has the 24 words from the approved phone mockup, plus a seventh row for the People, Places, Body and Things folders the mockup had no room for; it still fits an iPhone SE. Core words keep fixed cells within each layout, but a phone cell is not in the same place as the tablet cell. How motor plans should carry between phone and tablet is a question for the vocabulary work with SLPs.
 
 Labels wrap between words and never mid-word. A word too long for its cell shrinks until it fits (down to 0.6rem), rather than being cut off or split. Each button uses CSS size containment, so nothing inside it can resize the grid; symbol and label sizes come from the cell (container query units).
 
@@ -62,4 +62,3 @@ Still to do: a second language's own layout where word order or vocabulary needs
 ## Known gaps
 
 - **Phones in landscape** get the tablet board, which is very short at phone height.
-- **People, Places, Body and Things** have no phone layout yet. The phone core board doesn't link to them.

@@ -173,16 +173,23 @@ const slug = (label: string) => label.toLowerCase().replace(/[^a-z0-9]+/g, '-');
  * Bump when the starter boards change. Saved starter boards from an older
  * version are replaced on next launch, as long as nobody has edited them.
  */
-export const STARTER_VERSION = 3;
+export const STARTER_VERSION = 4;
 const EXT_STARTER_VERSION = 'ext_openaac_starter_version';
+
+const PHONE = ' (phone)';
 
 /** A word or board name in every language the starter boards come in. */
 function translated(english: string): Record<string, string> {
+  const phone = english.endsWith(PHONE);
+  const key = phone ? english.slice(0, -PHONE.length) : english;
   const out: Record<string, string> = {};
   for (const [lang, words] of Object.entries(STARTER_TRANSLATIONS)) {
-    const word = words[english];
-    if (word === undefined) throw new Error(`"${english}" has no ${lang} translation.`);
-    out[lang] = word;
+    const word = words[key];
+    const suffix = phone ? words[PHONE.trim()] : '';
+    if (word === undefined || suffix === undefined) {
+      throw new Error(`"${english}" has no ${lang} translation.`);
+    }
+    out[lang] = phone ? `${word} ${suffix}` : word;
   }
   return out;
 }
@@ -231,7 +238,10 @@ const coreWord = (label: string): Word => {
   return found;
 };
 
-/** The phone layout of the core board: 24 words, from the approved phone mockup. */
+/**
+ * The phone layout of the core board: the 24 words from the approved phone
+ * mockup, with a row below them for the topics the mockup had no room for.
+ */
 const PHONE_CORE: Layout = [
   ['I', 'want', 'more', 'not'],
   ['you', 'go', 'like', 'what'],
@@ -239,10 +249,8 @@ const PHONE_CORE: Layout = [
   ['get', 'help', 'good', 'yes'],
   ['eat', 'play', 'up', 'no'],
   ['drink', 'all done', 'Food', 'Feelings'],
+  ['People', 'Places', 'Body', 'Things'],
 ].map((row) => row.map(coreWord));
-
-/** Topic boards that also get a phone layout (the ones the phone core links to). */
-const PHONE_TOPICS = ['food', 'feelings'];
 
 function newBoard(id: string, name: string, layout: Layout): ObfBoard {
   return {
@@ -342,15 +350,14 @@ export async function starterSet(): Promise<BoardSet> {
     ...coreBoard('core', 'Core words', TABLET_CORE, images),
     [EXT_COMPACT_BOARD]: 'core-phone',
   };
-  const phoneCore = coreBoard('core-phone', 'Core words (phone)', PHONE_CORE, images);
+  const phoneCore = coreBoard('core-phone', `Core words${PHONE}`, PHONE_CORE, images);
 
   const topics = TOPICS.flatMap((topic) => {
     const board = topicBoard(topic.id, topic.name, TABLET_CORE, topic.words, images);
-    if (!PHONE_TOPICS.includes(topic.id)) return [board];
     const phoneId = `${topic.id}-phone`;
     return [
       { ...board, [EXT_COMPACT_BOARD]: phoneId },
-      topicBoard(phoneId, `${topic.name} (phone)`, PHONE_CORE, topic.words, images),
+      topicBoard(phoneId, `${topic.name}${PHONE}`, PHONE_CORE, topic.words, images),
     ];
   });
 
