@@ -142,12 +142,14 @@
     install.listen();
     void requestPersistentStorage();
     void appVoice.refreshDownloaded();
-    // Browsers only let audio start from a tap; keep the voice's audio awake.
+    // Browsers only let audio start from a tap, and iOS only from a tap's
+    // touchend or click (not pointerdown or pointerup); keep the voice's audio awake.
     const wake = () => {
       if (app.settings.speech.engine === 'app') appVoice.engine.unlock();
     };
-    addEventListener('pointerup', wake, { capture: true });
-    addEventListener('keydown', wake, { capture: true });
+    for (const type of ['pointerup', 'touchend', 'click', 'keydown']) {
+      addEventListener(type, wake, { capture: true, passive: true });
+    }
     try {
       app.settings = await loadSettings();
     } catch {

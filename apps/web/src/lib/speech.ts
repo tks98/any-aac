@@ -128,16 +128,61 @@ export function preferPlaybackAudio() {
   if (session && session.type !== 'playback') session.type = 'playback';
 }
 
-class WebSpeech implements SpeechOutput {
-  readonly available = true;
+/** Events every browser counts as a tap or key press that may start speech. */
+const GESTURES = ['touchend', 'click', 'keydown', 'mouseup'] as const;
+/** How long a word that didn't start waits for the rest of its tap. */
+const RETRY_MS = 1000;
 
-  constructor(private readonly lang: string) {}
+/**
+ * The browser's built-in voices. iOS only starts speech from an event it
+ * counts as a tap (touchend or click), not from pointerdown, where words are
+ * chosen; a word spoken there is silently dropped. Chrome on Android is
+ * similar. So until speech has started once, a word that didn't start is said
+ * again from the same tap's touchend or click, and a tap with nothing to say
+ * unlocks speech with a silent utterance. After that, speech starts from
+ * anywhere.
+ */
+export class WebSpeech implements SpeechOutput {
+  readonly available = true;
+  /** Speech has started once, so the browser lets it start at any time. */
+  private started = false;
+  private waiting: { utterance: SpeechSynthesisUtterance; at: number } | null = null;
+
+  constructor(
+    private readonly lang: string,
+    private readonly synth: SpeechSynthesis = speechSynthesis,
+    events: EventTarget = globalThis,
+  ) {
+    for (const type of GESTURES) {
+      events.addEventListener(type, this.unlock, { capture: true, passive: true });
+    }
+  }
+
+  private readonly markStarted = () => {
+    this.started = true;
+    this.waiting = null;
+  };
+
+  private readonly unlock = () => {
+    if (this.started || this.synth.speaking || this.synth.pending) return;
+    const waiting = this.waiting;
+    this.waiting = null;
+    let utterance: SpeechSynthesisUtterance;
+    if (waiting && Date.now() - waiting.at < RETRY_MS) {
+      utterance = waiting.utterance;
+    } else {
+      utterance = new SpeechSynthesisUtterance(' ');
+      utterance.volume = 0;
+      utterance.addEventListener('start', this.markStarted);
+    }
+    this.synth.speak(utterance);
+  };
 
   speak(text: string, options: Partial<SpeakOptions> = {}) {
     if (text.trim() === '') return;
     preferPlaybackAudio();
-    speechSynthesis.cancel();
-    const voices = speechSynthesis.getVoices();
+    this.synth.cancel();
+    const voices = this.synth.getVoices();
     const chosen =
       options.voice != null ? voices.find((v) => voiceKey(v) === options.voice) : undefined;
     const lang = options.lang ?? this.lang;
@@ -148,24 +193,26 @@ class WebSpeech implements SpeechOutput {
     utterance.rate = options.rate ?? 1;
     utterance.pitch = options.pitch ?? 1;
     utterance.volume = options.volume ?? 1;
-    speechSynthesis.speak(utterance);
+    utterance.addEventListener('start', this.markStarted);
+    if (!this.started) this.waiting = { utterance, at: Date.now() };
+    this.synth.speak(utterance);
   }
 
   stop() {
-    speechSynthesis.cancel();
+    this.synth.cancel();
   }
 
   get speaking() {
-    return speechSynthesis.speaking === true;
+    return this.synth.speaking === true;
   }
 
   voices(lang = this.lang): VoiceInfo[] {
-    return rankVoices(speechSynthesis.getVoices(), lang);
+    return rankVoices(this.synth.getVoices(), lang);
   }
 
   onVoicesChanged(callback: () => void) {
-    speechSynthesis.addEventListener('voiceschanged', callback);
-    return () => speechSynthesis.removeEventListener('voiceschanged', callback);
+    this.synth.addEventListener('voiceschanged', callback);
+    return () => this.synth.removeEventListener('voiceschanged', callback);
   }
 }
 

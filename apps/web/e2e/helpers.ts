@@ -45,7 +45,13 @@ export async function recordSpeech(page: Page) {
       });
     }
     const fake = {
-      speak(utterance: { text: string; lang: string }) {
+      speaking: false,
+      pending: false,
+      // Like a browser that lets speech start: it starts at once. The silent
+      // utterance that unlocks speech on iOS isn't a word, so isn't recorded.
+      speak(utterance: { text: string; lang: string; dispatchEvent?: (event: Event) => void }) {
+        utterance.dispatchEvent?.(new Event('start'));
+        if (utterance.text.trim() === '') return;
         spoken.push(utterance.text);
         spokenIn.push(utterance.lang);
       },
