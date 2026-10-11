@@ -10,7 +10,9 @@
   import { editor } from './lib/editor.svelte';
   import { isOutdatedStarter, starterSet } from './lib/starter';
   import { app } from './lib/state.svelte';
+  import { backups } from './lib/backup.svelte';
   import {
+    loadBackupTimes,
     loadBoards,
     loadSettings,
     requestPersistentStorage,
@@ -103,6 +105,7 @@
         app.load(starter);
         await saveBoards(starter);
       }
+      Object.assign(backups, await loadBackupTimes());
     } catch {
       // Storage can be unavailable (private browsing, blocked site data).
       // Speaking must still work, so carry on with the starter boards in memory.

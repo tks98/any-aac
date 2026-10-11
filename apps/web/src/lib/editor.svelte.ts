@@ -26,6 +26,7 @@ import {
   type ObfButton,
   type ObfImage,
 } from '@open-aac/core';
+import { backups } from './backup.svelte';
 import { app } from './state.svelte';
 import { saveBoards } from './storage';
 
@@ -140,7 +141,10 @@ class Editor {
       this.selected = null;
     }
     saveBoards(set).then(
-      () => (this.saveFailed = false),
+      () => {
+        this.saveFailed = false;
+        backups.savedAt = Date.now();
+      },
       () => (this.saveFailed = true),
     );
   }

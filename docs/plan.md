@@ -110,7 +110,7 @@ Phases are defined in §6. **P1** is the MVP.
 ### 4.7 Data, privacy, and backup
 
 - [P1] Everything is stored locally. `navigator.storage.persist()` is requested. A prompt encourages installing to the Home Screen.
-- [P1] **Export and import the whole profile** (OBZ plus a settings JSON), with periodic reminders to back up.
+- [P1] **Export and import the whole profile** (OBZ plus a settings JSON), with periodic reminders to back up. _Done:_ Back up everything (in Settings, or from the reminder in edit mode) saves one .obz with the settings inside; importing it offers to restore them. Edit mode reminds when edited boards were never backed up, or changed and the last backup is over a week old.
 - [P1] Import and export single boards and sets as OBF/OBZ.
 - [P4] Opt-in usage logging:
   - Off by default and pausable

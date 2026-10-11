@@ -161,3 +161,13 @@ describe('readObf', () => {
     expect(set).toMatchObject({ rootId: 'solo', files: {} });
   });
 });
+
+describe('extra files', () => {
+  it('round-trip, so an app can keep its own data in a package', () => {
+    const board = createBoard({ id: 'b', name: 'B', rows: 1, columns: 1 });
+    const set = { rootId: 'b', boards: [board], files: {} };
+    const bytes = writeObz(set, { 'app/settings.json': new TextEncoder().encode('{"a":1}') });
+    const { set: read } = readObz(bytes);
+    expect(new TextDecoder().decode(read.files['app/settings.json'])).toBe('{"a":1}');
+  });
+});

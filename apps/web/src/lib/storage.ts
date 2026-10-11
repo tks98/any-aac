@@ -26,8 +26,15 @@ export interface StoredAudio {
   sampleRate: number;
 }
 
+/** When the boards were last backed up (a backup file downloaded). */
+interface StoredMeta {
+  key: string;
+  value: number;
+}
+
 class Database extends Dexie {
   sets!: EntityTable<StoredSet, 'key'>;
+  meta!: EntityTable<StoredMeta, 'key'>;
   settings!: EntityTable<StoredSettings, 'key'>;
   audio!: EntityTable<StoredAudio, 'key'>;
 
@@ -36,6 +43,7 @@ class Database extends Dexie {
     this.version(1).stores({ sets: 'key' });
     this.version(2).stores({ sets: 'key', settings: 'key' });
     this.version(3).stores({ sets: 'key', settings: 'key', audio: 'key, voice' });
+    this.version(4).stores({ sets: 'key', settings: 'key', audio: 'key, voice', meta: 'key' });
   }
 }
 
@@ -48,6 +56,19 @@ export async function loadBoards(): Promise<BoardSet | undefined> {
 
 export async function saveBoards(set: BoardSet): Promise<void> {
   await db.sets.put({ key: CURRENT, set, savedAt: Date.now() });
+}
+
+/** When the boards were last saved and last backed up (ms since 1970), if ever. */
+export async function loadBackupTimes(): Promise<{
+  savedAt: number | null;
+  backedUpAt: number | null;
+}> {
+  const [set, meta] = await Promise.all([db.sets.get(CURRENT), db.meta.get('backedUpAt')]);
+  return { savedAt: set?.savedAt ?? null, backedUpAt: meta?.value ?? null };
+}
+
+export async function saveBackupTime(at: number): Promise<void> {
+  await db.meta.put({ key: 'backedUpAt', value: at });
 }
 
 export async function loadSettings(): Promise<Settings> {

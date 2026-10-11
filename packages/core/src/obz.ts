@@ -142,7 +142,11 @@ function boardFileNames(boards: ObfBoard[]): Map<string, string> {
   return names;
 }
 
-export function writeObz(set: BoardSet): Uint8Array {
+/**
+ * Packs a set as .obz. `extras` are more files for the zip (e.g. an app's own
+ * settings); other apps ignore them, and readObz returns them in `files`.
+ */
+export function writeObz(set: BoardSet, extras: Record<string, Uint8Array> = {}): Uint8Array {
   const pathFor = boardFileNames(set.boards);
   const rootPath = pathFor.get(set.rootId);
   if (!rootPath) throw new ObfError('The root board is not in the set.');
@@ -178,6 +182,7 @@ export function writeObz(set: BoardSet): Uint8Array {
 
   // Images and sounds are usually compressed already.
   for (const [path, data] of Object.entries(set.files)) zip[path] = [data, { level: 0 }];
+  for (const [path, data] of Object.entries(extras)) zip[path] = [data, { level: 6 }];
   zip['manifest.json'] = [strToU8(JSON.stringify(manifest, null, 2)), { level: 6 }];
   return zipSync(zip);
 }

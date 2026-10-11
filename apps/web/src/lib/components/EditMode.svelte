@@ -1,5 +1,6 @@
 <script lang="ts">
   import { boardName, buttonAt, linkableBoards, type ObfBoard } from '@open-aac/core';
+  import { backups } from '../backup.svelte';
   import { editor } from '../editor.svelte';
   import { ICONS } from '../icons';
   import { app } from '../state.svelte';
@@ -12,6 +13,12 @@
 
   let printDialog: HTMLDialogElement;
   const allBoards = $derived(app.set ? linkableBoards(app.set) : []);
+
+  const backupDue = $derived(backups.due(app.set));
+
+  function backUpNow() {
+    if (app.set) void backups.backUp(app.set, $state.snapshot(app.settings));
+  }
 
   function printBoards(boards: ObfBoard[]) {
     printDialog.close();
@@ -52,6 +59,12 @@
       <span class="saved" class:warning={editor.saveFailed}>
         {editor.saveFailed ? t.notSavedEdit : t.savesHere}
       </span>
+      {#if backupDue}
+        <span class="due">
+          {t.backupDue}
+          <button class="link" onclick={backUpNow}>{t.backUpNow}</button>
+        </span>
+      {/if}
     </div>
     <div class="tools" role="toolbar" aria-label={t.editTools}>
       {#if app.history.length > 0}
@@ -163,6 +176,21 @@
   .warning {
     color: var(--help);
     font-weight: 700;
+  }
+
+  .due {
+    font-size: 0.95rem;
+    font-weight: 700;
+  }
+
+  .link {
+    padding: 0;
+    border: none;
+    background: none;
+    color: var(--accent);
+    font: inherit;
+    text-decoration: underline;
+    cursor: pointer;
   }
 
   .tools {

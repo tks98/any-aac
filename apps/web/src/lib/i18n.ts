@@ -112,9 +112,19 @@ const en = {
   showSymbolsHelp: 'Off: words only, in larger text.',
 
   boardsIntro:
-    "Boards are stored on this device only. Export a copy now and then so they can't be lost.",
-  importBoards: 'Import boards',
-  exportBoards: 'Export all boards',
+    "Boards are stored on this device only. Back them up now and then so they can't be lost.",
+  backUp: 'Back up everything',
+  backUpHelp: 'Saves every board, picture and setting in one file.',
+  lastBackup: (date: string) => `Last backup: ${date}.`,
+  neverBackedUp: 'Not backed up yet.',
+  backedUp: 'Saved a backup of all boards and settings.',
+  backupDue: 'The boards have changed since the last backup.',
+  backUpNow: 'Back up now',
+  restoreSettings:
+    'This backup also has settings. Use them too? (Cancel keeps the settings on this device.)',
+  settingsRestored: 'Settings restored.',
+  importBoards: 'Import boards or a backup',
+  exportBoards: 'Export boards only (to share)',
   resetBoards: 'Reset to starter boards',
   boardCount: (count: number) => (count === 1 ? '1 board' : `${count} boards`),
   confirmImport: (count: string, file: string) =>
@@ -325,9 +335,19 @@ const es: Messages = {
   showSymbolsHelp: 'Desactivado: solo palabras, en letra más grande.',
 
   boardsIntro:
-    'Los tableros se guardan solo en este dispositivo. Exporta una copia de vez en cuando para no perderlos.',
-  importBoards: 'Importar tableros',
-  exportBoards: 'Exportar todos los tableros',
+    'Los tableros se guardan solo en este dispositivo. Haz una copia de vez en cuando para no perderlos.',
+  backUp: 'Hacer una copia de todo',
+  backUpHelp: 'Guarda todos los tableros, imágenes y ajustes en un archivo.',
+  lastBackup: (date) => `Última copia: ${date}.`,
+  neverBackedUp: 'Todavía no hay ninguna copia.',
+  backedUp: 'Se guardó una copia de todos los tableros y ajustes.',
+  backupDue: 'Los tableros han cambiado desde la última copia.',
+  backUpNow: 'Hacer una copia ahora',
+  restoreSettings:
+    'Esta copia también tiene ajustes. ¿Usarlos también? (Cancelar mantiene los ajustes de este dispositivo.)',
+  settingsRestored: 'Ajustes restaurados.',
+  importBoards: 'Importar tableros o una copia',
+  exportBoards: 'Exportar solo los tableros (para compartir)',
   resetBoards: 'Volver a los tableros iniciales',
   boardCount: (count) => (count === 1 ? '1 tablero' : `${count} tableros`),
   confirmImport: (count, file) =>

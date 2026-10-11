@@ -1,6 +1,11 @@
 import { expect, test, type Page } from '@playwright/test';
 import { messageBar, openEditor, recordSpeech, spoken, word } from './helpers';
 
+async function openSettingsFromEditor(page: Page, section: string) {
+  await page.getByRole('toolbar').getByRole('button', { name: 'Settings' }).click();
+  await page.getByRole('button', { name: section }).click();
+}
+
 const panel = (page: Page) => page.getByRole('complementary', { name: 'Button settings' });
 const done = (page: Page) => page.getByRole('button', { name: 'Done', exact: true }).click();
 
@@ -197,4 +202,39 @@ test('prints this board or all boards, one per page', async ({ page }) => {
   await page.evaluate(() => dispatchEvent(new Event('afterprint')));
   await page.emulateMedia({ media: 'screen' });
   await expect(pages).toHaveCount(0);
+});
+
+test('backs up boards and settings, reminds when due, and restores both', async ({ page }) => {
+  // Edit a word: edit mode now reminds that the boards aren't backed up.
+  await openEditor(page);
+  await word(page, 'want').click();
+  await panel(page).getByLabel('Label in English').fill('need');
+  await panel(page).getByLabel('Label in English').press('Enter');
+  await expect(page.getByText('The boards have changed since the last backup.')).toBeVisible();
+  const downloading = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Back up now' }).click();
+  const backup = await downloading;
+  expect(backup.suggestedFilename()).toMatch(/^open-aac-backup-\d{4}-\d{2}-\d{2}\.obz$/);
+  await expect(page.getByText('The boards have changed since the last backup.')).toBeHidden();
+
+  // Change a word and a setting after the backup…
+  await word(page, 'need').click();
+  await panel(page).getByLabel('Label in English').fill('wish');
+  await panel(page).getByLabel('Label in English').press('Enter');
+  await openSettingsFromEditor(page, 'Speech & voice');
+  await page.getByRole('switch', { name: 'Speak each word when tapped' }).click();
+
+  // …then restore the backup: both come back.
+  await page.getByRole('button', { name: 'Boards & backup' }).click();
+  await expect(page.getByText(/one file\.\s+Last backup: /)).toBeVisible();
+  page.on('dialog', (dialog) => dialog.accept());
+  await page.getByLabel('Import boards or a backup').setInputFiles(await backup.path());
+  await expect(page.getByRole('dialog').getByRole('status')).toHaveText(
+    'Imported 14 boards. Settings restored.',
+  );
+  await page.getByRole('button', { name: 'Speech & voice' }).click();
+  await expect(page.getByRole('switch', { name: 'Speak each word when tapped' })).toBeChecked();
+  await page.getByRole('dialog').getByRole('button', { name: 'Done', exact: true }).click();
+  await done(page);
+  await expect(word(page, 'need')).toBeVisible();
 });

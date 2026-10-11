@@ -1,6 +1,6 @@
 <script lang="ts">
   import { ObfError, type BoardSet } from '@open-aac/core';
-  import { downloadBoards, readBoardFile } from '../files';
+  import { backups, exportBoards, readBackup } from '../backup.svelte';
   import { APP_LANGUAGES, type AppLanguage } from '../i18n';
   import { ICONS } from '../icons';
   import { capitalize, nameIn, nativeName } from '../languages';
@@ -71,6 +71,7 @@
     app.load(set);
     try {
       await saveBoards(set);
+      backups.savedAt = Date.now();
       status = done;
     } catch {
       status = `${done} ${t.couldNotSave}`;
@@ -84,19 +85,29 @@
     if (!file) return;
     fixes = [];
     try {
-      const { set, issues } = await readBoardFile(file);
+      const { set, issues, settings } = await readBackup(file);
       const count = t.boardCount(set.boards.length);
       if (!confirm(t.confirmImport(count, file.name))) return;
       await replaceBoards(set, t.imported(count));
+      if (settings && confirm(t.restoreSettings)) {
+        app.settings = settings;
+        status = `${status} ${t.settingsRestored}`;
+      }
       fixes = issues.map((issue) => issue.message);
     } catch (error) {
       status = error instanceof ObfError ? error.message : t.unreadable;
     }
   }
 
+  async function backUp() {
+    if (!app.set) return;
+    await backups.backUp(app.set, $state.snapshot(app.settings));
+    status = t.backedUp;
+  }
+
   function exportAll() {
     if (!app.set) return;
-    downloadBoards(app.set);
+    exportBoards(app.set);
     status = t.exported;
   }
 
@@ -550,6 +561,16 @@
         <h3>{t.sectionBoards}</h3>
         <p class="intro">{t.boardsIntro}</p>
         <div class="actions">
+          <button class="action primary" onclick={backUp}>
+            <Icon path={ICONS.export} size={24} />
+            {t.backUp}
+          </button>
+          <p class="help">
+            {t.backUpHelp}
+            {backups.backedUpAt
+              ? t.lastBackup(new Date(backups.backedUpAt).toLocaleDateString(app.appLanguage))
+              : t.neverBackedUp}
+          </p>
           <label class="action">
             <Icon path={ICONS.import} size={24} />
             {t.importBoards}
@@ -561,7 +582,7 @@
             />
           </label>
           <button class="action" onclick={exportAll}>
-            <Icon path={ICONS.export} size={24} />
+            <Icon path={ICONS.boards} size={24} />
             {t.exportBoards}
           </button>
           <button class="action" onclick={reset}>
@@ -1005,6 +1026,16 @@
     font-size: 1.05rem;
     font-weight: 700;
     cursor: pointer;
+  }
+
+  .action.primary {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+
+  .actions .help {
+    margin: -2px 0 8px;
   }
 
   .status {

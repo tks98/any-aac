@@ -56,7 +56,7 @@ test('editing needs a press and hold, not a tap', async ({ page }) => {
 test('exports boards and imports them back', async ({ page }) => {
   await openSettings(page, 'Boards & backup');
   const downloading = page.waitForEvent('download');
-  await page.getByRole('button', { name: 'Export all boards' }).click();
+  await page.getByRole('button', { name: 'Export boards only (to share)' }).click();
   const download = await downloading;
   expect(download.suggestedFilename()).toMatch(/^open-aac-boards-\d{4}-\d{2}-\d{2}\.obz$/);
 
