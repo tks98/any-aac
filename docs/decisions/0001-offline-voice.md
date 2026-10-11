@@ -1,6 +1,6 @@
 # 0001: Offline voice
 
-Status: proposed, pending real-device numbers. 2026-10-10.
+Status: accepted for iPhone; budget Android still to measure. 2026-10-10.
 
 ## Context
 
@@ -16,20 +16,20 @@ The plan's first principle is that speaking always works. The browser's own voic
 
 ## Measurements
 
-These used `voice-lab.html` with the Piper `en_US-ljspeech-medium` voice, single-threaded (no cross-origin isolation). The machine is an Apple-silicon Mac, so treat these numbers as an upper bound on speed.
+These used `voice-lab.html` with the Piper `en_US-ljspeech-medium` voice, single-threaded (no cross-origin isolation). The desktop and simulator runs were on an Apple-silicon Mac; the iPhone column is a real iPhone over the network.
 
-| Phrase                      | Audio | Chromium | WebKit | iOS Safari (simulator) |
-| --------------------------- | ----- | -------- | ------ | ---------------------- |
-| "want"                      | 0.5 s | 87 ms    | 85 ms  | 88 ms                  |
-| "I want more."              | 0.9 s | 145 ms   | 152 ms | 153 ms                 |
-| "Can you help me … please?" | 2.2 s | 369 ms   | 383 ms | 370 ms                 |
-| A 16-word sentence          | 4.2 s | 668 ms   | 708 ms | 687 ms                 |
+| Phrase                      | Audio | Chromium | WebKit | iOS Safari (simulator) | iPhone (Safari) |
+| --------------------------- | ----- | -------- | ------ | ---------------------- | --------------- |
+| "want"                      | 0.5 s | 87 ms    | 85 ms  | 88 ms                  | 75 ms           |
+| "I want more."              | 0.9 s | 145 ms   | 152 ms | 153 ms                 | 128 ms          |
+| "Can you help me … please?" | 2.2 s | 369 ms   | 383 ms | 370 ms                 | 316 ms          |
+| A 16-word sentence          | 4.2 s | 668 ms   | 708 ms | 687 ms                 | 596 ms          |
 
-- Real-time factor (synthesis time divided by audio length) is about 0.16 to 0.17 everywhere, so synthesis runs about six times faster than real time.
+- Real-time factor (synthesis time divided by audio length) is about 0.16 to 0.17 on the Mac and 0.14 on the iPhone, so synthesis runs six to seven times faster than real time.
 - Phonemizing takes 3 to 42 ms.
 - Loading takes 4.3 to 5.3 s, including the 63.5 MB download. First speech then takes 130 to 145 ms.
 
-**Still needed:** numbers from a real iPhone and a budget Android tablet. A phone CPU could be several times slower. That's acceptable for buttons, whose audio is rendered ahead and cached, but it matters for typed messages.
+**Still needed:** numbers from a budget Android tablet and an older iPad, which could be several times slower. That's acceptable for buttons, whose audio is rendered ahead and cached, but it matters for typed messages.
 
 ## Download sizes
 
