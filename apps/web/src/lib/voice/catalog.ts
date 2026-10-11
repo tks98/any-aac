@@ -83,6 +83,42 @@ export const VOICES: VoiceEntry[] = [
     sizeMB: 63.2,
     source: piper('en_GB', 'alba'),
   },
+  {
+    id: 'es_MX-claude-high',
+    name: 'Claude',
+    lang: 'es-MX',
+    description: 'Mexican Spanish, male',
+    license: 'Apache 2.0',
+    sizeMB: 63.1,
+    source: piper('es_MX', 'claude', 'high'),
+  },
+  {
+    id: 'es_MX-ald-medium',
+    name: 'Ald',
+    lang: 'es-MX',
+    description: 'Mexican Spanish, male',
+    license: 'Public domain (Unlicense)',
+    sizeMB: 63.2,
+    source: piper('es_MX', 'ald'),
+  },
+  {
+    id: 'es_ES-davefx-medium',
+    name: 'Davefx',
+    lang: 'es-ES',
+    description: 'Spanish (Spain), male',
+    license: 'CC0',
+    sizeMB: 63.2,
+    source: piper('es_ES', 'davefx'),
+  },
+  {
+    id: 'es_ES-carlfm-x_low',
+    name: 'Carlfm',
+    lang: 'es-ES',
+    description: 'Spanish (Spain), male, small and fast',
+    license: 'Public domain',
+    sizeMB: 28.1,
+    source: piper('es_ES', 'carlfm', 'x_low'),
+  },
 ];
 
 export const voiceById = (id: string | null | undefined) => VOICES.find((v) => v.id === id);

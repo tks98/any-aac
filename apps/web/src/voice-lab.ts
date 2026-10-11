@@ -6,12 +6,21 @@ import { preferPlaybackAudio } from './lib/speech';
 import { VOICES } from './lib/voice/catalog';
 import type { PiperVoice, Synthesized } from './lib/voice/piper';
 
-const PHRASES = [
-  'want',
-  'I want more.',
-  'Can you help me with my coat, please?',
-  'I would like to go outside and play with my friends after lunch, if that is okay.',
-];
+const PHRASES: Record<string, string[]> = {
+  en: [
+    'want',
+    'I want more.',
+    'Can you help me with my coat, please?',
+    'I would like to go outside and play with my friends after lunch, if that is okay.',
+  ],
+  es: [
+    'quiero',
+    'Quiero más.',
+    '¿Me puedes ayudar con mi abrigo, por favor?',
+    'Me gustaría salir a jugar con mis amigos después del almuerzo, si está bien.',
+  ],
+};
+const phrasesFor = (lang: string) => PHRASES[lang.split('-')[0]!] ?? PHRASES.en!;
 
 interface Row {
   text: string;
@@ -103,7 +112,8 @@ el('bench').addEventListener('click', async () => {
   results.rows = [];
   const body = el('rows');
   body.replaceChildren();
-  for (const text of PHRASES) {
+  const lang = VOICES.find((v) => v.id === select.value)?.lang ?? 'en';
+  for (const text of phrasesFor(lang)) {
     status(`Measuring “${text}”`);
     const t0 = performance.now();
     await voice.phonemes(text);

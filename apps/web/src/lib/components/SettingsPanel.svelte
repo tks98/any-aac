@@ -29,6 +29,10 @@
 
   const isMain = (v: VoiceInfo) => !v.novelty && baseLanguage(v.lang) === baseLanguage(appLanguage);
   const myVoices = $derived(voices.filter(isMain));
+  /** Open AAC voices in the boards' language. */
+  const openaacVoices = $derived(
+    VOICES.filter((v) => baseLanguage(v.lang) === baseLanguage(app.language)),
+  );
   const otherVoices = $derived(voices.filter((v) => !isMain(v)));
   const s = $derived(app.settings);
 
@@ -275,7 +279,7 @@
               These run on this device. The first download is about 80 MB (the voice plus the speech
               engine), from the Piper project at huggingface.co. After that they work offline.
             </p>
-            {#each VOICES as voice (voice.id)}
+            {#each openaacVoices as voice (voice.id)}
               {@const anyBusy =
                 openaacVoice.status === 'downloading' || openaacVoice.status === 'loading'}
               {@const busy =

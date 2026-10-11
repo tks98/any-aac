@@ -58,10 +58,10 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,svg,png,ico,woff2}'],
         // The offline voice is an optional download: cache its code when first
         // used, rather than making every install fetch it.
-        globIgnores: ['**/ort*.js', '**/phonemizer*.js', '**/piper*.js'],
+        globIgnores: ['**/ort*.js', '**/piper*.js', '**/voice.worker*.js'],
         runtimeCaching: [
           {
-            urlPattern: /\/assets\/(ort|phonemizer|piper)[^/]*\.(m?js|wasm)$/,
+            urlPattern: /\/assets\/(ort|piper|voice\.worker)[^/]*\.(m?js|wasm|data)$/,
             handler: 'CacheFirst',
             options: { cacheName: 'open-aac-voice-runtime' },
           },

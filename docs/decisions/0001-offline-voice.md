@@ -10,7 +10,7 @@ The plan's first principle is that speaking always works. The browser's own voic
 
 1. **Web Speech only.** Free and instant, but not reliable offline and different on every device. We keep it as the fallback.
 2. **Piper through `@mintplex-labs/piper-tts-web`.** This works, but it rebuilds the eSpeak phonemizer (and its 18 MB of data) for every utterance. It also loads code from cdnjs and jsdelivr and voices from a hard-coded Hugging Face mirror.
-3. **Piper through our own thin engine (chosen).** ONNX Runtime Web runs the voice model, and `phonemizer` (eSpeak NG in WebAssembly, by the Transformers.js author) turns text into phonemes. Both stay loaded between utterances, all code is served from our origin, and the engine is about 150 lines (`apps/web/src/lib/voice/piper.ts`).
+3. **Piper through our own thin engine (chosen).** ONNX Runtime Web runs the voice model, and piper-phonemize (eSpeak NG in WebAssembly, from `@diffusionstudio/piper-wasm`) turns text into phonemes. We keep one instance and call it for every phrase, in any of eSpeak's languages, instead of rebuilding it each time. Both stay loaded between utterances, all code is served from our origin, and the engine is about 200 lines (`apps/web/src/lib/voice/piper.ts`). (We first used the `phonemizer` package, but it only contains English data.)
 4. **sherpa-onnx in WebAssembly.** One runtime for Piper, Matcha and Kokoro. The prebuilt web builds bake the model in at build time, so loading voices at runtime means building it ourselves. Worth revisiting if we outgrow option 3.
 5. **Kokoro (`kokoro-js`).** It sounds more natural, but it's mostly English, 86 MB or more, and brings in Transformers.js. It's a candidate for a premium voice later.
 
@@ -35,12 +35,12 @@ These used `voice-lab.html` with the Piper `en_US-ljspeech-medium` voice, single
 
 All of these are fetched only when someone turns the voice on. None are in the app's precache.
 
-| Part                     | Size    | Gzipped |
-| ------------------------ | ------- | ------- |
-| ONNX Runtime WebAssembly | 14.2 MB | 3.7 MB  |
-| ONNX Runtime JavaScript  | 71 KB   | 23 KB   |
-| phonemizer (eSpeak NG)   | 1.3 MB  | 0.7 MB  |
-| One Piper voice (medium) | 63 MB   | n/a     |
+| Part                                        | Size    | Gzipped |
+| ------------------------------------------- | ------- | ------- |
+| ONNX Runtime WebAssembly                    | 14.2 MB | 3.7 MB  |
+| ONNX Runtime JavaScript                     | 71 KB   | 23 KB   |
+| piper-phonemize (eSpeak NG, ~100 languages) | 18.7 MB | n/a     |
+| One Piper voice (medium)                    | 63 MB   | n/a     |
 
 ## Licences
 
@@ -68,6 +68,5 @@ Use option 3, with these parts:
 
 - Real-device speed (iPhone, budget Android). The voice lab's "Copy results" button exists to collect this.
 - Which voice sounds best for a default, as judged by AAC users.
-- `phonemizer` drops punctuation that Piper's own phonemizer keeps, which flattens question intonation slightly.
 - Multithreading needs cross-origin isolation (COOP/COEP headers), which would speed up synthesis on multi-core devices.
 - Smaller models: quantized (int8) versions of the voices could be about a quarter of the size. Their quality needs testing.

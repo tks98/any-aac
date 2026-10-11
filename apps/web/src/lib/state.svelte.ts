@@ -11,7 +11,7 @@ import {
   type ObfButton,
 } from '@open-aac/core';
 import { DEFAULT_SETTINGS, type Settings } from './settings';
-import { preferPlaybackAudio, speech } from './speech';
+import { baseLanguage, preferPlaybackAudio, speech } from './speech';
 import { openaacVoice } from './voice/voice.svelte';
 
 class AppState {
@@ -32,6 +32,10 @@ class AppState {
     return this.boardById(compactBoardId(this.board)) ?? this.board;
   });
   atHome = $derived(this.set !== null && this.boardId === this.set.rootId);
+  /** The language the boards are in (base code, e.g. "en"). */
+  language = $derived(
+    baseLanguage(this.set?.boards.find((b) => b.id === this.set?.rootId)?.locale ?? 'en'),
+  );
   trail = $derived(
     [...this.history, this.boardId]
       .map((id) => this.set?.boards.find((b) => b.id === id)?.name ?? '')

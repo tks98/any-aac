@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { phonemeIds } from '../src/lib/voice/piper';
+import { phonemeIds, separateSentences } from '../src/lib/voice/piper';
 
 const MAP: Record<string, number[]> = {
   _: [0],
@@ -27,5 +27,24 @@ describe('phonemeIds', () => {
 
   it('keeps spaces between words', () => {
     expect(phonemeIds('h h', MAP)).toEqual([1, 0, 20, 0, 3, 0, 20, 0, 2]);
+  });
+});
+
+describe('separateSentences', () => {
+  it('adds a pause after a sentence end that runs into the next sentence', () => {
+    expect(separateSentences(['h', 'i', '.', 'h', 'o', '?'])).toEqual([
+      'h',
+      'i',
+      '.',
+      ' ',
+      'h',
+      'o',
+      '?',
+    ]);
+    expect(separateSentences(['a', '.', ' ', 'b'])).toEqual(['a', '.', ' ', 'b']);
+  });
+
+  it('accepts phonemes already split into tokens', () => {
+    expect(phonemeIds(['h', 'ə'], MAP)).toEqual([1, 0, 20, 0, 59, 0, 2]);
   });
 });
