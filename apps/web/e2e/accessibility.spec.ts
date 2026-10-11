@@ -93,15 +93,16 @@ async function smallTargets(page: Page, min: number) {
   }, min);
 }
 
-for (const [device, viewport] of [
-  ['tablet', { width: 1180, height: 820 }],
-  ['phone', { width: 375, height: 667 }],
+for (const [device, viewport, cells] of [
+  ['tablet', { width: 1180, height: 820 }, 48],
+  ['phone', { width: 375, height: 667 }, 28],
 ] as const) {
   test(`every control on the communication screen is at least 44 px (${device})`, async ({
     page,
   }) => {
     await page.setViewportSize(viewport);
-    await expect(word(page, 'want')).toBeVisible();
+    // Wait for the layout for this screen size before measuring.
+    await expect(page.locator('button.cell')).toHaveCount(cells);
     expect(await smallTargets(page, 44)).toEqual([]);
   });
 }
