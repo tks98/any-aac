@@ -83,7 +83,7 @@
 
   async function reset() {
     if (!confirm('Replace all boards on this device with the starter boards?')) return;
-    await replaceBoards(starterSet(), 'Starter boards restored.');
+    await replaceBoards(await starterSet(), 'Starter boards restored.');
   }
 </script>
 
@@ -366,13 +366,23 @@
             >.
           </p>
           <p>
-            The starter vocabulary and pictograms are placeholders by Open AAC contributors,
-            licensed
+            Symbols from
+            <a href="https://mulberrysymbols.org" target="_blank" rel="noreferrer"
+              >Mulberry Symbols</a
+            >
+            © Steve Lee, and from
+            <a href="https://openmoji.org" target="_blank" rel="noreferrer">OpenMoji</a>, the
+            open-source emoji and icon project. Both are licensed
             <a
               href="https://creativecommons.org/licenses/by-sa/4.0/"
               target="_blank"
               rel="noreferrer">CC BY-SA 4.0</a
-            >.
+            >. Each symbol's source is recorded with it, and travels with exported boards.
+          </p>
+          <p>
+            The starter vocabulary is a placeholder until it's designed with speech-language
+            pathologists. It and the few remaining line-drawing pictograms are by Open AAC
+            contributors, licensed CC BY-SA 4.0.
           </p>
           <p>Text is set in Atkinson Hyperlegible Next (SIL Open Font License).</p>
           <p>Open AAC collects nothing. Your boards and settings stay on this device.</p>

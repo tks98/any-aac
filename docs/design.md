@@ -38,7 +38,7 @@ The dark and high-contrast themes from the mockups are not built yet.
 
 ## Placeholders
 
-- **Pictograms** in the starter boards are simple line drawings made for this project (`apps/web/src/lib/pictograms.ts`). They will be replaced by Mulberry and OpenMoji symbols, with licence metadata on every image.
+- **Symbols** in the starter boards come from Mulberry (most words) and OpenMoji (pronouns and other function words Mulberry lacks), both CC BY-SA 4.0. Each image records its licence and source. The choices are in `apps/web/src/assets/symbols/sources.json` and should be reviewed with SLPs. Five words (it, feel, is, do, tablet) still use the project's placeholder line drawings.
 - **The starter vocabulary** (`apps/web/src/lib/starter.ts`) follows the rules above, but it is not a designed vocabulary. The real set will be built with SLPs and scored against RELAAACs.
 
 ## Phone layouts

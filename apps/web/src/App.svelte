@@ -4,7 +4,7 @@
   import MessageBar from './lib/components/MessageBar.svelte';
   import NavRail from './lib/components/NavRail.svelte';
   import SettingsPanel from './lib/components/SettingsPanel.svelte';
-  import { isUntouchedStarter, starterSet } from './lib/starter';
+  import { isOutdatedStarter, starterSet } from './lib/starter';
   import { app } from './lib/state.svelte';
   import {
     loadBoards,
@@ -46,17 +46,17 @@
     settingsLoaded = true;
     try {
       const saved = await loadBoards();
-      if (saved && !isUntouchedStarter(saved)) {
+      if (saved && !isOutdatedStarter(saved)) {
         app.load(saved);
       } else {
-        const starter = starterSet();
+        const starter = await starterSet();
         app.load(starter);
         await saveBoards(starter);
       }
     } catch {
       // Storage can be unavailable (private browsing, blocked site data).
       // Speaking must still work, so carry on with the starter boards in memory.
-      if (!app.set) app.load(starterSet());
+      if (!app.set) app.load(await starterSet());
       notSaved = true;
     }
   });

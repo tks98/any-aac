@@ -9,6 +9,11 @@ const allowedHosts = ['.ts.net'];
 export default defineConfig({
   server: { allowedHosts },
   preview: { allowedHosts },
+  build: {
+    // Keep symbols as separate files (cached by the service worker) rather than
+    // inlining the small ones into the JavaScript bundle.
+    assetsInlineLimit: (file) => (file.includes('/assets/symbols/') ? false : undefined),
+  },
   plugins: [
     svelte(),
     VitePWA({

@@ -98,6 +98,8 @@ test('exports boards and imports them back', async ({ page }) => {
   await page.getByRole('button', { name: 'Done', exact: true }).click();
   await word(page, 'go').click();
   await expect(messageBar(page)).toHaveAccessibleName('Message: go. Tap to speak it.');
+  // The symbols came back inside the package.
+  await expectSymbolsLoaded(page);
 });
 
 /**
@@ -136,6 +138,25 @@ async function expectBoardFits(page: Page) {
 
 test('the board fits on screen', async ({ page }) => {
   await expectBoardFits(page);
+});
+
+/** Every symbol on the board has loaded (no broken images). */
+async function expectSymbolsLoaded(page: Page) {
+  const images = page.locator('button.cell img');
+  await expect(images.first()).toBeVisible();
+  const broken = await images.evaluateAll((els) =>
+    (els as HTMLImageElement[])
+      .filter((img) => !img.complete || img.naturalWidth === 0)
+      .map((img) => img.closest('button')?.textContent?.trim()),
+  );
+  expect(broken).toEqual([]);
+}
+
+test('every symbol loads, on the core board and a topic board', async ({ page }) => {
+  await expectSymbolsLoaded(page);
+  await page.getByRole('button', { name: 'Food, folder' }).click();
+  await expect(word(page, 'apple')).toBeVisible();
+  await expectSymbolsLoaded(page);
 });
 
 test.describe('on a phone', () => {

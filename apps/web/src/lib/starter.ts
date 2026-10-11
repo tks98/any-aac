@@ -21,6 +21,7 @@ import {
   type PartOfSpeech,
 } from '@open-aac/core';
 import { pictogramDataUri } from './pictograms';
+import { starterSymbol } from './symbols';
 
 const ROWS = 6;
 const COLUMNS = 8;
@@ -166,25 +167,38 @@ const TOPICS: { id: string; name: string; words: Word[] }[] = [
 
 const slug = (label: string) => label.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 
-function addWord(board: ObfBoard, row: number, column: number, w: Word): ObfBoard {
-  const imageId = `pic-${w.pic}`;
-  const button: ObfButton = {
-    id: slug(w.label),
-    label: w.label,
-    image_id: imageId,
-    [EXT_LOCKED]: true,
-  };
-  if (w.pos) button[EXT_PART_OF_SPEECH] = w.pos;
-  if (w.folder) button.load_board = { id: w.folder, name: w.label };
-  const image: ObfImage = {
-    id: imageId,
-    data: pictogramDataUri(w.pic),
+/**
+ * Bump when the starter boards change. Saved starter boards from an older
+ * version are replaced on next launch, as long as nobody has edited them.
+ */
+export const STARTER_VERSION = 2;
+const EXT_STARTER_VERSION = 'ext_openaac_starter_version';
+
+/** Images by word key; real symbols where we have them, placeholders otherwise. */
+type Images = Map<string, ObfImage>;
+
+function placeholderImage(key: string): ObfImage {
+  return {
+    id: `pic-${key}`,
+    data: pictogramDataUri(key),
     content_type: 'image/svg+xml',
     width: 48,
     height: 48,
     license: LICENSE,
     [EXT_PLACEHOLDER]: true,
   };
+}
+
+function addWord(board: ObfBoard, row: number, column: number, w: Word, images: Images): ObfBoard {
+  const image = images.get(w.pic) ?? placeholderImage(w.pic);
+  const button: ObfButton = {
+    id: slug(w.label),
+    label: w.label,
+    image_id: image.id,
+    [EXT_LOCKED]: true,
+  };
+  if (w.pos) button[EXT_PART_OF_SPEECH] = w.pos;
+  if (w.folder) button.load_board = { id: w.folder, name: w.label };
   return placeButton(board, row, column, button, image);
 }
 
@@ -219,12 +233,13 @@ function newBoard(id: string, name: string, layout: Layout): ObfBoard {
     ...createBoard({ id, name, rows: layout.length, columns: layout[0]!.length }),
     license: LICENSE,
     [EXT_PLACEHOLDER]: true,
+    [EXT_STARTER_VERSION]: STARTER_VERSION,
   };
 }
 
-function coreBoard(id: string, name: string, layout: Layout): ObfBoard {
+function coreBoard(id: string, name: string, layout: Layout, images: Images): ObfBoard {
   let board = newBoard(id, name, layout);
-  layout.forEach((row, r) => row.forEach((w, c) => (board = addWord(board, r, c, w))));
+  layout.forEach((row, r) => row.forEach((w, c) => (board = addWord(board, r, c, w, images))));
   return board;
 }
 
@@ -232,11 +247,17 @@ function coreBoard(id: string, name: string, layout: Layout): ObfBoard {
  * A topic board keeps the layout's core words in their home cells and fills the
  * free cells from the second row onward with the topic's words.
  */
-function topicBoard(id: string, name: string, layout: Layout, words: Word[]): ObfBoard {
+function topicBoard(
+  id: string,
+  name: string,
+  layout: Layout,
+  words: Word[],
+  images: Images,
+): ObfBoard {
   let board = newBoard(id, name, layout);
   layout.forEach((row, r) =>
     row.forEach((w, c) => {
-      if (KEEP_ON_TOPICS.includes(w.label)) board = addWord(board, r, c, w);
+      if (KEEP_ON_TOPICS.includes(w.label)) board = addWord(board, r, c, w, images);
     }),
   );
   const columns = layout[0]!.length;
@@ -247,37 +268,74 @@ function topicBoard(id: string, name: string, layout: Layout, words: Word[]): Ob
       cell++;
     }
     if (cell >= size) throw new Error(`Board "${id}" has no room left for "${w.label}".`);
-    board = addWord(board, Math.floor(cell / columns), cell % columns, w);
+    board = addWord(board, Math.floor(cell / columns), cell % columns, w, images);
     cell++;
   }
   return board;
 }
 
 /**
- * True when every board is still placeholder starter content, which is safe to
- * replace with a newer starter set. Editing a board must clear its placeholder
- * flag once the board editor exists.
+ * True when every board is unedited starter content from an older starter
+ * version, so it's safe to replace with the current one. Editing a board must
+ * clear its placeholder flag once the board editor exists.
  */
-export function isUntouchedStarter(set: BoardSet): boolean {
-  return set.boards.every((board) => board[EXT_PLACEHOLDER] === true);
+export function isOutdatedStarter(set: BoardSet): boolean {
+  const untouched = set.boards.every((board) => board[EXT_PLACEHOLDER] === true);
+  const root = set.boards.find((board) => board.id === set.rootId);
+  const version = root?.[EXT_STARTER_VERSION];
+  return untouched && (typeof version === 'number' ? version : 1) < STARTER_VERSION;
 }
 
-export function starterSet(): BoardSet {
+/** Loads each word's symbol file; words without one (or that fail to load) get a placeholder. */
+async function loadImages(
+  keys: string[],
+): Promise<{ images: Images; files: Record<string, Uint8Array> }> {
+  const images: Images = new Map();
+  const files: Record<string, Uint8Array> = {};
+  await Promise.all(
+    keys.map(async (key) => {
+      const symbol = starterSymbol(key);
+      if (!symbol) return;
+      try {
+        const response = await fetch(symbol.url);
+        if (!response.ok) return;
+        const path = `images/${symbol.set}/${key}.svg`;
+        files[path] = new Uint8Array(await response.arrayBuffer());
+        images.set(key, {
+          id: `sym-${key}`,
+          path,
+          content_type: 'image/svg+xml',
+          license: symbol.license,
+        });
+      } catch {
+        // Offline before the symbols were cached: the placeholder will do.
+      }
+    }),
+  );
+  return { images, files };
+}
+
+export async function starterSet(): Promise<BoardSet> {
+  const keys = [
+    ...new Set([...CORE_COLUMNS.flat(), ...TOPICS.flatMap((t) => t.words)].map((w) => w.pic)),
+  ];
+  const { images, files } = await loadImages(keys);
+
   const core = {
-    ...coreBoard('core', 'Core words', TABLET_CORE),
+    ...coreBoard('core', 'Core words', TABLET_CORE, images),
     [EXT_COMPACT_BOARD]: 'core-phone',
   };
-  const phoneCore = coreBoard('core-phone', 'Core words (phone)', PHONE_CORE);
+  const phoneCore = coreBoard('core-phone', 'Core words (phone)', PHONE_CORE, images);
 
   const topics = TOPICS.flatMap((topic) => {
-    const board = topicBoard(topic.id, topic.name, TABLET_CORE, topic.words);
+    const board = topicBoard(topic.id, topic.name, TABLET_CORE, topic.words, images);
     if (!PHONE_TOPICS.includes(topic.id)) return [board];
     const phoneId = `${topic.id}-phone`;
     return [
       { ...board, [EXT_COMPACT_BOARD]: phoneId },
-      topicBoard(phoneId, `${topic.name} (phone)`, PHONE_CORE, topic.words),
+      topicBoard(phoneId, `${topic.name} (phone)`, PHONE_CORE, topic.words, images),
     ];
   });
 
-  return { rootId: core.id, boards: [core, phoneCore, ...topics], files: {} };
+  return { rootId: core.id, boards: [core, phoneCore, ...topics], files };
 }
