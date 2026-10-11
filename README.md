@@ -114,6 +114,12 @@ Any AAC's own fields in OBF files use the `ext_anyaac_` prefix.
 - [Design](docs/design.md): the interface rules and design tokens
 - [Changelog](CHANGELOG.md)
 
+## Origins
+
+Any AAC continues work that began in 2020 at the Illinois Institute of Technology. In _Voice for the Voiceless: Developing a Low-Cost Open-Source Communication Device for the Speech Impaired_, Travis Smith and Vasilios Pappademetriou built an AAC device from a Raspberry Pi, a 7-inch touchscreen and a battery pack for $142, running an open-source phrase board that spoke without an internet connection ([IIT's story about it](https://www.iit.edu/student-experience/student-and-alumni-stories/using-technology-better-peoples-lives)).
+
+Its requirements still guide this project: low cost, open source so the community can keep it going, working offline, and easy to use and customise. The paper was also clear about what that device couldn't do yet: offline speech sounded robotic, there were no pictures, the vocabulary couldn't be changed on the device, and a system update could break it. Any AAC answers each of these with neural voices that run on the device, symbols and photos, editing in place, and the browser as its platform, so the hardware is whatever a family already has.
+
 ## Licences and credits
 
 The code is licensed under the [GNU AGPL v3 or later](LICENSE). Any AAC's vocabulary arrangements and translations are licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).

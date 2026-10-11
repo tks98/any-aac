@@ -2,6 +2,8 @@
 
 What we've learned about AAC, and the decisions it led to. Every product decision that rests on evidence should be traceable to a finding here.
 
+The project grew out of a 2020 paper on a $142 open-source AAC device built on a Raspberry Pi; its requirements and the limitations it named are summarised in the [README](../../README.md#origins).
+
 ## Findings
 
 By topic, with sources and what Any AAC does about each:
