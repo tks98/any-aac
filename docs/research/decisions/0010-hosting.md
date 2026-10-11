@@ -17,7 +17,7 @@ Options:
 1. **GitHub Pages, at `https://any-aac.com/`.** [pages.yml](../../../.github/workflows/pages.yml) deploys `main` only after CI has passed on the same commit. The domain is registered at Squarespace and verified on the GitHub account, so no other repository can claim it. The old address, `tks98.github.io/any-aac`, redirects to it.
 2. **Cloudflare (Free) in front**, as for opcode-dev.com. It isn't needed for the app to work: Any AAC needs no special headers, and GitHub provides HTTPS. It's there to cache the large files, so GitHub's traffic limit isn't the ceiling, and to count requests without a script in the page. Its settings:
    - SSL/TLS mode **Full** (encrypted to GitHub), and Always Use HTTPS.
-   - Nothing that changes pages: Rocket Loader, Real User Monitoring, Email Address Obfuscation, Speed Brain and Early Hints are off.
+   - Nothing that changes pages: Rocket Loader, Email Address Obfuscation, Speed Brain and Early Hints are off, and Real User Monitoring is set to **Disable completely**. Left unconfigured, Cloudflare injects its analytics beacon (static.cloudflareinsights.com) into pages on the Free plan.
    - A cache rule: files under `/voices/`, and `.wasm` and `.data` files (the speech engine), are cached at Cloudflare for 7 days, whatever GitHub's 10-minute cache header says. If a voice file ever changes in place, purge Cloudflare's cache.
    - DNS: GitHub Pages' four addresses for the domain, `www` to `tks98.github.io` (GitHub redirects it), GitHub's verification record, and records saying the domain sends no email (SPF `-all`, DMARC reject).
    - DNSSEC is off; it can be turned on in Cloudflare and its DS record added at Squarespace.
