@@ -2,6 +2,7 @@
  * Voice lab: measures the offline Piper voices on this device. Not part of the
  * app; it exists to choose an approach with real numbers (see docs/plan.md, P0).
  */
+import { preferPlaybackAudio } from './lib/speech';
 import { VOICES } from './lib/voice/catalog';
 import type { PiperVoice, Synthesized } from './lib/voice/piper';
 
@@ -46,6 +47,7 @@ let voice: PiperVoice | null = null;
 let audio: AudioContext | null = null;
 
 function play({ samples, sampleRate }: Synthesized) {
+  preferPlaybackAudio();
   audio ??= new AudioContext();
   void audio.resume();
   const buffer = audio.createBuffer(1, samples.length, sampleRate);

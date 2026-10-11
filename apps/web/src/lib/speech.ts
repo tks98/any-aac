@@ -102,6 +102,15 @@ export function pickDefaultVoice<V extends RawVoice>(voices: V[], lang: string):
   return candidates.sort((a, b) => score(b) - score(a))[0] ?? null;
 }
 
+/**
+ * Ask for "playback" audio, which iOS Safari plays even when the ring/silent
+ * switch is on silent. A voice that goes quiet in silent mode is no voice at all.
+ */
+export function preferPlaybackAudio() {
+  const session = (navigator as { audioSession?: { type: string } }).audioSession;
+  if (session && session.type !== 'playback') session.type = 'playback';
+}
+
 class WebSpeech implements SpeechOutput {
   readonly available = true;
 
@@ -109,6 +118,7 @@ class WebSpeech implements SpeechOutput {
 
   speak(text: string, options: Partial<SpeakOptions> = {}) {
     if (text.trim() === '') return;
+    preferPlaybackAudio();
     speechSynthesis.cancel();
     const voices = speechSynthesis.getVoices();
     const chosen =
