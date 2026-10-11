@@ -12,6 +12,8 @@ export default defineConfig({
   preview: { allowedHosts },
   // ONNX Runtime finds its .wasm next to itself; pre-bundling would break that.
   optimizeDeps: { exclude: ['onnxruntime-web'] },
+  // The voice worker loads ONNX Runtime and the phonemizer on demand.
+  worker: { format: 'es' },
   build: {
     rollupOptions: {
       input: {

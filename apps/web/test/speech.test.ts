@@ -31,6 +31,11 @@ describe('rankVoices', () => {
     ]);
   });
 
+  it('drops voices the browser lists twice', () => {
+    const ranked = rankVoices([voice('Samantha', 'en-US'), voice('Samantha', 'en-US')], 'en-US');
+    expect(ranked.map((v) => v.key)).toEqual(['Samantha|en-US']);
+  });
+
   it('flags novelty voices and network voices', () => {
     const ranked = rankVoices(VOICES, 'en-US');
     expect(ranked.find((v) => v.name === 'Bells')?.novelty).toBe(true);

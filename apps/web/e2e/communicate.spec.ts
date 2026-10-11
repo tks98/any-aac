@@ -259,3 +259,78 @@ test('labels can go above symbols, or symbols can be hidden', async ({ page }) =
   await expect(image).toHaveCount(0);
   await expectBoardFits(page);
 });
+
+test.describe('Open AAC voice', () => {
+  const spokenBy = (page: Page) =>
+    page.evaluate(
+      () => (window as unknown as { voiceLog: { engine: string; text: string }[] }).voiceLog,
+    );
+
+  test.beforeEach(async ({ page }) => {
+    await page.addInitScript(() => {
+      const voiceLog: { engine: string; text: string }[] = [];
+      Object.assign(window, { voiceLog });
+      addEventListener('openaac:speak', (event) =>
+        voiceLog.push((event as CustomEvent<{ engine: string; text: string }>).detail),
+      );
+    });
+    await page.reload();
+    await expect(word(page, 'want')).toBeVisible();
+  });
+
+  test('offers only openly licensed voices, and the device voice speaks until one is ready', async ({
+    page,
+  }) => {
+    await openSettings(page, 'Speech & voice');
+    await page.getByRole('button', { name: 'Open AAC voice' }).click();
+    const voices = page.locator('.voice.offline');
+    await expect(voices).toHaveCount(6);
+    await expect(voices.filter({ hasText: /CC BY-NC|lessac|hfc/ })).toHaveCount(0);
+    await expect(voices.first().getByRole('button', { name: 'Download' })).toBeVisible();
+    await expect(
+      page.getByText('Until an Open AAC voice is ready, the device voice speaks.'),
+    ).toBeVisible();
+    // Pitch only applies to device voices.
+    await expect(page.getByRole('slider', { name: 'Pitch' })).toHaveCount(0);
+    await page.getByRole('button', { name: 'Done', exact: true }).click();
+
+    await word(page, 'want').click();
+    expect(await spokenBy(page)).toEqual([{ engine: 'device', text: 'want' }]);
+  });
+
+  // Downloads a real 63 MB voice from Hugging Face, so it only runs when asked:
+  // OPENAAC_E2E_VOICE=1 pnpm test:e2e --project=chromium
+  test('downloads a voice, speaks with it, and starts it again offline', async ({
+    page,
+    context,
+    browserName,
+  }) => {
+    test.skip(!process.env.OPENAAC_E2E_VOICE, 'Set OPENAAC_E2E_VOICE=1 to run.');
+    test.skip(browserName !== 'chromium', 'Offline check needs Chromium.');
+    test.setTimeout(300_000);
+    await openSettings(page, 'Speech & voice');
+    await page.getByRole('button', { name: 'Open AAC voice' }).click();
+    const linda = page.locator('.voice.offline').filter({ hasText: 'Linda' });
+    await linda.getByRole('button', { name: 'Download' }).click();
+    await expect(linda.getByRole('button', { name: 'In use' })).toBeVisible({ timeout: 240_000 });
+    await expect(page.getByText(/Getting words ready|Until an Open AAC voice/)).toHaveCount(1);
+    await page.getByRole('button', { name: 'Done', exact: true }).click();
+
+    await word(page, 'want').click();
+    await expect.poll(() => spokenBy(page)).toEqual([{ engine: 'openaac', text: 'want' }]);
+
+    await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
+    await context.setOffline(true);
+    await page.reload();
+    await expect(word(page, 'go')).toBeVisible();
+    await expect
+      .poll(
+        async () => {
+          await word(page, 'go').click();
+          return (await spokenBy(page)).at(-1)?.engine;
+        },
+        { timeout: 30_000 },
+      )
+      .toBe('openaac');
+  });
+});

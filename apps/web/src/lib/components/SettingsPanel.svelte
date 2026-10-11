@@ -4,6 +4,8 @@
   import { ICONS } from '../icons';
   import { appLanguage, baseLanguage, speech, type VoiceInfo } from '../speech';
   import { starterSet } from '../starter';
+  import { VOICES, type VoiceEntry } from '../voice/catalog';
+  import { openaacVoice } from '../voice/voice.svelte';
   import { app } from '../state.svelte';
   import { saveBoards } from '../storage';
   import Icon from './Icon.svelte';
@@ -42,6 +44,7 @@
 
   $effect(() => {
     if (!open) return;
+    void openaacVoice.refreshDownloaded();
     voices = speech.voices();
     return speech.onVoicesChanged(() => (voices = speech.voices()));
   });
@@ -79,6 +82,33 @@
     if (!app.set) return;
     downloadBoards(app.set);
     status = 'Exported a copy of all boards.';
+  }
+
+  function progressText() {
+    const { loaded, total } = openaacVoice.progress;
+    if (openaacVoice.status === 'downloading' && total > 0 && loaded < total) {
+      return `Downloading ${(loaded / 1e6).toFixed(0)} of ${(total / 1e6).toFixed(0)} MB`;
+    }
+    return 'Starting the voice…';
+  }
+
+  async function downloadVoice(voice: VoiceEntry) {
+    if (await openaacVoice.use(voice, { download: true })) {
+      app.settings.speech.openaacVoice = voice.id;
+      app.settings.speech.engine = 'openaac';
+    }
+  }
+
+  // The app starts the chosen voice from the files on this device.
+  function chooseVoice(voice: VoiceEntry) {
+    app.settings.speech.openaacVoice = voice.id;
+    app.settings.speech.engine = 'openaac';
+  }
+
+  async function removeVoice(voice: VoiceEntry) {
+    if (!confirm(`Delete the ${voice.name} voice from this device?`)) return;
+    await openaacVoice.remove(voice);
+    if (app.settings.speech.openaacVoice === voice.id) app.settings.speech.openaacVoice = null;
   }
 
   async function reset() {
@@ -175,6 +205,30 @@
       {#if section === 'speech'}
         <h3>Speech & voice</h3>
         <div class="card">
+          <div class="row">
+            <div class="text">
+              <span class="label">Voice</span>
+              <span class="help"
+                >Open AAC voices sound the same on every device and work offline once downloaded.</span
+              >
+            </div>
+            <div class="segmented" role="group" aria-label="Voice">
+              <button
+                aria-pressed={s.speech.engine === 'openaac'}
+                class:on={s.speech.engine === 'openaac'}
+                onclick={() => (app.settings.speech.engine = 'openaac')}
+              >
+                Open AAC voice
+              </button>
+              <button
+                aria-pressed={s.speech.engine === 'device'}
+                class:on={s.speech.engine === 'device'}
+                onclick={() => (app.settings.speech.engine = 'device')}
+              >
+                Device voice
+              </button>
+            </div>
+          </div>
           {@render toggle(
             'Speak each word when tapped',
             'Off: words only build the message until Speak is pressed.',
@@ -191,16 +245,18 @@
             `${s.speech.rate.toFixed(1)}×`,
             (v) => (app.settings.speech.rate = v),
           )}
-          {@render slider(
-            'Pitch',
-            '',
-            s.speech.pitch,
-            0.5,
-            1.5,
-            0.1,
-            `${s.speech.pitch.toFixed(1)}×`,
-            (v) => (app.settings.speech.pitch = v),
-          )}
+          {#if s.speech.engine === 'device'}
+            {@render slider(
+              'Pitch',
+              '',
+              s.speech.pitch,
+              0.5,
+              1.5,
+              0.1,
+              `${s.speech.pitch.toFixed(1)}×`,
+              (v) => (app.settings.speech.pitch = v),
+            )}
+          {/if}
           <div class="row">
             <div class="text">
               <span class="label">Try it</span>
@@ -212,37 +268,107 @@
           </div>
         </div>
 
-        <fieldset class="card voices">
-          <legend>Voice</legend>
-          <p class="help">
-            The voices this device offers. Voices that work offline keep speaking without internet.
-          </p>
-          <label class="voice">
-            <input
-              type="radio"
-              name="voice"
-              checked={s.speech.voice === null}
-              onchange={() => (app.settings.speech.voice = null)}
-            />
-            <span class="voice-name">Device default</span>
-            <span class="voice-meta">Picks an offline voice in your language when there is one</span
-            >
-          </label>
-          {#each myVoices as voice (voice.key)}
-            {@render voiceOption(voice)}
-          {/each}
-          {#if otherVoices.length > 0}
-            <details>
-              <summary>Other voices ({otherVoices.length})</summary>
-              {#each otherVoices as voice (voice.key)}
-                {@render voiceOption(voice)}
-              {/each}
-            </details>
-          {/if}
-          {#if voices.length === 0}
-            <p class="help">This browser hasn't listed any voices yet.</p>
-          {/if}
-        </fieldset>
+        {#if s.speech.engine === 'openaac'}
+          <section class="card voices" aria-labelledby="openaac-voices">
+            <h4 id="openaac-voices" class="legend">Open AAC voices</h4>
+            <p class="help">
+              These run on this device. The first download is about 80 MB (the voice plus the speech
+              engine), from the Piper project at huggingface.co. After that they work offline.
+            </p>
+            {#each VOICES as voice (voice.id)}
+              {@const anyBusy =
+                openaacVoice.status === 'downloading' || openaacVoice.status === 'loading'}
+              {@const busy =
+                openaacVoice.voiceId === voice.id &&
+                (openaacVoice.status === 'downloading' || openaacVoice.status === 'loading')}
+              {@const inUse = s.speech.openaacVoice === voice.id}
+              <div class="voice offline">
+                <div class="voice-text">
+                  <span class="voice-name">{voice.name}</span>
+                  <span class="voice-meta"
+                    >{voice.description} · {voice.license} · {Math.round(voice.sizeMB)} MB</span
+                  >
+                  {#if busy}
+                    <span class="voice-meta" role="status">{progressText()}</span>
+                    <progress
+                      max={openaacVoice.progress.total || 1}
+                      value={openaacVoice.progress.loaded}
+                    ></progress>
+                  {/if}
+                  {#if openaacVoice.voiceId === voice.id && openaacVoice.status === 'error'}
+                    <span class="error" role="alert"
+                      >Couldn't load this voice: {openaacVoice.error}</span
+                    >
+                  {/if}
+                </div>
+                <div class="voice-actions">
+                  {#if openaacVoice.downloaded[voice.id]}
+                    <button
+                      aria-pressed={inUse}
+                      class:selected={inUse}
+                      disabled={anyBusy && !inUse}
+                      onclick={() => chooseVoice(voice)}
+                    >
+                      {inUse ? 'In use' : 'Use'}
+                    </button>
+                    <button
+                      aria-label="Delete {voice.name}"
+                      disabled={busy}
+                      onclick={() => removeVoice(voice)}
+                    >
+                      Delete
+                    </button>
+                  {:else}
+                    <button disabled={anyBusy} onclick={() => downloadVoice(voice)}>Download</button
+                    >
+                  {/if}
+                </div>
+              </div>
+            {/each}
+            {#if openaacVoice.isReady(s.speech.openaacVoice) && openaacVoice.preparing.done < openaacVoice.preparing.total}
+              <p class="help" role="status">
+                Getting words ready: {openaacVoice.preparing.done} of {openaacVoice.preparing.total}
+              </p>
+            {/if}
+            {#if !openaacVoice.isReady(s.speech.openaacVoice)}
+              <p class="help">Until an Open AAC voice is ready, the device voice speaks.</p>
+            {/if}
+          </section>
+        {:else}
+          <fieldset class="card voices">
+            <legend>Voice</legend>
+            <p class="help">
+              The voices this device offers. Voices that work offline keep speaking without
+              internet.
+            </p>
+            <label class="voice">
+              <input
+                type="radio"
+                name="voice"
+                checked={s.speech.voice === null}
+                onchange={() => (app.settings.speech.voice = null)}
+              />
+              <span class="voice-name">Device default</span>
+              <span class="voice-meta"
+                >Picks an offline voice in your language when there is one</span
+              >
+            </label>
+            {#each myVoices as voice (voice.key)}
+              {@render voiceOption(voice)}
+            {/each}
+            {#if otherVoices.length > 0}
+              <details>
+                <summary>Other voices ({otherVoices.length})</summary>
+                {#each otherVoices as voice (voice.key)}
+                  {@render voiceOption(voice)}
+                {/each}
+              </details>
+            {/if}
+            {#if voices.length === 0}
+              <p class="help">This browser hasn't listed any voices yet.</p>
+            {/if}
+          </fieldset>
+        {/if}
       {:else if section === 'touch'}
         <h3>Touch</h3>
         <p class="intro">When a touch on a word counts. These apply to the board.</p>
@@ -633,6 +759,61 @@
     width: 22px;
     height: 22px;
     accent-color: var(--accent);
+  }
+
+  .legend {
+    margin: 0 0 4px;
+    font-size: 1.1rem;
+  }
+
+  .voice.offline {
+    grid-template-columns: 1fr auto;
+    gap: 6px 12px;
+    cursor: default;
+  }
+
+  .voice-text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+  }
+
+  .voice-actions {
+    display: flex;
+    gap: 6px;
+  }
+
+  .voice-actions button {
+    min-height: 44px;
+    padding: 0 14px;
+    border: 2px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .voice-actions button:disabled {
+    opacity: 0.45;
+    cursor: default;
+  }
+
+  .voice-actions button.selected {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+
+  progress {
+    width: 100%;
+    max-width: 320px;
+    accent-color: var(--accent);
+  }
+
+  .error {
+    color: var(--help);
+    font-weight: 700;
   }
 
   .voice-name {

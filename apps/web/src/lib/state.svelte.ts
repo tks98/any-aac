@@ -11,7 +11,8 @@ import {
   type ObfButton,
 } from '@open-aac/core';
 import { DEFAULT_SETTINGS, type Settings } from './settings';
-import { speech } from './speech';
+import { preferPlaybackAudio, speech } from './speech';
+import { openaacVoice } from './voice/voice.svelte';
 
 class AppState {
   set = $state.raw<BoardSet | null>(null);
@@ -105,9 +106,34 @@ class AppState {
     this.say('I need help');
   }
 
+  /**
+   * Speaks with the Open AAC voice when it's chosen and ready, and with the
+   * device voice otherwise, or if the Open AAC voice fails.
+   */
   say(text: string) {
-    speech.speak(text, this.settings.speech);
+    preferPlaybackAudio();
+    const options = this.settings.speech;
+    if (options.engine === 'openaac' && openaacVoice.isReady(options.openaacVoice)) {
+      speech.stop();
+      openaacVoice.engine.speak(text, options.rate).then(
+        () => announce('openaac', text),
+        () => {
+          speech.speak(text, options);
+          announce('device', text);
+        },
+      );
+      return;
+    }
+    openaacVoice.engine.stop();
+    speech.speak(text, options);
+    announce('device', text);
   }
+}
+
+/** Tells listeners (tests, for now) which voice said what. */
+function announce(engine: 'device' | 'openaac', text: string) {
+  if (text.trim() === '') return;
+  dispatchEvent(new CustomEvent('openaac:speak', { detail: { engine, text } }));
 }
 
 export const app = new AppState();

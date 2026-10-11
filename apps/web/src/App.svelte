@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { behaviorOf, spokenText } from '@open-aac/core';
+  import { onMount, untrack } from 'svelte';
   import BoardGrid from './lib/components/BoardGrid.svelte';
   import MessageBar from './lib/components/MessageBar.svelte';
   import NavRail from './lib/components/NavRail.svelte';
@@ -13,6 +14,8 @@
     saveBoards,
     saveSettings,
   } from './lib/storage';
+  import { voiceById } from './lib/voice/catalog';
+  import { openaacVoice } from './lib/voice/voice.svelte';
 
   /** Must match the phone breakpoint in the components' CSS. */
   const PHONE = '(max-width: 599px)';
@@ -36,8 +39,40 @@
     saveSettings(settings).catch(() => (notSaved = true));
   });
 
+  // Start the chosen Open AAC voice from the files on this device. This never
+  // downloads: downloading only happens when someone asks for it in Settings.
+  $effect(() => {
+    const { engine, openaacVoice: id } = app.settings.speech;
+    if (!settingsLoaded || engine !== 'openaac') return;
+    const voice = voiceById(id);
+    if (!voice || openaacVoice.voiceId === id) return;
+    void openaacVoice.use(voice, { download: false });
+  });
+
+  // Once the voice is ready, render every word's audio in the background
+  // (current board first) so taps play instantly.
+  $effect(() => {
+    const set = app.set;
+    const { engine, openaacVoice: id, rate } = app.settings.speech;
+    if (!set || engine !== 'openaac' || !openaacVoice.isReady(id)) return;
+    const first = untrack(() => app.view?.buttons ?? []);
+    const texts = [...first, ...set.boards.flatMap((board) => board.buttons)]
+      .filter((button) => behaviorOf(button).kind === 'word')
+      .map(spokenText);
+    // Wait for the rate slider to settle before rendering everything again.
+    const timer = setTimeout(() => void openaacVoice.prepare(['I need help', ...texts], rate), 600);
+    return () => clearTimeout(timer);
+  });
+
   onMount(async () => {
     void requestPersistentStorage();
+    void openaacVoice.refreshDownloaded();
+    // Browsers only let audio start from a tap; keep the voice's audio awake.
+    const wake = () => {
+      if (app.settings.speech.engine === 'openaac') openaacVoice.engine.unlock();
+    };
+    addEventListener('pointerup', wake, { capture: true });
+    addEventListener('keydown', wake, { capture: true });
     try {
       app.settings = await loadSettings();
     } catch {

@@ -18,6 +18,9 @@ export interface VoiceEntry {
   source: VoiceSource;
 }
 
+/** Cache Storage bucket that holds downloaded voice files. */
+export const VOICE_CACHE = 'open-aac-voices-v1';
+
 const HF = 'https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0';
 
 const piper = (locale: string, name: string, quality = 'medium'): VoiceSource => {
@@ -81,3 +84,20 @@ export const VOICES: VoiceEntry[] = [
     source: piper('en_GB', 'alba'),
   },
 ];
+
+export const voiceById = (id: string | null | undefined) => VOICES.find((v) => v.id === id);
+
+/** True when the voice's files are on this device (so it works offline). */
+export async function isDownloaded(voice: VoiceEntry): Promise<boolean> {
+  if (!('caches' in globalThis)) return false;
+  const cache = await caches.open(VOICE_CACHE);
+  return Boolean(
+    (await cache.match(voice.source.model)) && (await cache.match(voice.source.config)),
+  );
+}
+
+export async function deleteVoiceFiles(voice: VoiceEntry): Promise<void> {
+  if (!('caches' in globalThis)) return;
+  const cache = await caches.open(VOICE_CACHE);
+  await Promise.all([cache.delete(voice.source.model), cache.delete(voice.source.config)]);
+}

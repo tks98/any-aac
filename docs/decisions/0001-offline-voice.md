@@ -55,6 +55,15 @@ Use option 3, with these parts:
 - **Each button's audio is rendered once and cached**, so a tap plays instantly whatever the device's speed. The message bar's "Speak" renders the whole sentence.
 - Before release, voice files must be served from our own origin (or from a self-hoster's server), not from Hugging Face.
 
+## Implementation
+
+- `voice.worker.ts` runs the engine in a Web Worker, one job at a time, so synthesis never delays a tap.
+- `engine.ts` keeps rendered phrases in memory (up to 400) and in IndexedDB as 16-bit audio, plays them with Web Audio, and lets a newer tap win over an older phrase that's still rendering.
+- `voice.svelte.ts` handles download and load state, and prepares every word on the boards in the background, one phrase at a time (the current board first).
+- The app starts the chosen voice from the files on the device. It only downloads when someone presses Download in Settings.
+- If the voice isn't ready or fails, the device voice speaks instead.
+- Measured end to end (Playwright, this Mac): taps on prepared words start speaking in 20 to 45 ms. Unprepared words take 130 to 260 ms. After a reload with the network off, the voice still starts and speaks.
+
 ## Open questions
 
 - Real-device speed (iPhone, budget Android). The voice lab's "Copy results" button exists to collect this.

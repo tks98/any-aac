@@ -66,10 +66,20 @@ const isNovelty = (name: string) => NOVELTY.has(name.replace(/\s*\(.*\)\s*$/, ''
 /** Apple marks its better voices "(Enhanced)" and "(Premium)". */
 const quality = (name: string) => (/premium/i.test(name) ? 2 : /enhanced/i.test(name) ? 1 : 0);
 
-/** The app's language first, then better quality, then by name. */
+/**
+ * The app's language first, then better quality, then by name. Browsers can
+ * list the same voice twice, so duplicates (same name and language) are dropped.
+ */
 export function rankVoices(voices: RawVoice[], lang: string): VoiceInfo[] {
   const base = baseLanguage(lang);
+  const seen = new Set<string>();
   return voices
+    .filter((v) => {
+      const key = voiceKey(v);
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
     .map((v) => ({
       key: voiceKey(v),
       name: v.name,

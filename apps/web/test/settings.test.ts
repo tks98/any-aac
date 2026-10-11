@@ -7,6 +7,15 @@ describe('withDefaults', () => {
     expect(withDefaults('nonsense')).toEqual(DEFAULT_SETTINGS);
   });
 
+  it('reads the Open AAC voice choice', () => {
+    const settings = withDefaults({
+      speech: { engine: 'openaac', openaacVoice: 'en_US-joe-medium' },
+    });
+    expect(settings.speech.engine).toBe('openaac');
+    expect(settings.speech.openaacVoice).toBe('en_US-joe-medium');
+    expect(withDefaults({ speech: { engine: 'robot' } }).speech.engine).toBe('device');
+  });
+
   it('keeps valid saved values and repairs the rest', () => {
     const settings = withDefaults({
       speech: { voice: 'Samantha|en-US', rate: 9, speakEachWord: false },
@@ -14,7 +23,9 @@ describe('withDefaults', () => {
       display: { labelPosition: 'above', buttonGap: -4 },
     });
     expect(settings.speech).toEqual({
+      engine: 'device',
       voice: 'Samantha|en-US',
+      openaacVoice: null,
       rate: 2,
       pitch: 1,
       speakEachWord: false,

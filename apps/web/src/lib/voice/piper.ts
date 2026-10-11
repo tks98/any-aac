@@ -7,6 +7,7 @@
  * the main bundle.
  */
 import type { InferenceSession, Tensor } from 'onnxruntime-web';
+import { VOICE_CACHE } from './catalog';
 
 /** The parts of a Piper voice's .onnx.json we use. */
 export interface PiperConfig {
@@ -34,11 +35,9 @@ export interface Synthesized {
   sampleRate: number;
 }
 
-const CACHE = 'open-aac-voices-v1';
-
 /** Fetches a file, from the voice cache when it's there, reporting download progress. */
 async function fetchCached(url: string, onProgress?: (p: Progress) => void): Promise<ArrayBuffer> {
-  const cache = 'caches' in globalThis ? await caches.open(CACHE) : undefined;
+  const cache = 'caches' in globalThis ? await caches.open(VOICE_CACHE) : undefined;
   const hit = await cache?.match(url);
   if (hit) return hit.arrayBuffer();
 

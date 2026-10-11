@@ -1,8 +1,12 @@
 import type { TouchSettings } from './access/touch';
 
 export interface SpeechSettings {
+  /** The device's own voices, or an Open AAC voice that runs offline. */
+  engine: 'device' | 'openaac';
   /** Chosen device voice (see voiceKey in speech.ts), or null for the default. */
   voice: string | null;
+  /** Chosen Open AAC voice (an id from voice/catalog.ts). */
+  openaacVoice: string | null;
   rate: number;
   pitch: number;
   /** Speak each word as it's tapped, not only when Speak is pressed. */
@@ -23,7 +27,14 @@ export interface Settings {
 }
 
 export const DEFAULT_SETTINGS: Settings = {
-  speech: { voice: null, rate: 1, pitch: 1, speakEachWord: true },
+  speech: {
+    engine: 'device',
+    voice: null,
+    openaacVoice: null,
+    rate: 1,
+    pitch: 1,
+    speakEachWord: true,
+  },
   touch: { holdMs: 0, selectOnRelease: false, ignoreRepeatMs: 0 },
   display: { labelPosition: 'below', showSymbols: true, buttonGap: 10 },
 };
@@ -51,7 +62,10 @@ export function withDefaults(saved: unknown): Settings {
   const display = isRecord(root.display) ? root.display : {};
   return {
     speech: {
+      engine: speech.engine === 'openaac' ? 'openaac' : 'device',
       voice: typeof speech.voice === 'string' ? speech.voice : d.speech.voice,
+      openaacVoice:
+        typeof speech.openaacVoice === 'string' ? speech.openaacVoice : d.speech.openaacVoice,
       rate: num(speech.rate, d.speech.rate, 0.5, 2),
       pitch: num(speech.pitch, d.speech.pitch, 0.5, 1.5),
       speakEachWord: bool(speech.speakEachWord, d.speech.speakEachWord),

@@ -17,14 +17,25 @@ interface StoredSettings {
   settings: Settings;
 }
 
+/** A phrase rendered by an Open AAC voice, kept so it plays instantly next time. */
+export interface StoredAudio {
+  /** voice id | rate | text */
+  key: string;
+  voice: string;
+  pcm: Int16Array;
+  sampleRate: number;
+}
+
 class Database extends Dexie {
   sets!: EntityTable<StoredSet, 'key'>;
   settings!: EntityTable<StoredSettings, 'key'>;
+  audio!: EntityTable<StoredAudio, 'key'>;
 
   constructor() {
     super('open-aac');
     this.version(1).stores({ sets: 'key' });
     this.version(2).stores({ sets: 'key', settings: 'key' });
+    this.version(3).stores({ sets: 'key', settings: 'key', audio: 'key, voice' });
   }
 }
 
@@ -45,6 +56,18 @@ export async function loadSettings(): Promise<Settings> {
 
 export async function saveSettings(settings: Settings): Promise<void> {
   await db.settings.put({ key: CURRENT, settings });
+}
+
+export async function loadAudio(key: string): Promise<StoredAudio | undefined> {
+  return db.audio.get(key);
+}
+
+export async function saveAudio(audio: StoredAudio): Promise<void> {
+  await db.audio.put(audio);
+}
+
+export async function deleteAudioForVoice(voice: string): Promise<void> {
+  await db.audio.where('voice').equals(voice).delete();
 }
 
 export async function requestPersistentStorage(): Promise<boolean> {
