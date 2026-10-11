@@ -10,6 +10,8 @@ const PERSONS = ['yo', 'tú', 'él, ella', 'nosotros', 'ellos, ellas'] as const;
 
 interface Verb {
   infinitive: string;
+  /** Past participle ("comido"); regular unless given. */
+  participle?: string;
   /** Present tense: yo, tú, él, nosotros, ellos. */
   present: [string, string, string, string, string];
   gerund: string;
@@ -96,8 +98,6 @@ const LEMMAS: Record<string, string> = {
   ayuda: 'ayudar',
   dame: 'dar',
   terminé: 'terminar',
-  beber: 'beber',
-  armar: 'armar',
 };
 
 function findVerb(word: string): Verb | undefined {
@@ -110,6 +110,33 @@ function findVerb(word: string): Verb | undefined {
   return regular(lemma);
 }
 
+/** Irregular past participles. */
+const PARTICIPLES: Record<string, string> = {
+  hacer: 'hecho',
+  poner: 'puesto',
+  decir: 'dicho',
+  ver: 'visto',
+  volver: 'vuelto',
+  abrir: 'abierto',
+  romper: 'roto',
+  escribir: 'escrito',
+  morir: 'muerto',
+  cubrir: 'cubierto',
+};
+
+function participle(infinitive: string): string {
+  if (PARTICIPLES[infinitive]) return PARTICIPLES[infinitive];
+  const stem = infinitive.slice(0, -2);
+  if (infinitive.endsWith('ar')) return `${stem}ado`;
+  // leer → leído, oír → oído, traer → traído, caer → caído
+  return /[aeo]$/.test(stem) ? `${stem}ído` : `${stem}ido`;
+}
+
+/**
+ * The forms young Spanish speakers use: the present for each person, the
+ * gerund, the past, the periphrastic future ("voy a comer") and the participle
+ * (Soto & Cooper, 2021).
+ */
 function verbForms(word: string): WordForm[] {
   const verb = findVerb(word);
   if (!verb) return [];
@@ -119,6 +146,8 @@ function verbForms(word: string): WordForm[] {
     { text: verb.gerund },
     { text: verb.past[0], hint: `${PERSONS[0]}, pasado` },
     { text: verb.past[1], hint: `${PERSONS[2]}, pasado` },
+    { text: `voy a ${verb.infinitive}`, hint: 'futuro' },
+    { text: verb.participle ?? participle(verb.infinitive) },
   ];
 }
 

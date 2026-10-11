@@ -2,6 +2,8 @@
   import { boardName, buttonAt, linkableBoards, type ObfBoard } from '@open-aac/core';
   import { backups } from '../backup.svelte';
   import { install } from '../install.svelte';
+  import { speech } from '../speech';
+  import { openaacVoice } from '../voice/voice.svelte';
   import { editor } from '../editor.svelte';
   import { ICONS } from '../icons';
   import { app } from '../state.svelte';
@@ -16,6 +18,8 @@
   const allBoards = $derived(app.set ? linkableBoards(app.set) : []);
 
   const backupDue = $derived(backups.due(app.set));
+  /** No device speech (Firefox on Android) and no Open AAC voice: nothing can be said. */
+  const mute = $derived(!speech.available && !openaacVoice.isReady(app.openaacVoiceId));
 
   function backUpNow() {
     if (app.set) void backups.backUp(app.set, $state.snapshot(app.settings));
@@ -60,7 +64,9 @@
       <span class="saved" class:warning={editor.saveFailed}>
         {editor.saveFailed ? t.notSavedEdit : t.savesHere}
       </span>
-      {#if backupDue}
+      {#if mute}
+        <span class="due warning">{t.appIsMute}</span>
+      {:else if backupDue}
         <span class="due">
           {t.backupDue}
           <button class="link" onclick={backUpNow}>{t.backUpNow}</button>

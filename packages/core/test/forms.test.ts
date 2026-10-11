@@ -74,7 +74,12 @@ describe('Spanish word forms', () => {
       { text: 'comiendo' },
       { text: 'comí', hint: 'yo, pasado' },
       { text: 'comió', hint: 'él, ella, pasado' },
+      { text: 'voy a comer', hint: 'futuro' },
+      { text: 'comido' },
     ]);
+    expect(texts('voy', 'es', 'verb')).toContain('ido');
+    expect(texts('abrir', 'es', 'verb')).toContain('abierto');
+    expect(texts('tomar', 'es', 'verb')).toContain('tomado');
     expect(texts('abrir', 'es', 'verb')).toContain('abrimos');
     expect(texts('para', 'es', 'verb')).toContain('paramos');
   });
@@ -90,6 +95,8 @@ describe('Spanish word forms', () => {
       'queriendo',
       'quise',
       'quiso',
+      'voy a querer',
+      'querido',
     ]);
     expect(texts('ir', 'es', 'verb')).toContain('vamos');
     expect(texts('tengo', 'es', 'verb')).toContain('tienes');

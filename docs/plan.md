@@ -309,4 +309,6 @@ Phases end when their exit criteria are met, not on a calendar.
 
 ### Still open
 
+From the research check ([research-check.md](research-check.md#decisions-needed)): what to do about voices with unclear licences, aligning the core vocabulary with Universal Core, a Spanish-first vocabulary, and phone layouts as a second motor plan.
+
 1. **Who comes first?** My recommendation: **emergent and developing communicators using touch, plus their SLPs and parents.** That's the largest group, and it forces the vocabulary work. ALS and literate-adult features (keyboard, prediction, voice banking) follow in P2 and P5.

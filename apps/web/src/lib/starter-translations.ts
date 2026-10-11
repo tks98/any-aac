@@ -22,10 +22,11 @@ export const STARTER_TRANSLATIONS: Record<string, Record<string, string>> = {
     Things: 'Cosas',
     Phrases: 'Frases',
 
-    // Core words. Spanish drops subject pronouns and conjugates verbs, so
-    // without grammar support the verbs most often said first are in the first
-    // person ("quiero", "puedo") and the rest are infinitives, which follow
-    // them naturally: "quiero comer", "puedo jugar".
+    // Core words. Spanish-speaking children mostly use conjugated verbs, above
+    // all the first person and commands ("quiero", "voy", "dame", "mira"), and
+    // seldom the infinitive (Soto & Cooper, 2021). The most used are
+    // conjugated here; the rest are infinitives so they follow "quiero" and
+    // "puedo" naturally ("quiero comer"). The Forms button gives the others.
     I: 'yo',
     you: 'tú',
     it: 'esto',
@@ -34,7 +35,7 @@ export const STARTER_TRANSLATIONS: Record<string, Record<string, string>> = {
     we: 'nosotros',
     want: 'quiero',
     like: 'me gusta',
-    go: 'ir',
+    go: 'voy',
     stop: 'para',
     help: 'ayuda',
     look: 'mira',
@@ -49,7 +50,7 @@ export const STARTER_TRANSLATIONS: Record<string, Record<string, string>> = {
     do: 'hacer',
     have: 'tengo',
     eat: 'comer',
-    drink: 'beber',
+    drink: 'tomar',
     more: 'más',
     again: 'otra vez',
     big: 'grande',
@@ -61,7 +62,7 @@ export const STARTER_TRANSLATIONS: Record<string, Record<string, string>> = {
     on: 'encima',
     up: 'arriba',
     down: 'abajo',
-    'all done': 'terminé',
+    'all done': 'ya',
     not: 'no',
     what: 'qué',
     where: 'dónde',

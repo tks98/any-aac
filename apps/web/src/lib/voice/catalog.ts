@@ -1,9 +1,12 @@
 import type { VoiceSource } from './piper';
 
 /**
- * Piper voices we can offer: only ones trained on openly licensed recordings.
- * (Several popular Piper voices, such as hfc_female, lessac and ryan, are
- * non-commercial, so they're left out.)
+ * Piper voices we can offer. A voice's licence depends on its recordings and,
+ * when it was fine-tuned, on the voice it started from. Several popular Piper
+ * voices (hfc_female, lessac, ryan) are non-commercial, so they're left out.
+ * Some voices here were fine-tuned from lessac, whose recordings are licensed
+ * for research only; until that's settled they're marked `clear: false` and
+ * never recommended. See docs/decisions/0001-offline-voice.md.
  *
  * The files currently come from the Piper project on Hugging Face. Before this
  * ships, they must be served from the app's own origin like everything else.
@@ -17,6 +20,11 @@ export interface VoiceEntry {
   small?: boolean;
   /** The one to suggest first for its language. */
   recommended?: boolean;
+  /**
+   * False when the licence isn't clearly open: the voice was fine-tuned from a
+   * research-only voice, or its training isn't documented.
+   */
+  clear: boolean;
   license: string;
   sizeMB: number;
   source: VoiceSource;
@@ -42,6 +50,7 @@ export const VOICES: VoiceEntry[] = [
     recommended: true,
     license: 'Public domain (LJ Speech)',
     sizeMB: 63.5,
+    clear: true,
     source: piper('en_US', 'ljspeech'),
   },
   {
@@ -51,6 +60,7 @@ export const VOICES: VoiceEntry[] = [
     gender: 'female',
     license: 'Public domain (LibriVox)',
     sizeMB: 63.5,
+    clear: true,
     source: piper('en_US', 'kristin'),
   },
   {
@@ -60,6 +70,7 @@ export const VOICES: VoiceEntry[] = [
     gender: 'male',
     license: 'Public domain (LibriVox)',
     sizeMB: 63.5,
+    clear: true,
     source: piper('en_US', 'norman'),
   },
   {
@@ -67,8 +78,9 @@ export const VOICES: VoiceEntry[] = [
     name: 'Joe',
     lang: 'en-US',
     gender: 'male',
-    license: 'CC0 (Nabu Casa)',
+    license: 'CC0 recordings; based on a research-only voice',
     sizeMB: 63.2,
+    clear: false,
     source: piper('en_US', 'joe'),
   },
   {
@@ -78,6 +90,7 @@ export const VOICES: VoiceEntry[] = [
     gender: 'female',
     license: 'Public domain (LibriVox)',
     sizeMB: 63.5,
+    clear: true,
     source: piper('en_GB', 'cori'),
   },
   {
@@ -85,8 +98,9 @@ export const VOICES: VoiceEntry[] = [
     name: 'Alba',
     lang: 'en-GB',
     gender: 'female',
-    license: 'CC BY 4.0 (University of Edinburgh)',
+    license: 'CC BY 4.0 recordings; based on a research-only voice',
     sizeMB: 63.2,
+    clear: false,
     source: piper('en_GB', 'alba'),
   },
   {
@@ -94,10 +108,9 @@ export const VOICES: VoiceEntry[] = [
     name: 'Claude',
     lang: 'es-MX',
     gender: 'male',
-    // The only high-quality Spanish model, and Latin American like the starter words.
-    recommended: true,
-    license: 'Apache 2.0',
+    license: 'Apache 2.0, training not documented',
     sizeMB: 63.1,
+    clear: false,
     source: piper('es_MX', 'claude', 'high'),
   },
   {
@@ -105,8 +118,9 @@ export const VOICES: VoiceEntry[] = [
     name: 'Ald',
     lang: 'es-MX',
     gender: 'male',
-    license: 'Public domain (Unlicense)',
+    license: 'Unlicense recordings; based on a research-only voice',
     sizeMB: 63.2,
+    clear: false,
     source: piper('es_MX', 'ald'),
   },
   {
@@ -114,8 +128,9 @@ export const VOICES: VoiceEntry[] = [
     name: 'Davefx',
     lang: 'es-ES',
     gender: 'male',
-    license: 'CC0',
+    license: 'CC0 recordings; based on a research-only voice',
     sizeMB: 63.2,
+    clear: false,
     source: piper('es_ES', 'davefx'),
   },
   {
@@ -126,6 +141,7 @@ export const VOICES: VoiceEntry[] = [
     small: true,
     license: 'Public domain',
     sizeMB: 28.1,
+    clear: true,
     source: piper('es_ES', 'carlfm', 'x_low'),
   },
 ];

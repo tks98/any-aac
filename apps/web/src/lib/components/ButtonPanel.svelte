@@ -24,7 +24,7 @@
   import { editor } from '../editor.svelte';
   import { ICONS } from '../icons';
   import { imageSrc } from '../images';
-  import { nameIn } from '../languages';
+  import { nameInSentence } from '../languages';
   import { shrinkPicture } from '../photos';
   import { app } from '../state.svelte';
   import { cellColors, WORD_TYPE_COLORS } from '../theme';
@@ -59,7 +59,7 @@
   let naming = $state(false);
   let photoError = $state('');
 
-  const languageName = (lang: string) => nameIn(lang, app.appLanguage);
+  const languageName = (lang: string) => nameInSentence(lang, app.appLanguage);
 
   const labelFor = (b: ObfButton, lang: string) =>
     lang === own ? (b.label ?? '') : (translatedLabel(b, lang) ?? '');

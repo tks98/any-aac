@@ -73,4 +73,22 @@ Use option 3, with these parts:
 
 ## Recommended voices (2026-10-11)
 
-Settings lists one voice per language first, marked Recommended: **Linda** (`en_US-ljspeech-medium`) for English, clear and natural from the public-domain LJ Speech recordings, and **Claude** (`es_MX-claude-high`) for Spanish, the only high-quality Spanish model and Latin American like the starter words. The device voice stays the default until someone chooses to download a voice, since a voice is a 63 MB download.
+Settings lists one voice per language first, marked Recommended: **Linda** (`en_US-ljspeech-medium`) for English, clear and natural from the public-domain LJ Speech recordings. The device voice stays the default until someone chooses to download a voice, since a voice is a 63 MB download.
+
+## Voice lineage (2026-10-11)
+
+A voice's licence depends on its recordings and, if it was fine-tuned, on the voice it started from. Checking each MODEL_CARD for the base model as well as the dataset ([research-check.md](../research-check.md)):
+
+| Voice            | Recordings               | Started from                      | Clearly open? |
+| ---------------- | ------------------------ | --------------------------------- | ------------- |
+| Linda (ljspeech) | Public domain            | Trained from scratch              | Yes           |
+| Kristin, Norman  | Public domain (LibriVox) | Trained from scratch              | Yes           |
+| Cori             | Public domain (LibriVox) | Trained from scratch              | Yes           |
+| Carlfm (es_ES)   | Public domain            | Trained from scratch              | Yes           |
+| Joe              | CC0                      | lessac (research-only recordings) | No            |
+| Alba             | CC BY 4.0                | lessac                            | No            |
+| Davefx (es_ES)   | CC0                      | lessac                            | No            |
+| Ald (es_MX)      | Unlicense                | Davefx, so lessac                 | No            |
+| Claude (es_MX)   | Stated Apache 2.0        | Not documented                    | No            |
+
+The lessac recordings are licensed for research only, excluding "developing … voice synthesis … products"; the licence doesn't say whether a model fine-tuned from them is a derived work. Until that's settled, the five are labelled in Settings and never recommended, so Spanish has no recommended voice. Before a public release: remove them or get clarity, and evaluate Kokoro-82M (Apache 2.0, with Spanish voices) for Spanish.

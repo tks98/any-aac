@@ -540,3 +540,44 @@ test.describe('word forms', () => {
     await expect(page.getByRole('button', { name: 'Word forms' })).toHaveCount(0);
   });
 });
+
+test.describe('research checks', () => {
+  test('voices whose licence is unclear say so, and are never recommended', async ({ page }) => {
+    await openSettings(page, 'Speech & voice');
+    await page.getByRole('button', { name: 'Open AAC voice' }).click();
+    const joe = page.locator('.voice.offline').filter({ hasText: 'Joe' });
+    await expect(joe).toContainText('based on a research-only voice');
+    await expect(joe).toContainText("Its licence isn't clearly open");
+    const linda = page.locator('.voice.offline').filter({ hasText: 'Linda' });
+    await expect(linda).not.toContainText('clearly open');
+  });
+
+  test('warns when the device has no voice for the language in use', async ({ page }) => {
+    await page.addInitScript(() => {
+      const english = [{ name: 'Samantha', lang: 'en-US', localService: true, default: true }];
+      (window.speechSynthesis as unknown as { getVoices: () => unknown[] }).getVoices = () =>
+        english;
+    });
+    await page.reload();
+    await openSettings(page, 'Language');
+    await page
+      .getByRole('group', { name: 'Words' })
+      .getByRole('button', { name: 'Español' })
+      .click();
+    await page.getByRole('button', { name: 'Habla y voz' }).click();
+    await page.getByRole('button', { name: 'Voz del dispositivo' }).click();
+    await expect(page.getByRole('alert')).toContainText('no tiene una voz en español');
+  });
+
+  test.describe('on a phone', () => {
+    test.use({ viewport: { width: 390, height: 844 }, hasTouch: true });
+
+    test('phone layouts can be turned off, to keep one layout everywhere', async ({ page }) => {
+      await expect(page.locator('button.cell')).toHaveCount(28);
+      await openSettings(page, 'Display');
+      await page.getByRole('switch', { name: 'Smaller layouts on phones' }).click();
+      await closeSettings(page);
+      await expect(page.locator('button.cell')).toHaveCount(48);
+    });
+  });
+});

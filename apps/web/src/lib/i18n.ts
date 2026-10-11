@@ -122,10 +122,17 @@ const en = {
   confirmDeleteVoice: (name: string) => `Delete the ${name} voice from this device?`,
   download: 'Download',
   recommended: 'Recommended',
+  licenceUnclear: "Its licence isn't clearly open (see above), so Open AAC may stop offering it.",
   gettingReady: (done: number, total: number) => `Getting words ready: ${done} of ${total}`,
   deviceSpeaksUntilReady: 'Until an Open AAC voice is ready, the device voice speaks.',
   deviceVoicesHelp:
     'The voices this device offers. Voices that work offline keep speaking without internet.',
+  noDeviceSpeech:
+    "This browser can't speak with device voices. Download an Open AAC voice so the app can speak.",
+  noDeviceVoiceFor: (language: string) =>
+    `This device has no ${language} voice, so ${language} words may be read in the wrong accent or not at all. An Open AAC voice in ${language} avoids this.`,
+  appIsMute:
+    "This browser can't speak yet. Download an Open AAC voice in Settings → Speech & voice.",
   deviceDefault: 'Device default',
   deviceDefaultHelp: 'Picks an offline voice in your language when there is one',
   otherVoices: (count: number) => `Other voices (${count})`,
@@ -300,6 +307,9 @@ const en = {
   noForms: (word: string) => `“${word}” has no other forms.`,
   noFormsHelp: 'Words get forms from their word type, which can be set in edit mode.',
   phrases: 'Phrases',
+  phoneLayouts: 'Smaller layouts on phones',
+  phoneLayoutsHelp:
+    'Phones show a smaller board, with fewer words in different places. Off: every device shows the same board, so each word stays in one place everywhere (buttons are smaller on a phone).',
   showPhrases: 'Phrases button',
   showPhrasesHelp: 'Quick phrases like “I need a break”, said at once. Change them in edit mode.',
   share: 'Share',
@@ -432,10 +442,18 @@ const es: Messages = {
   confirmDeleteVoice: (name) => `¿Borrar la voz ${name} de este dispositivo?`,
   download: 'Descargar',
   recommended: 'Recomendada',
+  licenceUnclear:
+    'Su licencia no es claramente abierta (ver arriba), así que Open AAC podría dejar de ofrecerla.',
   gettingReady: (done, total) => `Preparando palabras: ${done} de ${total}`,
   deviceSpeaksUntilReady: 'Hasta que una voz de Open AAC esté lista, habla la voz del dispositivo.',
   deviceVoicesHelp:
     'Las voces que ofrece este dispositivo. Las que funcionan sin internet siguen hablando sin conexión.',
+  noDeviceSpeech:
+    'Este navegador no puede hablar con voces del dispositivo. Descarga una voz de Open AAC para que la aplicación pueda hablar.',
+  noDeviceVoiceFor: (language) =>
+    `Este dispositivo no tiene una voz en ${language}, así que las palabras en ${language} pueden leerse con otro acento o no leerse. Una voz de Open AAC en ${language} lo evita.`,
+  appIsMute:
+    'Este navegador todavía no puede hablar. Descarga una voz de Open AAC en Ajustes → Habla y voz.',
   deviceDefault: 'Predeterminada del dispositivo',
   deviceDefaultHelp: 'Elige una voz sin conexión en tu idioma si hay alguna',
   otherVoices: (count) => `Otras voces (${count})`,
@@ -613,6 +631,9 @@ const es: Messages = {
   noFormsHelp:
     'Las palabras tienen formas según su tipo, que se puede elegir en el modo de edición.',
   phrases: 'Frases',
+  phoneLayouts: 'Tableros más pequeños en teléfonos',
+  phoneLayoutsHelp:
+    'Los teléfonos muestran un tablero más pequeño, con menos palabras y en otros lugares. Desactivado: todos los dispositivos muestran el mismo tablero, así cada palabra está siempre en el mismo lugar (los botones son más pequeños en un teléfono).',
   showPhrases: 'Botón de frases',
   showPhrasesHelp:
     'Frases rápidas como «Necesito un descanso», dichas al momento. Se cambian en el modo de edición.',

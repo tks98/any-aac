@@ -48,6 +48,11 @@ export interface DisplaySettings {
   showShare: boolean;
   /** A Phrases button for quick phrases, spoken at once. */
   showPhrases: boolean;
+  /**
+   * Phone-sized screens show boards' smaller phone layouts. Off: every device
+   * shows the same layout, so every word keeps one place everywhere.
+   */
+  phoneLayouts: boolean;
 }
 
 export interface ScanSettings {
@@ -103,6 +108,7 @@ export const DEFAULT_SETTINGS: Settings = {
     showWordForms: true,
     showShare: false,
     showPhrases: true,
+    phoneLayouts: true,
   },
   scan: {
     enabled: false,
@@ -223,6 +229,7 @@ export function withDefaults(saved: unknown): Settings {
       showWordForms: bool(display.showWordForms, d.display.showWordForms),
       showShare: bool(display.showShare, d.display.showShare),
       showPhrases: bool(display.showPhrases, d.display.showPhrases),
+      phoneLayouts: bool(display.phoneLayouts, d.display.phoneLayouts),
     },
     scan: {
       enabled: bool(scan.enabled, d.scan.enabled),

@@ -174,7 +174,7 @@ const slug = (label: string) => label.toLowerCase().replace(/[^a-z0-9]+/g, '-');
  * Bump when the starter boards change. Saved starter boards from an older
  * version are replaced on next launch, as long as nobody has edited them.
  */
-export const STARTER_VERSION = 5;
+export const STARTER_VERSION = 6;
 const EXT_STARTER_VERSION = 'ext_openaac_starter_version';
 
 const PHONE = ' (phone)';

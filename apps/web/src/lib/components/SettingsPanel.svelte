@@ -4,7 +4,7 @@
   import { APP_LANGUAGES, type AppLanguage } from '../i18n';
   import { ICONS } from '../icons';
   import { pictureCredits } from '../credits';
-  import { capitalize, nameIn, nativeName } from '../languages';
+  import { capitalize, nameIn, nameInSentence, nativeName } from '../languages';
   import { phrase } from '../phrases';
   import { baseLanguage, speech, type VoiceInfo } from '../speech';
   import { starterSet } from '../starter';
@@ -40,7 +40,9 @@
   /** Open AAC voices in the language in use, the recommended one first. */
   const openaacVoices = $derived(
     VOICES.filter((v) => baseLanguage(v.lang) === baseLanguage(app.language)).sort(
-      (a, b) => Number(b.recommended === true) - Number(a.recommended === true),
+      (a, b) =>
+        Number(b.recommended === true) - Number(a.recommended === true) ||
+        Number(b.clear) - Number(a.clear),
     ),
   );
   const otherVoices = $derived(voices.filter((v) => !isMain(v)));
@@ -416,7 +418,7 @@
           <section class="card voices" aria-labelledby="openaac-voices">
             <h4 id="openaac-voices" class="legend">{t.openaacVoices}</h4>
             {#if openaacVoices.length === 0}
-              <p class="help">{t.noOpenaacVoice(nameIn(app.language, app.appLanguage))}</p>
+              <p class="help">{t.noOpenaacVoice(nameInSentence(app.language, app.appLanguage))}</p>
             {:else}
               <p class="help">{t.openaacVoicesHelp}</p>
             {/if}
@@ -436,6 +438,9 @@
                   <span class="voice-meta"
                     >{describe(voice)} · {voice.license} · {Math.round(voice.sizeMB)} MB</span
                   >
+                  {#if !voice.clear}
+                    <span class="voice-meta unclear">{t.licenceUnclear}</span>
+                  {/if}
                   {#if busy}
                     <span class="voice-meta" role="status">{progressText()}</span>
                     <progress
@@ -485,6 +490,13 @@
           <fieldset class="card voices">
             <legend>{t.voice}</legend>
             <p class="help">{t.deviceVoicesHelp}</p>
+            {#if !speech.available}
+              <p class="warning" role="alert">{t.noDeviceSpeech}</p>
+            {:else if voices.length > 0 && myVoices.length === 0}
+              <p class="warning" role="alert">
+                {t.noDeviceVoiceFor(nameInSentence(app.language, app.appLanguage))}
+              </p>
+            {/if}
             <label class="voice">
               <input
                 type="radio"
@@ -537,7 +549,9 @@
             )}
           {:else}
             <div class="row">
-              <p class="help">{t.onlyLanguage(nameIn(app.boardsLanguage, app.appLanguage))}</p>
+              <p class="help">
+                {t.onlyLanguage(nameInSentence(app.boardsLanguage, app.appLanguage))}
+              </p>
             </div>
           {/if}
           {@render choice(
@@ -789,6 +803,12 @@
             t.showWordFormsHelp,
             s.display.showWordForms,
             (on) => (app.settings.display.showWordForms = on),
+          )}
+          {@render toggle(
+            t.phoneLayouts,
+            t.phoneLayoutsHelp,
+            s.display.phoneLayouts,
+            (on) => (app.settings.display.phoneLayouts = on),
           )}
           {@render toggle(
             t.showPhrases,
@@ -1312,6 +1332,19 @@
   .voice-meta {
     color: var(--muted);
     font-size: 0.95rem;
+  }
+
+  .warning {
+    margin: 4px 0 8px;
+    padding: 10px 12px;
+    border-left: 4px solid var(--help);
+    background: var(--chip);
+    font-weight: 700;
+  }
+
+  .voice-meta.unclear {
+    color: var(--ink);
+    font-weight: 700;
   }
 
   details {

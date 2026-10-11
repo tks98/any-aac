@@ -37,7 +37,8 @@
 
   $effect(() => {
     const query = matchMedia(PHONE);
-    const update = () => (app.compact = query.matches);
+    const phoneLayouts = app.settings.display.phoneLayouts;
+    const update = () => (app.compact = phoneLayouts && query.matches);
     update();
     query.addEventListener('change', update);
     return () => query.removeEventListener('change', update);

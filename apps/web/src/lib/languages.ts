@@ -15,3 +15,15 @@ export function nameIn(code: string, inLanguage: string): string {
 export function capitalize(text: string, lang: string): string {
   return text.charAt(0).toLocaleUpperCase(lang) + text.slice(1);
 }
+
+/** Languages that write language names with a capital letter even mid-sentence. */
+const CAPITALIZED = new Set(['en', 'de']);
+
+/** A language's name for use inside a sentence: "español", but "Spanish". */
+export function nameInSentence(code: string, inLanguage: string): string {
+  const name = nameIn(code, inLanguage);
+  const base = inLanguage.toLowerCase().split('-')[0] ?? '';
+  return CAPITALIZED.has(base)
+    ? capitalize(name, inLanguage)
+    : name.charAt(0).toLocaleLowerCase(inLanguage) + name.slice(1);
+}
