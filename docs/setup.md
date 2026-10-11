@@ -38,6 +38,10 @@ Open AAC's own lock keeps editing behind a press-and-hold on **Edit**. To keep s
 
 **Settings → Switch scanning.** Most switch interfaces send keys: set yours to send **Space** (switch 1) and **Enter** (switch 2). Game controllers work too (button A is switch 1, B is switch 2). Start with **two switches** (one to move, one to choose) or **by itself** with one switch, a slow speed, and **dim the rest**. With **tap anywhere** on, hold the screen for 3 seconds to get back to edit mode.
 
-## 6. Back up
+## 6. Modeling
+
+People learn to use AAC by seeing others use it. **Model** (in the edit toolbar: hold Edit, then tap Model) lets partners tap words on the person's own board as they talk: the words are said but don't go into the person's message. **Find a word** shows where any word is, one step at a time.
+
+## 7. Back up
 
 **Settings → Boards & backup → Back up everything** saves every board, picture and setting in one file. Keep a copy somewhere other than the device. Edit mode reminds you when the boards have changed since the last backup. **Print** (in edit mode) makes paper boards for when the device isn't available.

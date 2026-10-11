@@ -26,7 +26,7 @@ Longer documents:
 | [0003](decisions/0003-core-vocabulary.md)              | Core vocabulary from Universal Core                 | Accepted |
 | [0004](decisions/0004-spanish-first-vocabulary.md)     | A Spanish-first vocabulary                          | Proposed |
 | [0005](decisions/0005-phone-layouts.md)                | Phone layouts follow the tablet's order; can be off | Accepted |
-| [0006](decisions/0006-partner-modeling.md)             | Tools for partner modeling                          | Proposed |
+| [0006](decisions/0006-partner-modeling.md)             | Tools for partner modeling                          | Accepted |
 | [0007](decisions/0007-kokoro-for-spanish.md)           | Kokoro for a clearly licensed Spanish voice         | Proposed |
 
 Earlier project decisions (licence, framework, name, building fresh, the approved design) are in [plan.md §10](../plan.md#10-decisions).

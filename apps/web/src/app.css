@@ -26,6 +26,9 @@
   /* Switch scanning highlight (from the approved design). */
   --scan: #1d5bd6;
   --scan-fill: rgb(29 91 214 / 0.12);
+  /* Modeling mode (from the approved find-word design). */
+  --model: #5b3cc4;
+  --model-ink: #ffffff;
   --radius: 14px;
   --gap: clamp(6px, 1.2vmin, 12px);
 
@@ -58,6 +61,8 @@
   --on-ring: #2f6fe4;
   --scan: #ffe14d;
   --scan-fill: rgb(255 225 77 / 0.16);
+  --model: #ae91f7;
+  --model-ink: #0d1318;
 }
 
 :root[data-theme='contrast'] {
@@ -84,6 +89,8 @@
   --on-ring: #ffe14d;
   --scan: #ffe14d;
   --scan-fill: rgb(255 225 77 / 0.18);
+  --model: #ffe14d;
+  --model-ink: #000000;
 }
 
 /* While scanning with "dim others", everything but the highlight fades. */

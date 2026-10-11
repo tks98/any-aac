@@ -2,6 +2,7 @@
   import { boardName, buttonAt, linkableBoards, type ObfBoard } from '@open-aac/core';
   import { backups } from '../backup.svelte';
   import { install } from '../install.svelte';
+  import { modeling } from '../modeling.svelte';
   import { speech } from '../speech';
   import { openaacVoice } from '../voice/voice.svelte';
   import { editor } from '../editor.svelte';
@@ -104,6 +105,15 @@
       >
         <Icon path={editor.showHidden ? ICONS.eye : ICONS.eyeOff} size={22} />
         {t.showHidden}
+      </button>
+      <button
+        onclick={() => {
+          editor.close();
+          modeling.open();
+        }}
+      >
+        <Icon path={ICONS.model} size={22} />
+        {t.model}
       </button>
       <button onclick={() => printDialog.showModal()}>
         <Icon path={ICONS.print} size={22} />

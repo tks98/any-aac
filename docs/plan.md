@@ -102,8 +102,8 @@ Phases are defined in §6. **P1** is the MVP.
 - [P1] Edit mode in place: add or edit buttons, drag to swap, copy and paste, link boards, and undo. _Started:_ everything but drag (Swap is two taps for now); see [design.md](design.md#edit-mode).
 - [P1] **Edit lock** (PIN or hold-to-unlock) so the user can't change things by accident. _Hold-to-unlock done._
 - [P1] **Print boards to PDF** as a low-tech backup, from the browser's own print. _Done:_ Print in the edit toolbar prints this board or all of them, one per page, with symbol credits.
-- [P2] **Find word:** search any word and see the path to it highlighted. This is for partners modeling language and for new users.
-- [P2] **Modeling mode:** a partner's selections are highlighted without being spoken or logged as the user's own.
+- [P2] **Find word:** search any word and see the path to it highlighted. This is for partners modeling language and for new users. _Done_ ([0006](research/decisions/0006-partner-modeling.md)).
+- [P2] **Modeling mode:** a partner's selections are highlighted without being spoken or logged as the user's own. _Done:_ taps are said but never added to the message.
 - [P2] Board version snapshots, with restore.
 - [P3] Bulk edit (change many buttons at once), board templates, and "copy a board and keep it linked to updates" or "fork it".
 

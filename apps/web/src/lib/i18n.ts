@@ -298,6 +298,23 @@ const en = {
   printCredit: (date: string) =>
     `Printed from Open AAC on ${date}. Symbols: Mulberry Symbols © Steve Lee and OpenMoji, CC BY-SA 4.0.`,
 
+  // Modeling
+  model: 'Model',
+  modeling: 'Modeling',
+  modelingHelp: "Taps are said, but aren't added to the message.",
+  findWord: 'Find a word',
+  findHint: 'Type a word to see where it is on the boards.',
+  pathTo: 'Path to',
+  pathToWord: (word: string) => `Path to “${word}”`,
+  stepOpen: (label: string) => `Open ${label}`,
+  stepTap: (label: string) => `Tap ${label}`,
+  stepDone: 'Done',
+  startOver: 'Start over',
+  sayIt: 'Say it',
+  noMatch: (query: string) => `No word on these boards matches “${query}”.`,
+  otherMatches: 'Other matches',
+  exit: 'Exit',
+
   // Word forms
   forms: 'Forms',
   wordForms: 'Word forms',
@@ -619,6 +636,22 @@ const es: Messages = {
   printHelp: 'Para guardar un PDF, elige «Guardar como PDF» en la ventana de impresión.',
   printCredit: (date) =>
     `Impreso desde Open AAC el ${date}. Símbolos: Mulberry Symbols © Steve Lee y OpenMoji, CC BY-SA 4.0.`,
+
+  model: 'Modelar',
+  modeling: 'Modelado',
+  modelingHelp: 'Los toques se dicen, pero no se añaden al mensaje.',
+  findWord: 'Buscar una palabra',
+  findHint: 'Escribe una palabra para ver dónde está en los tableros.',
+  pathTo: 'Camino a',
+  pathToWord: (word) => `Camino a «${word}»`,
+  stepOpen: (label) => `Abrir ${label}`,
+  stepTap: (label) => `Tocar ${label}`,
+  stepDone: 'Hecho',
+  startOver: 'Volver a empezar',
+  sayIt: 'Decirla',
+  noMatch: (query) => `Ninguna palabra de estos tableros coincide con «${query}».`,
+  otherMatches: 'Otras coincidencias',
+  exit: 'Salir',
 
   forms: 'Formas',
   wordForms: 'Formas de palabras',

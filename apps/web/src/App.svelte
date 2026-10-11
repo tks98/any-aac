@@ -3,6 +3,8 @@
   import { onMount, untrack } from 'svelte';
   import BoardGrid from './lib/components/BoardGrid.svelte';
   import EditMode from './lib/components/EditMode.svelte';
+  import ModelingMode from './lib/components/ModelingMode.svelte';
+  import { modeling } from './lib/modeling.svelte';
   import MessageBar from './lib/components/MessageBar.svelte';
   import NavRail from './lib/components/NavRail.svelte';
   import PrintView from './lib/components/PrintView.svelte';
@@ -182,6 +184,8 @@
 <div class="screen">
   {#if editor.active}
     <EditMode onsettings={() => (settingsOpen = true)} onprint={(boards) => (printing = boards)} />
+  {:else if modeling.active}
+    <ModelingMode />
   {:else}
     <div class="app">
       <MessageBar />

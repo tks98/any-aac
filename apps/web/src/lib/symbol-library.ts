@@ -73,7 +73,11 @@ export function loadSymbols(): Promise<LibrarySymbol[]> {
   return library;
 }
 
-const fold = (text: string) => text.toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '');
+const fold = (text: string) =>
+  text
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '');
 
 /** Words in other languages that the starter vocabulary translates from English. */
 function englishFor(word: string): string[] {

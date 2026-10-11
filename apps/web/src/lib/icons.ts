@@ -35,6 +35,9 @@ export const ICONS = {
   share: 'M12 15V3M8 7l4-4 4 4M5 11v9h14v-9',
   phrases: 'M4 5h16v11H9l-5 4zM8 9h8M8 12h5',
   switch: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z',
+  // A pointer showing a word on the board.
+  model: 'M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14l7 2.5-3 1.2-1.2 3.3z',
+  find: 'M11 4.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13zM16 16l4.5 4.5',
   print: 'M7 9V3h10v6M7 17H4V9h16v8h-3M7 14h10v7H7z',
   forms: 'M3 12h5M8 12c4 0 4-6 8-6h5M8 12c4 0 4 6 8 6h5M8 12h13',
 } as const;

@@ -33,7 +33,7 @@ export function uniqueId(base: string, taken: Iterable<string>): string {
     base
       .toLowerCase()
       .normalize('NFKD')
-      .replace(/[̀-ͯ]/g, '')
+      .replace(/[\u0300-\u036f]/g, '')
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-|-$/g, '') || 'item';
   const used = new Set(taken);

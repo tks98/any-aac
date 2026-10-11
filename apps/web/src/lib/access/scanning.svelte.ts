@@ -5,6 +5,7 @@
  */
 import { cells } from '@open-aac/core';
 import { editor } from '../editor.svelte';
+import { modeling } from '../modeling.svelte';
 import { speech } from '../speech';
 import { app } from '../state.svelte';
 import { openaacVoice } from '../voice/voice.svelte';
@@ -24,7 +25,7 @@ class Scanning {
   /** Where the highlight is drawn, or null when nothing is highlighted. */
   box = $state<Box | null>(null);
   /** Scanning is on and the communicator's screen is showing. */
-  active = $derived(app.settings.scan.enabled && !editor.active);
+  active = $derived(app.settings.scan.enabled && !editor.active && !modeling.active);
 
   private scanner = new Scanner(() => app.settings.scan, {
     highlight: (node) => this.show(node),
