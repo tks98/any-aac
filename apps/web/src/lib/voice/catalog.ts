@@ -1,4 +1,5 @@
 import type { VoiceSource } from './piper';
+import catalog from './voices.json';
 
 /**
  * Piper voices we can offer: only voices whose licence is clearly open, from
@@ -9,8 +10,8 @@ import type { VoiceSource } from './piper';
  * whose training isn't documented (es_MX claude).
  * See docs/research/decisions/0002-only-clearly-licensed-voices.md.
  *
- * The files currently come from the Piper project on Hugging Face. Before this
- * ships, they must be served from the app's own origin like everything else.
+ * The list, with pinned sizes and hashes, is voices.json, which the
+ * self-hosting script reads too.
  */
 export interface VoiceEntry {
   id: string;
@@ -29,81 +30,65 @@ export interface VoiceEntry {
 /** Cache Storage bucket that holds downloaded voice files. */
 export const VOICE_CACHE = 'open-aac-voices-v1';
 
-const HF = 'https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0';
+/**
+ * Where voice files come from: this site's own voices/ folder when the build
+ * serves them (VITE_SELF_HOST_VOICES, as on GitHub Pages; see
+ * scripts/self-host-voices.mjs), so no request leaves the app's origin.
+ * Otherwise the pinned Piper release on Hugging Face (development).
+ */
+const VOICE_BASE =
+  import.meta.env.VITE_SELF_HOST_VOICES === 'true'
+    ? `${import.meta.env.BASE_URL}voices`
+    : catalog.piper;
 
-const piper = (locale: string, name: string, quality = 'medium'): VoiceSource => {
-  const base = `${HF}/${locale.split('_')[0]}/${locale}/${name}/${quality}/${locale}-${name}-${quality}`;
+const sourceOf = (dir: string): VoiceSource => {
+  const base = `${VOICE_BASE}/${dir}/${dir.split('/').slice(1).join('-')}`;
   return { model: `${base}.onnx`, config: `${base}.onnx.json` };
 };
 
-export const VOICES: VoiceEntry[] = [
-  {
-    id: 'en_US-ljspeech-medium',
-    name: 'Linda',
-    lang: 'en-US',
-    gender: 'female',
-    // Clear and natural, from the widely used, public-domain LJ Speech recordings.
-    recommended: true,
-    license: 'Public domain (LJ Speech)',
-    sizeMB: 63.5,
-    source: piper('en_US', 'ljspeech'),
-  },
-  {
-    id: 'en_US-kristin-medium',
-    name: 'Kristin',
-    lang: 'en-US',
-    gender: 'female',
-    license: 'Public domain (LibriVox)',
-    sizeMB: 63.5,
-    source: piper('en_US', 'kristin'),
-  },
-  {
-    id: 'en_US-norman-medium',
-    name: 'Norman',
-    lang: 'en-US',
-    gender: 'male',
-    license: 'Public domain (LibriVox)',
-    sizeMB: 63.5,
-    source: piper('en_US', 'norman'),
-  },
-  {
-    id: 'en_GB-cori-medium',
-    name: 'Cori',
-    lang: 'en-GB',
-    gender: 'female',
-    license: 'Public domain (LibriVox)',
-    sizeMB: 63.5,
-    source: piper('en_GB', 'cori'),
-  },
-  {
-    id: 'es_ES-carlfm-x_low',
-    name: 'Carlfm',
-    lang: 'es-ES',
-    gender: 'male',
-    small: true,
-    license: 'Public domain',
-    sizeMB: 28.1,
-    source: piper('es_ES', 'carlfm', 'x_low'),
-  },
-];
+export const VOICES: VoiceEntry[] = catalog.voices.map((v) => ({
+  id: v.id,
+  name: v.name,
+  lang: v.lang,
+  gender: v.gender as VoiceEntry['gender'],
+  ...('small' in v && v.small ? { small: true } : {}),
+  ...('recommended' in v && v.recommended ? { recommended: true } : {}),
+  license: v.license,
+  sizeMB: v.model.size / 1e6,
+  source: sourceOf(v.dir),
+}));
 
 export const voiceById = (id: string | null | undefined) => VOICES.find((v) => v.id === id);
 
 /**
- * Deletes downloaded files of voices no longer offered (e.g. withdrawn for
- * their licence), so they don't keep using space. Returns the ids removed.
+ * Tidies the downloaded voice files. Files of a voice still offered but now at
+ * a different address (e.g. moved from Hugging Face to this site) are kept
+ * under the new address; files of voices no longer offered (e.g. withdrawn for
+ * their licence) are deleted. Returns the ids of withdrawn voices.
  */
-export async function forgetWithdrawnVoices(): Promise<string[]> {
+export async function tidyVoiceFiles(): Promise<string[]> {
   if (!('caches' in globalThis)) return [];
   const cache = await caches.open(VOICE_CACHE);
-  const offered = new Set(VOICES.flatMap((v) => [v.source.model, v.source.config]));
+  const absolute = (url: string) => new URL(url, location.href).href;
+  const fileName = (url: string) => url.split('/').at(-1) ?? '';
+  const offered = new Map(
+    VOICES.flatMap((v) => [v.source.model, v.source.config]).map((url) => [
+      fileName(url),
+      absolute(url),
+    ]),
+  );
   const withdrawn = new Set<string>();
   for (const request of await cache.keys()) {
-    if (offered.has(request.url)) continue;
+    const name = fileName(request.url);
+    const current = offered.get(name);
+    if (current === request.url) continue;
+    if (current) {
+      const response = await cache.match(request);
+      if (response) await cache.put(current, response);
+    } else {
+      withdrawn.add(name.replace(/\.onnx(\.json)?$/, ''));
+    }
     await cache.delete(request);
-    // …/<lang>/<locale>/<name>/<quality>/<id>.onnx(.json)
-    const file = request.url.split('/').at(-1) ?? '';
-    withdrawn.add(file.replace(/\.onnx(\.json)?$/, ''));
   }
   return [...withdrawn];
 }

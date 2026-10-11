@@ -208,7 +208,7 @@ docs/
 
 ### 5.5 Offline and self-hosting modes
 
-1. **Hosted:** use our public instance once and install it; after that it runs offline.
+1. **Hosted:** use our public instance once and install it; after that it runs offline. It's on GitHub Pages at [tks98.github.io/open-aac](https://tks98.github.io/open-aac/), with the voices on the same site ([decision 0010](research/decisions/0010-hosting.md)).
 2. **Static self-host:** `dist/` is plain static files, servable by nginx, Caddy, GitHub Pages, or a school web server. HTTPS is required for offline mode (or `localhost`). Document Caddy's automatic TLS and an internal CA for LAN setups.
 3. **Docker:** static app plus optional sync server in one `docker compose up` (P4).
 4. **Desktop wrapper:** Tauri for kiosks or air-gapped installs (P5).
@@ -218,6 +218,8 @@ docs/
 ## 6. Roadmap
 
 Phases end when their exit criteria are met, not on a calendar.
+
+**Where things stand (0.1.0, 2026-10-11).** P1 is built except the starter vocabulary at three sizes: there's one size, plus phone layouts ([decision 0005](research/decisions/0005-phone-layouts.md)). None of P1's exit criteria has been met yet: a full day offline on a budget tablet, Cboard and CoughDrop imports, and SLP sign-off. From later phases, switch scanning (without block scanning), auditory scanning, find word, modeling mode, symbol search, word forms in English and Spanish, and a Spanish-first vocabulary are in. See the [changelog](../CHANGELOG.md).
 
 ### P0: Foundations
 

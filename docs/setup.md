@@ -1,6 +1,6 @@
 # Setting up a device
 
-For families, teachers and speech-language pathologists (SLPs) setting up Open AAC for someone. The app is still in early development; see the [README](../README.md).
+For families, teachers and speech-language pathologists (SLPs) setting up Open AAC for someone. Open AAC is at **[tks98.github.io/open-aac](https://tks98.github.io/open-aac/)**. This is its first release, and its vocabulary hasn't yet been reviewed by SLPs; see the [README](../README.md).
 
 ## 1. Install it
 
@@ -10,7 +10,7 @@ Installing keeps the app full screen, lets it work offline, and stops iOS from c
 - **Android:** open it in Chrome, open the ⋮ menu, then **Install app** (or **Add to Home screen**).
 - **Computer:** in Chrome or Edge, use the install button at the right of the address bar.
 
-Edit mode reminds you if the app isn't installed.
+Edit mode reminds you if the app isn't installed. Updates download in the background and take effect the next time the app is opened, so they never interrupt someone mid-sentence.
 
 ## 2. Choose one main device
 

@@ -19,7 +19,10 @@ export default defineConfig(
   ts.configs.recommended,
   svelte.configs.recommended,
   {
-    languageOptions: { globals: { ...globals.browser, ...globals.node } },
+    // __APP_VERSION__ is defined at build time (apps/web/vite.config.ts).
+    languageOptions: {
+      globals: { ...globals.browser, ...globals.node, __APP_VERSION__: 'readonly' },
+    },
   },
   {
     files: ['**/*.svelte', '**/*.svelte.ts'],

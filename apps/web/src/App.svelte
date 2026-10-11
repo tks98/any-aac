@@ -27,7 +27,7 @@
     saveSettings,
   } from './lib/storage';
   import { phrase } from './lib/phrases';
-  import { forgetWithdrawnVoices, voiceById } from './lib/voice/catalog';
+  import { tidyVoiceFiles, voiceById } from './lib/voice/catalog';
   import { openaacVoice } from './lib/voice/voice.svelte';
 
   /** Must match the phone breakpoint in the components' CSS. */
@@ -158,7 +158,7 @@
     for (const [lang, id] of Object.entries(app.settings.speech.openaacVoices)) {
       if (!voiceById(id)) delete app.settings.speech.openaacVoices[lang];
     }
-    void forgetWithdrawnVoices().then((ids) =>
+    void tidyVoiceFiles().then((ids) =>
       Promise.all(ids.map((id) => deleteAudioForVoice(id).catch(() => undefined))),
     );
     settingsLoaded = true;

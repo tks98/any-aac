@@ -80,6 +80,7 @@ const en = {
   sectionDisplay: 'Display',
   sectionBoards: 'Boards & backup',
   sectionAbout: 'About',
+  version: (version: string) => `Version ${version}`,
   picturesHeading: 'Pictures in these boards',
   pictureCount: (count: number) => (count === 1 ? '1 picture' : `${count} pictures`),
   ownPictures: (count: number) =>
@@ -107,7 +108,7 @@ const en = {
   testVoice: 'Test voice',
   openaacVoices: 'Open AAC voices',
   openaacVoicesHelp:
-    'These run on this device. The first download is about 80 MB (the voice plus the speech engine), from the Piper project at huggingface.co. After that they work offline.',
+    'These run on this device. The first download is about 80 MB (the voice and the speech engine); after that they work offline.',
   noOpenaacVoice: (language: string) =>
     `There's no Open AAC voice in ${language} yet, so the device voice speaks.`,
   female: 'female',
@@ -420,6 +421,7 @@ const es: Messages = {
   sectionDisplay: 'Pantalla',
   sectionBoards: 'Tableros y copias',
   sectionAbout: 'Acerca de',
+  version: (version) => `Versión ${version}`,
   picturesHeading: 'Imágenes de estos tableros',
   pictureCount: (count) => (count === 1 ? '1 imagen' : `${count} imágenes`),
   ownPictures: (count) =>
@@ -450,7 +452,7 @@ const es: Messages = {
   testVoice: 'Probar la voz',
   openaacVoices: 'Voces de Open AAC',
   openaacVoicesHelp:
-    'Funcionan en este dispositivo. La primera descarga ocupa unos 80 MB (la voz y el motor de habla) y viene del proyecto Piper en huggingface.co. Después funcionan sin internet.',
+    'Funcionan en este dispositivo. La primera descarga ocupa unos 80 MB (la voz y el motor de habla); después funcionan sin internet.',
   noOpenaacVoice: (language) =>
     `Todavía no hay una voz de Open AAC en ${language}, así que habla la voz del dispositivo.`,
   female: 'femenina',

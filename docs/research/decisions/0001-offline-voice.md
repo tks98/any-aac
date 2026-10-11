@@ -45,7 +45,7 @@ All of these are fetched only when someone turns the voice on. None are in the a
 ## Licences
 
 - eSpeak NG is GPL-3.0, which is compatible with our AGPL-3.0. ONNX Runtime is MIT.
-- Piper voices are licensed one by one. **The popular hfc_female, hfc_male and ryan voices are CC BY-NC-SA, and lessac has a restrictive research licence.** We only offer voices trained on open data: ljspeech, kristin, norman and cori (public domain), joe (CC0) and alba (CC BY 4.0). See `apps/web/src/lib/voice/catalog.ts`.
+- Piper voices are licensed one by one. **The popular hfc_female, hfc_male and ryan voices are CC BY-NC-SA, and lessac has a restrictive research licence.** We only offer voices whose recordings and training are clearly open ([0002](0002-only-clearly-licensed-voices.md)); the list is in `apps/web/src/lib/voice/voices.json`.
 
 ## Decision
 
@@ -53,7 +53,7 @@ Use option 3, with these parts:
 
 - The voice is an optional download in Settings. Web Speech stays the default until a voice is installed, and remains the fallback if the voice fails.
 - **Each button's audio is rendered once and cached**, so a tap plays instantly whatever the device's speed. The message bar's "Speak" renders the whole sentence.
-- Before release, voice files must be served from our own origin (or from a self-hoster's server), not from Hugging Face.
+- Before release, voice files must be served from our own origin (or from a self-hoster's server), not from Hugging Face. Done for 0.1.0 ([0010](0010-hosting.md)).
 
 ## Implementation
 

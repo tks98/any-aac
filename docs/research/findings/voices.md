@@ -12,6 +12,10 @@
 - Kokoro-82M's weights are Apache 2.0 and it has Spanish voices, but it was trained partly on synthetic audio from closed commercial TTS models, with no dataset manifest ([model card](https://huggingface.co/hexgrad/Kokoro-82M)), so it isn't clearly open ([0007](../decisions/0007-kokoro-for-spanish.md)).
 - Openly licensed Spanish recordings exist, such as [OpenSLR 61](https://www.openslr.org/61/) (Argentinian, female and male, CC BY-SA 4.0). Training one with a clean starting point is a possible future route to a clean Spanish voice ([0008](../decisions/0008-train-a-spanish-voice.md)).
 
+## Where the files come from
+
+- The hosted app serves voice files from its own site, copied from the pinned Piper release and checked against their hashes, so no other site learns who downloads a voice ([0010](../decisions/0010-hosting.md)).
+
 ## Gaps
 
 No openly licensed children's voices found yet; voice banking not started.

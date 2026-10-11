@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { defineConfig } from 'vite';
@@ -7,7 +8,14 @@ import { VitePWA } from 'vite-plugin-pwa';
 // `tailscale serve` (https://<machine>.<tailnet>.ts.net).
 const allowedHosts = ['.ts.net'];
 
+const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8')) as {
+  version: string;
+};
+
 export default defineConfig({
+  // GitHub Pages serves the app from /<repo>/; elsewhere it's the site root.
+  base: process.env.BASE_PATH ?? '/',
+  define: { __APP_VERSION__: JSON.stringify(pkg.version) },
   server: { allowedHosts },
   preview: { allowedHosts },
   // ONNX Runtime finds its .wasm next to itself; pre-bundling would break that.
@@ -64,6 +72,8 @@ export default defineConfig({
           '**/voice.worker*.js',
           // The symbol library is fetched as symbols are looked at, not up front.
           'symbol-library/**',
+          // Voices are optional downloads the app caches itself.
+          'voices/**',
         ],
         runtimeCaching: [
           {

@@ -880,6 +880,7 @@
         {/if}
       {:else}
         <h3>{t.sectionAbout}</h3>
+        <p class="intro">{t.version(__APP_VERSION__)}</p>
         {#if app.set}
           {@const { credits, ownPictures } = pictureCredits(app.set)}
           <section class="card prose" aria-labelledby="pictures-heading">
@@ -950,6 +951,16 @@
             </p>
             <p>El texto usa Atkinson Hyperlegible Next (SIL Open Font License).</p>
             <p>
+              Las voces de Open AAC son modelos de Piper entrenados con grabaciones de dominio
+              público, y funcionan con ONNX Runtime (MIT) y eSpeak NG (GPL-3.0). Las licencias de
+              todo lo que usa Open AAC están en
+              <a
+                href="https://github.com/tks98/open-aac/blob/main/THIRD_PARTY.md"
+                target="_blank"
+                rel="noreferrer">THIRD_PARTY.md</a
+              >.
+            </p>
+            <p>
               Open AAC no recoge ningún dato. Tus tableros y ajustes se quedan en este dispositivo.
             </p>
           </div>
@@ -986,11 +997,20 @@
                 rel="noreferrer">Universal Core</a
               >
               vocabulary from the Center for Literacy and Disability Studies (UNC-Chapel Hill, CC BY 4.0),
-              with a few words added. The starter vocabulary is a placeholder until speech-language pathologists
+              with a few words added. The starter vocabulary is a draft until speech-language pathologists
               have reviewed it. Its arrangement, translations and the few remaining line-drawing pictograms
               are by Open AAC contributors, licensed CC BY-SA 4.0.
             </p>
             <p>Text is set in Atkinson Hyperlegible Next (SIL Open Font License).</p>
+            <p>
+              Open AAC voices are Piper models trained on public-domain recordings, run with ONNX
+              Runtime (MIT) and eSpeak NG (GPL-3.0). The licences of everything Open AAC uses are in
+              <a
+                href="https://github.com/tks98/open-aac/blob/main/THIRD_PARTY.md"
+                target="_blank"
+                rel="noreferrer">THIRD_PARTY.md</a
+              >.
+            </p>
             <p>Open AAC collects nothing. Your boards and settings stay on this device.</p>
           </div>
         {/if}

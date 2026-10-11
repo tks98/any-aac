@@ -5,5 +5,6 @@ import { defineConfig } from 'vitest/config';
 // compiles .svelte.ts modules, which use runes.
 export default defineConfig({
   plugins: [svelte()],
+  define: { __APP_VERSION__: JSON.stringify('test') },
   test: { include: ['test/**/*.test.ts'] },
 });

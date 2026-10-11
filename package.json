@@ -1,5 +1,6 @@
 {
   "name": "open-aac",
+  "version": "0.1.0",
   "private": true,
   "description": "A free, open-source AAC (augmentative and alternative communication) app that runs in the browser and works offline.",
   "license": "AGPL-3.0-or-later",

@@ -192,7 +192,14 @@
       font-size: 1rem;
     }
 
+    /* Tighter spacing, so more of the message fits on a phone. */
+    .message {
+      gap: 4px;
+      padding: 6px 8px;
+    }
+
     .chip {
+      padding: 4px 6px;
       font-size: 0.9rem;
     }
 
