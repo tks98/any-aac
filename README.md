@@ -9,7 +9,17 @@ A free, open-source AAC (augmentative and alternative communication) app. It run
   <img src="docs/screenshots/iphone-board.png" alt="The phone layout on an iPhone: 22 of the core words and the six folders in a 4 by 7 grid, with the message “I want more”" width="283">
 </p>
 
-> **Status: 0.1.0, the first release.** The vocabulary is built on published research (Project Core's Universal Core, and Soto and Cooper's early Spanish vocabulary), but it hasn't yet been reviewed by speech-language pathologists or tested with AAC users. Use it alongside the advice of an SLP, and keep a backup way to communicate: Any AAC can print its boards on paper.
+## Built on research
+
+Any AAC's design follows published AAC research. The [research notes](docs/research/README.md) record each source and the decision it led to.
+
+- **Core vocabulary.** The English home board holds Project Core's [Universal Core](https://www.med.unc.edu/ahs/clds/universal-core-vocabulary/), 36 words chosen from published core vocabulary lists, device vocabularies and word-frequency data, plus six early words from research on toddlers' core vocabulary. Topic boards add the people, things and places beginning communicators talk about most ([vocabulary findings](docs/research/findings/vocabulary.md)).
+- **Spanish chosen in Spanish.** The Spanish-first boards follow Soto and Cooper's [early Spanish vocabulary for AAC](https://doi.org/10.1080/07434618.2021.1881822): words young Spanish speakers actually use, with verbs in the forms they use them, rather than a translation of an English board ([decision 0004](docs/research/decisions/0004-spanish-first-vocabulary.md)).
+- **Words that never move.** Each word keeps one place, so finding it becomes automatic (motor planning). Vocabulary grows by revealing words, not rearranging them; core words keep their place on every topic board, and phone layouts keep the tablet's order ([decision 0005](docs/research/decisions/0005-phone-layouts.md)).
+- **Colour and order.** Word types are colour-coded (Modified Fitzgerald Key) and run left to right in sentence order, which research on colour cues shows speeds up finding symbols.
+- **Teaching.** Modeling mode and Find a word support aided language modeling, the best-evidenced way to teach AAC ([teaching findings](docs/research/findings/teaching.md)).
+- **A plain, consistent interface.** It follows the W3C's guidance on cognitive accessibility, and every screen is checked against WCAG 2.2 AA in the automated tests ([interface findings](docs/research/findings/interface.md)).
+- **Speech that's always there.** Voices that run on the device, so speaking never depends on a connection, with every word's audio prepared ahead; only voices whose licences are clearly open ([decisions 0001](docs/research/decisions/0001-offline-voice.md) and [0002](docs/research/decisions/0002-only-clearly-licensed-voices.md)).
 
 ## What it does
 
@@ -116,7 +126,7 @@ Any AAC's own fields in OBF files use the `ext_anyaac_` prefix.
 
 ## Origins
 
-Any AAC continues work that began at the Illinois Institute of Technology. The paper [_Voice for the Voiceless: Developing a Low-Cost Open-Source Communication Device for the Speech Impaired_](https://link.springer.com/chapter/10.1007/978-3-030-70416-2_22) (Springer, _Advances in Intelligent Systems and Computing_) described an AAC device built from a Raspberry Pi, a 7-inch touchscreen and a battery pack for $142, running an open-source phrase board that spoke without an internet connection. [IIT wrote about the project](https://www.iit.edu/student-experience/student-and-alumni-stories/using-technology-better-peoples-lives).
+Any AAC continues my work that began at the Illinois Institute of Technology. The paper [_Voice for the Voiceless: Developing a Low-Cost Open-Source Communication Device for the Speech Impaired_](https://link.springer.com/chapter/10.1007/978-3-030-70416-2_22) (Springer, _Advances in Intelligent Systems and Computing_) described an AAC device built from a Raspberry Pi, a 7-inch touchscreen and a battery pack for $142, running an open-source phrase board that spoke without an internet connection. [IIT wrote about the project](https://www.iit.edu/student-experience/student-and-alumni-stories/using-technology-better-peoples-lives).
 
 Its requirements still guide this project: low cost, open source so the community can keep it going, working offline, and easy to use and customise. The paper was also clear about what that device couldn't do yet: offline speech sounded robotic, there were no pictures, the vocabulary couldn't be changed on the device, and a system update could break it. Any AAC answers each of these with neural voices that run on the device, symbols and photos, editing in place, and the browser as its platform, so the hardware is whatever a family already has.
 
