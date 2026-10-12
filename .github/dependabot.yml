@@ -11,6 +11,9 @@ updates:
       # TypeScript 7 (the Go compiler) isn't supported by typescript-eslint yet.
       - dependency-name: typescript
         update-types: ['version-update:semver-major']
+      # Node's types follow the Node version in .nvmrc; change both together.
+      - dependency-name: '@types/node'
+        update-types: ['version-update:semver-major']
     groups:
       development:
         dependency-type: development
