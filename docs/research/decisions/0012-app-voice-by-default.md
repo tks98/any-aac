@@ -24,8 +24,8 @@ Until the voice is ready: bundled clips for starter words, then the device voice
 
 ## Consequences
 
-- A first launch downloads about 70 MB on its own. The setup guide suggests opening the app on Wi-Fi, and the setting turns it off.
+- A first launch downloads about 70 MB on its own (about 37 MB since [0013](0013-half-precision-voices.md)). The setup guide suggests opening the app on Wi-Fi, and the setting turns it off.
 - Before the voice arrives, a whole message is said word by word, so it sounds a little choppy.
 - The clips must match the starter vocabularies. A unit test fails when a starter word has no clip; then run `node scripts/render-clips.mjs`.
 - Building this found a bug in piper-phonemize: it stops working after about 80 calls (its original build too), which made sentences fall back to the device voice once the app had prepared enough words. A fresh instance now takes over every 50 calls, and again if a call fails.
-- Next: a smaller voice model ([0001](0001-offline-voice.md) lists the sizes), after a listening comparison.
+- Next: a smaller voice model, after a listening comparison. Done in [0013](0013-half-precision-voices.md): voices are stored in half precision, half the size.

@@ -4,6 +4,9 @@
  * its own origin rather than Hugging Face (build with VITE_SELF_HOST_VOICES=true).
  * Files come from the pinned Piper release, are checked against the sizes and
  * hashes in src/lib/voice/voices.json, and are kept in .cache/voices/.
+ * Each model is stored in half precision, half the size and sounding the same
+ * (scripts/half-precision.mjs), and checked against its pinned hash too. They
+ * go in the site's voices/fp16/ folder.
  *
  *   node scripts/self-host-voices.mjs dist
  */
@@ -11,6 +14,7 @@ import { createHash } from 'node:crypto';
 import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { toHalfPrecision } from './half-precision.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const out = process.argv[2];
@@ -54,21 +58,17 @@ async function fetchChecked(path, expected) {
   return cached;
 }
 
+const folder = join(out, 'voices/fp16');
 let total = 0;
 for (const voice of voices) {
-  const base = `${voice.dir}/${voice.dir.split('/').slice(1).join('-')}`;
-  for (const [suffix, expected] of [
-    ['.onnx', voice.model],
-    ['.onnx.json', voice.config],
-  ]) {
-    const path = base + suffix;
-    const source = await fetchChecked(path, expected);
-    const target = join(out, 'voices', path);
-    mkdirSync(dirname(target), { recursive: true });
-    copyFileSync(source, target);
-    total += expected.size;
-  }
+  const path = `${voice.dir}/${voice.dir.split('/').slice(1).join('-')}.onnx`;
+  const target = join(folder, path);
+  mkdirSync(dirname(target), { recursive: true });
+
+  const { model } = toHalfPrecision(readFileSync(await fetchChecked(path, voice.model)));
+  check(model, voice.fp16, `${path} in half precision`);
+  writeFileSync(target, model);
+  copyFileSync(await fetchChecked(`${path}.json`, voice.config), `${target}.json`);
+  total += voice.fp16.size + voice.config.size;
 }
-console.log(
-  `Copied ${voices.length} voices (${Math.round(total / 1e6)} MB) into ${join(out, 'voices')}.`,
-);
+console.log(`Copied ${voices.length} voices (${Math.round(total / 1e6)} MB) into ${folder}.`);

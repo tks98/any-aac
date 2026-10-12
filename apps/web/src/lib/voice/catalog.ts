@@ -31,16 +31,16 @@ export interface VoiceEntry {
 /** Keeps the app's first name, so voices downloaded before the rename are found. */
 export const VOICE_CACHE = 'open-aac-voices-v1';
 
+const SELF_HOSTED = import.meta.env.VITE_SELF_HOST_VOICES === 'true';
+
 /**
- * Where voice files come from: this site's own voices/ folder when the build
- * serves them (VITE_SELF_HOST_VOICES, as on GitHub Pages; see
- * scripts/self-host-voices.mjs), so no request leaves the app's origin.
- * Otherwise the pinned Piper release on Hugging Face (development).
+ * Where voice files come from: this site's own voices/fp16/ folder when the
+ * build serves them (VITE_SELF_HOST_VOICES, as on GitHub Pages; see
+ * scripts/self-host-voices.mjs), so no request leaves the app's origin, and
+ * the models are the half-precision copies, half the size. Otherwise the
+ * pinned Piper release on Hugging Face, at full size (development).
  */
-const VOICE_BASE =
-  import.meta.env.VITE_SELF_HOST_VOICES === 'true'
-    ? `${import.meta.env.BASE_URL}voices`
-    : catalog.piper;
+const VOICE_BASE = SELF_HOSTED ? `${import.meta.env.BASE_URL}voices/fp16` : catalog.piper;
 
 const sourceOf = (dir: string): VoiceSource => {
   const base = `${VOICE_BASE}/${dir}/${dir.split('/').slice(1).join('-')}`;
@@ -55,7 +55,7 @@ export const VOICES: VoiceEntry[] = catalog.voices.map((v) => ({
   ...('small' in v && v.small ? { small: true } : {}),
   ...('recommended' in v && v.recommended ? { recommended: true } : {}),
   license: v.license,
-  sizeMB: v.model.size / 1e6,
+  sizeMB: (SELF_HOSTED ? v.fp16.size : v.model.size) / 1e6,
   source: sourceOf(v.dir),
 }));
 
@@ -82,9 +82,11 @@ export function appVoiceIdFor(chosen: Record<string, string>, lang: string): str
 
 /**
  * Tidies the downloaded voice files. Files of a voice still offered but now at
- * a different address (e.g. moved from Hugging Face to this site) are kept
- * under the new address; files of voices no longer offered (e.g. withdrawn for
- * their licence) are deleted. Returns the ids of withdrawn voices.
+ * a different address (e.g. moved from Hugging Face to this site, or to
+ * voices/fp16/ when the site began serving half-precision copies) are kept
+ * under the new address, so the voice keeps working offline; a full-size copy
+ * stays full size. Files of voices no longer offered (e.g. withdrawn for their
+ * licence) are deleted. Returns the ids of withdrawn voices.
  */
 export async function tidyVoiceFiles(): Promise<string[]> {
   if (!('caches' in globalThis)) return [];

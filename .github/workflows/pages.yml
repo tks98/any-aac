@@ -34,7 +34,8 @@ jobs:
       - id: pages
         uses: actions/configure-pages@v6
       # The symbol library's Mulberry release (52 MB) and the voices (282 MB),
-      # both pinned and checked against their hashes.
+      # both pinned and checked against their hashes. The site gets the voices
+      # in half precision (148 MB), converted and checked again.
       - uses: actions/cache@v6
         with:
           path: apps/web/.cache

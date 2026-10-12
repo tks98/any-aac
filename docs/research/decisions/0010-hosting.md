@@ -9,7 +9,7 @@ People need somewhere to open Any AAC before they can install it ([plan.md §5.5
 Options:
 
 1. **GitHub Pages.** Free for public repositories, deploys from Actions, HTTPS included. Sites can be up to 1 GB, with a soft limit of 100 GB of traffic a month ([GitHub's limits](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits)).
-2. **Another static host** (Cloudflare Pages, Netlify). Similar, but Cloudflare Pages can't serve files over 25 MiB, and each voice is 64 MB.
+2. **Another static host** (Cloudflare Pages, Netlify). Similar, but Cloudflare Pages can't serve files over 25 MiB, and each voice is 64 MB (32.5 MB in half precision since [0013](0013-half-precision-voices.md), still over the limit).
 3. **Our own server.** The most control, but someone has to run it.
 
 ## Decision

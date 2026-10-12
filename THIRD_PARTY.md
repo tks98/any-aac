@@ -29,7 +29,7 @@ App voices, the voices that come with Any AAC, are optional downloads. They're [
 | Cori    | British English  | LibriVox, public domain                                             |
 | Carlfm  | Spanish (Spain)  | Public domain                                                       |
 
-Each voice's model card is in its folder of the Piper release. The files and their hashes are pinned in [`apps/web/src/lib/voice/voices.json`](apps/web/src/lib/voice/voices.json).
+Each voice's model card is in its folder of the Piper release. The files and their hashes are pinned in [`apps/web/src/lib/voice/voices.json`](apps/web/src/lib/voice/voices.json). The hosted app serves each voice with its weights stored in half precision, converted from the release by [`apps/web/scripts/half-precision.mjs`](apps/web/scripts/half-precision.mjs) ([decision 0013](docs/research/decisions/0013-half-precision-voices.md)); the converted files' hashes are pinned there too.
 
 ## Speech engine
 

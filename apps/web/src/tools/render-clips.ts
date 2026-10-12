@@ -25,6 +25,26 @@ function base64(pcm: Int16Array): string {
 const texts = starterClipTexts();
 
 Object.assign(window, {
+  /** Renders texts with any model (for comparing voice files), timing each one. */
+  async renderTexts(
+    source: { model: string; config: string },
+    list: string[],
+  ): Promise<{ sampleRate: number; clips: string[]; ms: number[] }> {
+    const piper = await PiperVoice.load(source);
+    const clips: string[] = [];
+    const ms: number[] = [];
+    for (const text of list) {
+      const start = performance.now();
+      const { samples } = await piper.synthesize(text);
+      ms.push(Math.round(performance.now() - start));
+      const pcm = new Int16Array(samples.length);
+      for (let i = 0; i < samples.length; i++) {
+        pcm[i] = Math.round(Math.max(-1, Math.min(1, samples[i]!)) * 0x7fff);
+      }
+      clips.push(base64(pcm));
+    }
+    return { sampleRate: piper.sampleRate, clips, ms };
+  },
   clipLanguages: async () => Object.keys(await texts),
   async renderVoice(lang: string): Promise<Rendered> {
     const voice = defaultVoiceFor(lang);

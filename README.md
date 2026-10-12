@@ -55,7 +55,7 @@ Any AAC's design follows published AAC research. The [research notes](docs/resea
 
 ## Privacy
 
-Any AAC collects nothing: no accounts, no analytics, no third-party scripts. Boards, settings and voices are stored in the browser on the device. The hosted app makes no requests to anyone else: voice files come from the same site, and are only downloaded when someone presses Download.
+Any AAC collects nothing: no accounts, no analytics, no third-party scripts. Boards, settings and voices are stored in the browser on the device. The hosted app makes no requests to anyone else: voice files come from the same site. The voice for the language in use downloads the first time the app opens; a setting turns that off.
 
 Data stays with the web address it was saved under. If you move to a different address (your own server, say), use **Settings → Boards & backup → Back up everything** first, then restore the backup there.
 
@@ -69,7 +69,7 @@ VITE_SELF_HOST_VOICES=true pnpm build
 node apps/web/scripts/self-host-voices.mjs apps/web/dist
 ```
 
-Then serve `apps/web/dist` over HTTPS (offline mode and installing need HTTPS, or `localhost`). To serve it from a sub-path, set `BASE_PATH`, for example `BASE_PATH=/aac/`. The voices add about 280 MB; each file is checked against the hash pinned in [voices.json](apps/web/src/lib/voice/voices.json). Without `VITE_SELF_HOST_VOICES`, the app downloads voices from the pinned Piper release on Hugging Face instead.
+Then serve `apps/web/dist` over HTTPS (offline mode and installing need HTTPS, or `localhost`). To serve it from a sub-path, set `BASE_PATH`, for example `BASE_PATH=/aac/`. The voices add about 150 MB: the script stores each in half precision, half the size and sounding the same ([decision 0013](docs/research/decisions/0013-half-precision-voices.md)), and checks every file against the hashes pinned in [voices.json](apps/web/src/lib/voice/voices.json). Without `VITE_SELF_HOST_VOICES`, the app downloads voices from the pinned Piper release on Hugging Face instead.
 
 The hosted version is built the same way by [pages.yml](.github/workflows/pages.yml), which deploys `main` after CI passes ([decision 0010](docs/research/decisions/0010-hosting.md)).
 

@@ -42,6 +42,7 @@ All of these are fetched only when someone turns the voice on. None are in the a
 | piper-phonemize (eSpeak NG, ~100 languages)                             | 18.7 MB | 9.0 MB  |
 | — trimmed to English and Spanish ([0012](0012-app-voice-by-default.md)) | 1.0 MB  | 0.5 MB  |
 | One Piper voice (medium)                                                | 63 MB   | n/a     |
+| — in half precision ([0013](0013-half-precision-voices.md))             | 32.5 MB | n/a     |
 
 ## Licences
 
@@ -70,7 +71,7 @@ Use option 3, with these parts:
 - Real-device speed (iPhone, budget Android). The voice lab's "Copy results" button exists to collect this.
 - Which voice sounds best for a default, as judged by AAC users.
 - Multithreading needs cross-origin isolation (COOP/COEP headers), which would speed up synthesis on multi-core devices.
-- Smaller models: quantized (int8) versions of the voices could be about a quarter of the size. Their quality needs testing.
+- Smaller models: voices are now stored in half precision, half the size and sounding the same. 8-bit versions would be about a quarter of the size, but sound measurably different ([0013](0013-half-precision-voices.md)).
 
 ## Recommended voices (2026-10-11)
 

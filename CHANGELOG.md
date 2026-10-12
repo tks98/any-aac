@@ -9,7 +9,7 @@
 - Fixed: the device voice on iPhone and iPad said "capital I" for the word "I". A capital letter on its own is now passed to the voice in lower case.
 - App voices are now the default, so speech works in silent mode on iPhone and iPad. The voice for the language in use downloads in the background the first time the app opens (a setting turns this off).
 - Every starter word and quick phrase is bundled as audio (0.6 MB), so it speaks from the first tap, offline, before the voice has downloaded.
-- The voice download is smaller: eSpeak's data is trimmed to English and Spanish (0.5 MB instead of 9 MB).
+- The voice download is about half the size: voices are stored in half precision and sound the same (Linda is 32.5 MB instead of 63.5 MB), and eSpeak's data is trimmed to English and Spanish (0.5 MB instead of 9 MB). Voices already downloaded keep working.
 - Fixed: after the app had prepared about 80 words, sentences and typed text fell back to the device voice. The phonemizer stopped working after that many calls; it's now renewed before then.
 
 ## 0.1.0 (2026-10-11)
