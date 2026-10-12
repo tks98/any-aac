@@ -4,6 +4,7 @@
   import { install } from '../install.svelte';
   import { modeling } from '../modeling.svelte';
   import { silentMode } from '../silent-mode.svelte';
+  import { updates } from '../updates.svelte';
   import { speech } from '../speech';
   import { appVoice } from '../voice/voice.svelte';
   import { editor } from '../editor.svelte';
@@ -88,6 +89,11 @@
         <span class="due">
           {t.backupDue}
           <button class="link" onclick={backUpNow}>{t.backUpNow}</button>
+        </span>
+      {:else if updates.ready}
+        <span class="due">
+          {t.updateReady}.
+          <button class="link" onclick={() => void updates.now()}>{t.updateNow}</button>
         </span>
       {:else if install.offer}
         <span class="due">

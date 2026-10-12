@@ -159,7 +159,7 @@ Phases are defined in §6. **P1** is the MVP.
 │  ┌─────▼──────────────────────────────────────────────────────────────┐     │
 │  │ storage: IndexedDB (boards, settings) · OPFS/Cache (models, audio) │     │
 │  └────────────────────────────────────────────────────────────────────┘     │
-│  service worker: offline app shell, versioned updates applied on relaunch  │
+│  service worker: offline app shell, updates applied when the app is away    │
 └──────────────────────────────────────┬──────────────────────────────────────┘
                                        │ optional, E2E-encrypted
                               ┌────────▼────────┐

@@ -14,6 +14,7 @@
   import SettingsPanel from './lib/components/SettingsPanel.svelte';
   import { editor } from './lib/editor.svelte';
   import { install } from './lib/install.svelte';
+  import { updates } from './lib/updates.svelte';
   import { defaultStarter, isOutdatedStarter, starterOf, starterSet } from './lib/starter';
   import { app } from './lib/state.svelte';
   import { backups } from './lib/backup.svelte';
@@ -148,6 +149,11 @@
 
   onMount(async () => {
     install.listen();
+    // A new version is installed only when it can't interrupt: nothing in the
+    // message, and nothing being edited, set up or printed.
+    updates.start(
+      () => app.message.length === 0 && !editor.active && !settingsOpen && printing === null,
+    );
     void requestPersistentStorage();
     void appVoice.refreshDownloaded();
     // Browsers only let audio start from a tap, and iOS only from a tap's

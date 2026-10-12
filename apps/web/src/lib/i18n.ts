@@ -206,6 +206,10 @@ const en = {
   backedUp: 'Saved a backup of all boards and settings.',
   backupDue: 'The boards have changed since the last backup.',
   backUpNow: 'Back up now',
+  updateReady: 'An update is ready',
+  updateReadyHelp:
+    'It installs by itself the next time Any AAC is put away with nothing in the message. Updating now restarts the app on Home.',
+  updateNow: 'Update now',
   restoreSettings:
     'This backup also has settings. Use them too? (Cancel keeps the settings on this device.)',
   settingsRestored: 'Settings restored.',
@@ -562,6 +566,10 @@ const es: Messages = {
   backedUp: 'Se guardó una copia de todos los tableros y ajustes.',
   backupDue: 'Los tableros han cambiado desde la última copia.',
   backUpNow: 'Hacer una copia ahora',
+  updateReady: 'Hay una actualización lista',
+  updateReadyHelp:
+    'Se instala sola la próxima vez que se deje Any AAC con el mensaje vacío. Si actualizas ahora, la aplicación se reinicia en Inicio.',
+  updateNow: 'Actualizar ahora',
   restoreSettings:
     'Esta copia también tiene ajustes. ¿Usarlos también? (Cancelar mantiene los ajustes de este dispositivo.)',
   settingsRestored: 'Ajustes restaurados.',

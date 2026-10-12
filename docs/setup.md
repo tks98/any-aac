@@ -10,7 +10,7 @@ Installing keeps the app full screen, lets it work offline, and stops iOS from c
 - **Android:** open it in Chrome, open the ⋮ menu, then **Install app** (or **Add to Home screen**).
 - **Computer:** in Chrome or Edge, use the install button at the right of the address bar.
 
-Edit mode reminds you if the app isn't installed. Updates download in the background and take effect the next time the app is opened, so they never interrupt someone mid-sentence.
+Edit mode reminds you if the app isn't installed. Updates download in the background and install when the app is put away (another app opened, or the screen locked) with nothing in the message, so they never interrupt someone mid-sentence; the app reopens updated, on Home. When one is waiting, edit mode and **Settings → About** say so and offer **Update now**.
 
 ## 2. Choose one main device
 

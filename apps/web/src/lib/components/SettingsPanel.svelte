@@ -12,6 +12,7 @@
   import { starterSet, type StarterId } from '../starter';
   import { appVoiceIdFor, VOICES, type VoiceEntry } from '../voice/catalog';
   import { appVoice } from '../voice/voice.svelte';
+  import { updates } from '../updates.svelte';
   import { app } from '../state.svelte';
   import { saveBoards } from '../storage';
   import Icon from './Icon.svelte';
@@ -905,6 +906,16 @@
       {:else}
         <h3>{t.sectionAbout}</h3>
         <p class="intro">{t.version(__APP_VERSION__)}</p>
+        {#if updates.ready}
+          <section class="card prose" aria-labelledby="update-heading">
+            <h4 id="update-heading">{t.updateReady}</h4>
+            <p>{t.updateReadyHelp}</p>
+            <button class="action primary" onclick={() => void updates.now()}>
+              <Icon path={ICONS.reset} size={24} />
+              {t.updateNow}
+            </button>
+          </section>
+        {/if}
         {#if app.set}
           {@const { credits, ownPictures } = pictureCredits(app.set)}
           <section class="card prose" aria-labelledby="pictures-heading">

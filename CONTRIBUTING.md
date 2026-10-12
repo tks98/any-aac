@@ -19,7 +19,7 @@ pnpm lint && pnpm typecheck && pnpm test && pnpm test:e2e
 
 ## Releases
 
-Every commit on `main` that passes CI is deployed to [any-aac.com](https://any-aac.com/) ([decision 0010](docs/research/decisions/0010-hosting.md)), so `main` must always be safe to use. People get an update the next time they open the app. Note user-facing changes in [CHANGELOG.md](CHANGELOG.md). For a release, bump the version in the three `package.json` files, tag the commit (`v0.2.0`), and publish a [GitHub release](https://github.com/tks98/any-aac/releases) with the changelog's section for it.
+Every commit on `main` that passes CI is deployed to [any-aac.com](https://any-aac.com/) ([decision 0010](docs/research/decisions/0010-hosting.md)), so `main` must always be safe to use. People get an update the next time the app is put away with nothing in the message (or when an adult presses **Update now**), so it can't interrupt anyone. Note user-facing changes in [CHANGELOG.md](CHANGELOG.md). For a release, bump the version in the three `package.json` files, tag the commit (`v0.2.0`), and publish a [GitHub release](https://github.com/tks98/any-aac/releases) with the changelog's section for it.
 
 ## Content and licensing
 

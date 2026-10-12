@@ -50,6 +50,9 @@ importers:
       onnxruntime-web:
         specifier: 1.30.0
         version: 1.30.0
+      workbox-window:
+        specifier: 7.4.1
+        version: 7.4.1
     devDependencies:
       '@axe-core/playwright':
         specifier: ^4.13.0

@@ -52,13 +52,28 @@ class Database extends Dexie {
 const db = new Database();
 const CURRENT = 'current';
 
+/** Writes still in progress, so the app doesn't reload (to update) in the middle of one. */
+const writing = new Set<Promise<unknown>>();
+
+function tracked<T>(write: Promise<T>): Promise<T> {
+  writing.add(write);
+  const done = () => writing.delete(write);
+  write.then(done, done);
+  return write;
+}
+
+/** Resolves once every write started so far has finished, saved or not. */
+export async function writesFinished(): Promise<void> {
+  while (writing.size > 0) await Promise.allSettled([...writing]);
+}
+
 export async function loadBoards(): Promise<BoardSet | undefined> {
   const set = (await db.sets.get(CURRENT))?.set;
   return set && { ...set, boards: set.boards.map(renameOldFields) };
 }
 
 export async function saveBoards(set: BoardSet): Promise<void> {
-  await db.sets.put({ key: CURRENT, set, savedAt: Date.now() });
+  await tracked(db.sets.put({ key: CURRENT, set, savedAt: Date.now() }));
 }
 
 /** When the boards were last saved and last backed up (ms since 1970), if ever. */
@@ -71,7 +86,7 @@ export async function loadBackupTimes(): Promise<{
 }
 
 export async function saveBackupTime(at: number): Promise<void> {
-  await db.meta.put({ key: 'backedUpAt', value: at });
+  await tracked(db.meta.put({ key: 'backedUpAt', value: at }));
 }
 
 export async function loadSettings(): Promise<Settings> {
@@ -79,7 +94,7 @@ export async function loadSettings(): Promise<Settings> {
 }
 
 export async function saveSettings(settings: Settings): Promise<void> {
-  await db.settings.put({ key: CURRENT, settings });
+  await tracked(db.settings.put({ key: CURRENT, settings }));
 }
 
 export async function loadAudio(key: string): Promise<StoredAudio | undefined> {
@@ -87,11 +102,11 @@ export async function loadAudio(key: string): Promise<StoredAudio | undefined> {
 }
 
 export async function saveAudio(audio: StoredAudio): Promise<void> {
-  await db.audio.put(audio);
+  await tracked(db.audio.put(audio));
 }
 
 export async function deleteAudioForVoice(voice: string): Promise<void> {
-  await db.audio.where('voice').equals(voice).delete();
+  await tracked(db.audio.where('voice').equals(voice).delete());
 }
 
 export async function requestPersistentStorage(): Promise<boolean> {

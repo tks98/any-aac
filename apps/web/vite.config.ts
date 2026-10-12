@@ -95,10 +95,11 @@ export default defineConfig({
     securityPolicy(),
     linkPreview(),
     VitePWA({
-      // A new version waits until the app is next opened. It never reloads the
-      // page while someone is in the middle of saying something.
+      // A new version waits until it can't interrupt anyone: it never reloads
+      // the page while someone is in the middle of saying something.
       registerType: 'prompt',
-      injectRegister: 'script-defer',
+      // src/lib/updates.svelte.ts registers it, and decides when to update.
+      injectRegister: false,
       includeAssets: ['icon.svg', 'favicon.ico', 'apple-touch-icon-180x180.png'],
       manifest: {
         name: 'Any AAC',
