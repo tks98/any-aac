@@ -14,6 +14,8 @@ By topic, with sources and what Any AAC does about each:
 - [Access](findings/access.md): touch, switch scanning, auditory scanning, high contrast and CVI
 - [Teaching](findings/teaching.md): aided language modeling, just-in-time vocabulary, abandonment
 - [Interface](findings/interface.md): AAC display research, cognitive accessibility, legibility, contrast and target size
+- [Board files from other apps](findings/formats.md): Open Board Format, and what Cboard's and CoughDrop's exports really contain
+- [The browser platform](findings/platform.md): how installed web apps update, and enforcing a security policy
 
 Longer documents:
 
@@ -38,7 +40,8 @@ Longer documents:
 | [0012](decisions/0012-app-voice-by-default.md)         | An app voice by default, with the starter words bundled                 | Accepted    |
 | [0013](decisions/0013-half-precision-voices.md)        | Voices stored in half precision                                         | Accepted    |
 | [0014](decisions/0014-real-imports.md)                 | Imports tested with real exports; linked pictures from our library      | Accepted    |
-| [0015](decisions/0015-three-sizes.md)                  | Starter boards in three sizes, each word in the same part of the screen | Draft       |
+| [0015](decisions/0015-three-sizes.md)                  | Starter boards in three sizes, each word in the same part of the screen | Accepted    |
+| [0016](decisions/0016-updates-when-put-away.md)        | Updates install when the app is put away                                | Accepted    |
 
 Earlier project decisions (licence, framework, building fresh, the approved design) are in [plan.md §10](../plan.md#10-decisions).
 
