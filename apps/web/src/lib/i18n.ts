@@ -250,6 +250,14 @@ const en = {
   restored: 'Starter boards restored.',
   couldNotSave: 'They could not be saved on this device, so they will be gone when the app closes.',
   unreadable: 'That file could not be read.',
+  picturesFromLibrary: (count: number) =>
+    count === 1
+      ? 'A picture linked to a Mulberry symbol online now comes from Any AAC’s own copy, and works offline.'
+      : `${count} pictures linked to Mulberry symbols online now come from Any AAC’s own copy, and work offline.`,
+  picturesElsewhere: (count: number) =>
+    count === 1
+      ? 'One button’s picture is on another website. Any AAC doesn’t load pictures from other sites, so it shows its word; choose a picture for it in edit mode.'
+      : `${count} buttons’ pictures are on other websites. Any AAC doesn’t load pictures from other sites, so they show their words; choose pictures for them in edit mode.`,
   fixedWhileImporting: (count: number) =>
     count === 1
       ? '1 small problem was fixed while importing'
@@ -633,6 +641,14 @@ const es: Messages = {
   couldNotSave:
     'No se pudieron guardar en este dispositivo, así que desaparecerán al cerrar la aplicación.',
   unreadable: 'No se pudo leer ese archivo.',
+  picturesFromLibrary: (count) =>
+    count === 1
+      ? 'Una imagen enlazada a un símbolo de Mulberry en internet ahora viene de la copia propia de Any AAC y funciona sin internet.'
+      : `${count} imágenes enlazadas a símbolos de Mulberry en internet ahora vienen de la copia propia de Any AAC y funcionan sin internet.`,
+  picturesElsewhere: (count) =>
+    count === 1
+      ? 'La imagen de un botón está en otro sitio web. Any AAC no carga imágenes de otros sitios, así que muestra su palabra; elige una imagen en el modo de edición.'
+      : `Las imágenes de ${count} botones están en otros sitios web. Any AAC no carga imágenes de otros sitios, así que muestran sus palabras; elige imágenes en el modo de edición.`,
   fixedWhileImporting: (count) =>
     count === 1
       ? 'Se corrigió 1 pequeño problema al importar'

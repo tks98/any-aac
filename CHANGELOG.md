@@ -13,6 +13,7 @@
 - Fixed: after the app had prepared about 80 words, sentences and typed text fell back to the device voice. The phonemizer stopped working after that many calls; it's now renewed before then.
 - Updates arrive sooner. The app looks for a new version whenever it comes back on screen, and installs it when it's put away with nothing in the message, instead of waiting until every copy is closed (which an app on the Home Screen rarely is). Edit mode and Settings → About say when one is ready, with **Update now**.
 - A short getting-started guide opens on the first launch, for the adult setting Any AAC up: talking with the board, holding Edit to change words, the voice, and backups. Settings → About opens it again.
+- Imports are tested with files Cboard's and CoughDrop's own exporters made. Pictures that are only links to Mulberry symbols online now come from Any AAC's own library and work offline; pictures linked from other sites aren't loaded (the buttons show their words, and the import says how many). Folder buttons whose board isn't in the file become words instead of doing nothing. Repeated import notices are said once, and an empty file says it has no boards.
 - Links to Any AAC show a preview card when shared.
 - A security policy makes the browser refuse scripts, styles and requests from other sites, so the app can only contact its own site. any-aac.com also sends it as a header, with others that stop it being shown inside other sites.
 

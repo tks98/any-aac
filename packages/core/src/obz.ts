@@ -38,8 +38,41 @@ export function readObf(
   options?: ParseOptions,
 ): { set: BoardSet; issues: Issue[] } {
   const { board, issues } = parseObf(input, options);
-  return { set: { rootId: board.id, boards: [board], files: {} }, issues };
+  const set = withoutDeadLinks({ rootId: board.id, boards: [board], files: {} }, issues);
+  return { set, issues };
 }
+
+/**
+ * Folder buttons whose board isn't in the file would lead nowhere when tapped.
+ * They become words, which say their label, and keep the link they had in
+ * `ext_anyaac_missing_board`.
+ */
+function withoutDeadLinks(set: BoardSet, issues: Issue[]): BoardSet {
+  const ids = new Set(set.boards.map((board) => board.id));
+  let unlinked = 0;
+  const boards = set.boards.map((board) => ({
+    ...board,
+    buttons: board.buttons.map((button) => {
+      const ref = button.load_board;
+      if (!ref || (ref.id !== undefined && ids.has(ref.id))) return button;
+      unlinked++;
+      const { load_board, ...word } = button;
+      return { ...word, ext_anyaac_missing_board: load_board };
+    }),
+  }));
+  if (unlinked > 0) {
+    issues.push({
+      message:
+        unlinked === 1
+          ? "A folder button opened a board that isn't in the file; it now says its word."
+          : `${unlinked} folder buttons opened boards that aren't in the file; they now say their words.`,
+    });
+  }
+  return { ...set, boards };
+}
+
+/** Files a zip tool adds that aren't part of the boards (macOS's resource forks, Finder's notes). */
+const junk = (path: string) => path.startsWith('__MACOSX/') || /(^|\/)\.DS_Store$/.test(path);
 
 export function readObz(
   bytes: Uint8Array,
@@ -47,7 +80,7 @@ export function readObz(
 ): { set: BoardSet; issues: Issue[] } {
   let entries: Record<string, Uint8Array>;
   try {
-    entries = unzipSync(bytes);
+    entries = unzipSync(bytes, { filter: (file) => !junk(file.name) });
   } catch {
     throw new ObfError('This file is not a valid .obz package.');
   }
@@ -55,26 +88,35 @@ export function readObz(
   if (!manifestBytes) throw new ObfError('The package has no manifest.json.');
   const manifest = parseJson(strFromU8(manifestBytes), 'manifest.json');
   if (!isRecord(manifest) || typeof manifest.root !== 'string') {
-    throw new ObfError('manifest.json does not name a root board.');
+    // Cboard exports an empty package when there are no boards of your own.
+    const anyBoard = Object.keys(entries).some((name) => name.endsWith('.obf'));
+    throw new ObfError(
+      anyBoard ? 'manifest.json does not name a root board.' : 'There are no boards in this file.',
+    );
   }
   const paths = isRecord(manifest.paths) ? manifest.paths : {};
   const boardPaths = stringMap(paths.boards);
   const imagePaths = stringMap(paths.images);
   const soundPaths = stringMap(paths.sounds);
 
+  const boardIssues: { path: string; issue: Issue }[] = [];
   const issues: Issue[] = [];
   const byPath = new Map<string, ObfBoard>();
-  const queue = [manifest.root, ...Object.values(boardPaths)];
+  const listed = new Set(Object.values(boardPaths));
+  const missing = new Set<string>();
+  const queue = [manifest.root, ...listed];
   while (queue.length > 0) {
     const path = queue.shift() as string;
-    if (byPath.has(path)) continue;
+    if (byPath.has(path) || missing.has(path)) continue;
     const file = entries[path];
     if (!file) {
-      issues.push({ message: `The package is missing ${path}.` });
+      missing.add(path);
+      // A board only a button links to is reported with the button.
+      if (listed.has(path)) issues.push({ message: `The package is missing ${path}.` });
       continue;
     }
     const parsed = parseObf(parseJson(strFromU8(file), path), options);
-    issues.push(...parsed.issues.map((i) => ({ message: `${path}: ${i.message}` })));
+    boardIssues.push(...parsed.issues.map((issue) => ({ path, issue })));
     byPath.set(path, parsed.board);
     for (const button of parsed.board.buttons) {
       const ref = button.load_board;
@@ -85,6 +127,7 @@ export function readObz(
 
   const root = byPath.get(manifest.root);
   if (!root) throw new ObfError('The root board could not be read.');
+  issues.push(...combined(boardIssues));
 
   const idByPath = new Map([...byPath].map(([path, board]) => [path, board.id]));
   const seen = new Set<string>();
@@ -126,7 +169,38 @@ export function readObz(
     files[path] = data;
   }
 
-  return { set: { rootId: root.id, boards, files }, issues };
+  return { set: withoutDeadLinks({ rootId: root.id, boards, files }, issues), issues };
+}
+
+/**
+ * The boards' notices, each said once: a big page set can have the same
+ * notice on every board, or hundreds of buttons without their pictures.
+ */
+function combined(boardIssues: { path: string; issue: Issue }[]): Issue[] {
+  const out: Issue[] = [];
+  const unpictured = boardIssues.filter(({ issue }) => issue.missingImages);
+  const buttons = unpictured.reduce((sum, { issue }) => sum + (issue.missingImages ?? 0), 0);
+  if (unpictured.length === 1) {
+    const [{ path, issue }] = unpictured as [{ path: string; issue: Issue }];
+    out.push({ ...issue, message: `${path}: ${issue.message}` });
+  } else if (unpictured.length > 1) {
+    out.push({
+      message: `${buttons} buttons on ${unpictured.length} boards use pictures that aren't in the file; they show only their words.`,
+      missingImages: buttons,
+    });
+  }
+  const byMessage = new Map<string, string[]>();
+  for (const { path, issue } of boardIssues) {
+    if (issue.missingImages) continue;
+    byMessage.set(issue.message, [...(byMessage.get(issue.message) ?? []), path]);
+  }
+  for (const [message, paths] of byMessage) {
+    out.push({
+      message:
+        paths.length === 1 ? `${paths[0]}: ${message}` : `${paths.length} boards: ${message}`,
+    });
+  }
+  return out;
 }
 
 function boardFileNames(boards: ObfBoard[]): Map<string, string> {

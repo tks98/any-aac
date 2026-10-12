@@ -120,7 +120,7 @@ describe('writeObz and readObz', () => {
     expect(set.boards.map((b) => b.id)).toEqual(['a', 'b']);
   });
 
-  it('reports a linked board that is missing from the package', () => {
+  it('turns a folder whose board is missing into a word, and says so', () => {
     const bytes = zipSync({
       'manifest.json': strToU8(JSON.stringify({ format: OBF_FORMAT, root: 'a.obf', paths: {} })),
       'a.obf': strToU8(
@@ -134,7 +134,12 @@ describe('writeObz and readObz', () => {
     });
     const { set, issues } = readObz(bytes);
     expect(set.boards).toHaveLength(1);
-    expect(issues).toEqual([{ message: 'The package is missing gone.obf.' }]);
+    const [button] = set.boards[0]!.buttons;
+    expect(button?.load_board).toBeUndefined();
+    expect(button?.ext_anyaac_missing_board).toEqual({ id: 'gone', path: 'gone.obf' });
+    expect(issues).toEqual([
+      { message: "A folder button opened a board that isn't in the file; it now says its word." },
+    ]);
   });
 
   it('rejects files that are not OBZ packages', () => {

@@ -14,6 +14,7 @@
   import { appVoice } from '../voice/voice.svelte';
   import { updates } from '../updates.svelte';
   import { guide } from '../guide.svelte';
+  import { localizeLinkedPictures } from '../linked-pictures';
   import { editor } from '../editor.svelte';
   import { app } from '../state.svelte';
   import { saveBoards } from '../storage';
@@ -92,15 +93,20 @@
     if (!file) return;
     fixes = [];
     try {
-      const { set, issues, settings } = await readBackup(file);
-      const count = t.boardCount(set.boards.length);
+      const { set: read, issues, settings } = await readBackup(file);
+      const count = t.boardCount(read.boards.length);
       if (!confirm(t.confirmImport(count, file.name))) return;
+      const { set, fromLibrary, elsewhere } = await localizeLinkedPictures(read);
       await replaceBoards(set, t.imported(count));
+      if (elsewhere > 0) status = `${status} ${t.picturesElsewhere(elsewhere)}`;
       if (settings && confirm(t.restoreSettings)) {
         app.settings = settings;
         status = `${status} ${t.settingsRestored}`;
       }
-      fixes = issues.map((issue) => issue.message);
+      fixes = [
+        ...(fromLibrary > 0 ? [t.picturesFromLibrary(fromLibrary)] : []),
+        ...issues.map((issue) => issue.message),
+      ];
     } catch (error) {
       status = error instanceof ObfError ? error.message : t.unreadable;
     }

@@ -14,6 +14,7 @@
   import SettingsPanel from './lib/components/SettingsPanel.svelte';
   import SetupGuide from './lib/components/SetupGuide.svelte';
   import { guide } from './lib/guide.svelte';
+  import { hasLinkedPictures, localizeLinkedPictures } from './lib/linked-pictures';
   import { editor } from './lib/editor.svelte';
   import { install } from './lib/install.svelte';
   import { updates } from './lib/updates.svelte';
@@ -189,6 +190,14 @@
       const saved = await loadBoards();
       if (saved && !isOutdatedStarter(saved)) {
         app.load(saved);
+        // Boards imported before linked Mulberry symbols were copied in.
+        if (hasLinkedPictures(saved)) {
+          void localizeLinkedPictures(saved).then(async ({ set, fromLibrary }) => {
+            if (fromLibrary === 0 || app.set !== saved) return;
+            app.replaceSet(set);
+            await saveBoards(set);
+          });
+        }
       } else {
         // A first launch gets the vocabulary for the device's language; an
         // update keeps the vocabulary the boards came from.

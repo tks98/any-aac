@@ -105,6 +105,8 @@ export interface ObfManifest {
 /** Something odd in an imported file that we repaired or skipped. */
 export interface Issue {
   message: string;
+  /** Buttons whose picture isn't in the file, so a package can add them up. */
+  missingImages?: number;
 }
 
 /** The file can't be used at all. */
@@ -262,10 +264,18 @@ export function parseObf(
   const grid = normalizeGrid(json.grid, new Set(buttons.map((b) => b.id)), issues);
 
   const imageIds = new Set(images.map((i) => i.id));
-  for (const button of buttons) {
-    if (button.image_id !== undefined && !imageIds.has(button.image_id)) {
-      issues.push({ message: `Button "${button.id}" uses a missing image "${button.image_id}".` });
-    }
+  const unpictured = buttons.filter(
+    (button) => button.image_id !== undefined && !imageIds.has(button.image_id),
+  );
+  const [first] = unpictured;
+  if (first) {
+    issues.push({
+      message:
+        unpictured.length === 1
+          ? `Button "${first.id}" uses a missing image "${first.image_id}".`
+          : `${unpictured.length} buttons use pictures that aren't in the file; they show only their words.`,
+      missingImages: unpictured.length,
+    });
   }
 
   return {

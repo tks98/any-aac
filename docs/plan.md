@@ -111,7 +111,7 @@ Phases are defined in §6. **P1** is the MVP.
 
 - [P1] Everything is stored locally. `navigator.storage.persist()` is requested. A prompt encourages installing to the Home Screen. _Done:_ the prompt is in edit mode, so the communicator never sees it.
 - [P1] **Export and import the whole profile** (OBZ plus a settings JSON), with periodic reminders to back up. _Done:_ Back up everything (in Settings, or from the reminder in edit mode) saves one .obz with the settings inside; importing it offers to restore them. Edit mode reminds when edited boards were never backed up, or changed and the last backup is over a week old.
-- [P1] Import and export single boards and sets as OBF/OBZ.
+- [P1] Import and export single boards and sets as OBF/OBZ. _Done,_ and tested with files Cboard's and CoughDrop's own exporters made ([decision 0014](research/decisions/0014-real-imports.md)).
 - [P4] Opt-in usage logging:
   - Off by default and pausable
   - Passcode-protected
@@ -219,7 +219,7 @@ docs/
 
 Phases end when their exit criteria are met, not on a calendar.
 
-**Where things stand (0.1.0, 2026-10-11).** P1 is built except the starter vocabulary at three sizes: there's one size, plus phone layouts ([decision 0005](research/decisions/0005-phone-layouts.md)). None of P1's exit criteria has been met yet: a full day offline on a budget tablet, Cboard and CoughDrop imports, and SLP sign-off. From later phases, switch scanning (without block scanning), auditory scanning, find word, modeling mode, symbol search, word forms in English and Spanish, and a Spanish-first vocabulary are in. See the [changelog](../CHANGELOG.md).
+**Where things stand (0.1.0, 2026-10-11).** P1 is built except the starter vocabulary at three sizes: there's one size, plus phone layouts ([decision 0005](research/decisions/0005-phone-layouts.md)). Of P1's exit criteria, Cboard and CoughDrop imports are tested with their own exporters' files ([decision 0014](research/decisions/0014-real-imports.md)); a full day offline on a budget tablet and SLP sign-off are still to come. From later phases, switch scanning (without block scanning), auditory scanning, find word, modeling mode, symbol search, word forms in English and Spanish, and a Spanish-first vocabulary are in. See the [changelog](../CHANGELOG.md).
 
 ### P0: Foundations
 
