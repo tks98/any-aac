@@ -12,6 +12,7 @@
 - The voice download is about half the size: voices are stored in half precision and sound the same (Linda is 32.5 MB instead of 63.5 MB), and eSpeak's data is trimmed to English and Spanish (0.5 MB instead of 9 MB). Voices already downloaded keep working.
 - Fixed: after the app had prepared about 80 words, sentences and typed text fell back to the device voice. The phonemizer stopped working after that many calls; it's now renewed before then.
 - Links to Any AAC show a preview card when shared.
+- A security policy makes the browser refuse scripts, styles and requests from other sites, so the app can only contact its own site. any-aac.com also sends it as a header, with others that stop it being shown inside other sites.
 
 ## 0.1.0 (2026-10-11)
 

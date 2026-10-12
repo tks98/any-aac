@@ -55,7 +55,7 @@ Any AAC's design follows published AAC research. The [research notes](docs/resea
 
 ## Privacy
 
-Any AAC collects nothing: no accounts, no analytics, no third-party scripts. Boards, settings and voices are stored in the browser on the device. The hosted app makes no requests to anyone else: voice files come from the same site. The voice for the language in use downloads the first time the app opens; a setting turns that off.
+Any AAC collects nothing: no accounts, no analytics, no third-party scripts. Boards, settings and voices are stored in the browser on the device. The hosted app makes no requests to anyone else: voice files come from the same site, and a security policy makes the browser refuse anything from elsewhere. The voice for the language in use downloads the first time the app opens; a setting turns that off.
 
 Data stays with the web address it was saved under. If you move to a different address (your own server, say), use **Settings → Boards & backup → Back up everything** first, then restore the backup there.
 

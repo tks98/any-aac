@@ -3,14 +3,39 @@ import { fileURLToPath } from 'node:url';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { defineConfig, type Plugin } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
+import { contentSecurityPolicy, securityHeaders } from './security-headers';
 
 // Lets phones on your tailnet reach the dev and preview servers through
 // `tailscale serve` (https://<machine>.<tailnet>.ts.net).
 const allowedHosts = ['.ts.net'];
 
+const selfHostedVoices = process.env.VITE_SELF_HOST_VOICES === 'true';
+
 const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8')) as {
   version: string;
 };
+
+/**
+ * Puts the security policy (security-headers.ts) first in every built page,
+ * and asks the browser not to tell other sites where a link was opened from.
+ */
+function securityPolicy(): Plugin {
+  return {
+    name: 'any-aac-security-policy',
+    apply: 'build',
+    transformIndexHtml: () => [
+      {
+        tag: 'meta',
+        attrs: {
+          'http-equiv': 'Content-Security-Policy',
+          content: contentSecurityPolicy({ selfHostedVoices }),
+        },
+        injectTo: 'head-prepend',
+      },
+      { tag: 'meta', attrs: { name: 'referrer', content: 'no-referrer' }, injectTo: 'head' },
+    ],
+  };
+}
 
 /**
  * The link preview's image (public/social-card.jpg). Previews need its full
@@ -48,7 +73,8 @@ export default defineConfig({
   base: process.env.BASE_PATH ?? '/',
   define: { __APP_VERSION__: JSON.stringify(pkg.version) },
   server: { allowedHosts },
-  preview: { allowedHosts },
+  // The headers any-aac.com sends, so the browser tests run under them.
+  preview: { allowedHosts, headers: securityHeaders({ selfHostedVoices }) },
   // ONNX Runtime finds its .wasm next to itself; pre-bundling would break that.
   optimizeDeps: { exclude: ['onnxruntime-web'] },
   // The voice worker loads ONNX Runtime and the phonemizer on demand.
@@ -66,6 +92,7 @@ export default defineConfig({
   },
   plugins: [
     svelte(),
+    securityPolicy(),
     linkPreview(),
     VitePWA({
       // A new version waits until the app is next opened. It never reloads the
