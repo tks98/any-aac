@@ -109,7 +109,10 @@ const en = {
   testVoice: 'Test voice',
   appVoices: 'App voices',
   appVoicesHelp:
-    'These run on this device. The first download is about 80 MB (the voice and the speech engine); after that they work offline.',
+    'These run on this device. The first download is about 70 MB (the voice and the speech engine); after that they work offline.',
+  autoDownload: 'Download app voices automatically',
+  autoDownloadHelp:
+    "When the voice for the language in use isn't on this device, it downloads in the background.",
   noAppVoice: (language: string) =>
     `There's no app voice in ${language} yet, so the device voice speaks.`,
   female: 'female',
@@ -458,7 +461,10 @@ const es: Messages = {
   testVoice: 'Probar la voz',
   appVoices: 'Voces de la aplicación',
   appVoicesHelp:
-    'Funcionan en este dispositivo. La primera descarga ocupa unos 80 MB (la voz y el motor de habla); después funcionan sin internet.',
+    'Funcionan en este dispositivo. La primera descarga ocupa unos 70 MB (la voz y el motor de habla); después funcionan sin internet.',
+  autoDownload: 'Descargar las voces de la aplicación automáticamente',
+  autoDownloadHelp:
+    'Cuando la voz del idioma en uso no está en este dispositivo, se descarga en segundo plano.',
   noAppVoice: (language) =>
     `Todavía no hay una voz de la aplicación en ${language}, así que habla la voz del dispositivo.`,
   female: 'femenina',

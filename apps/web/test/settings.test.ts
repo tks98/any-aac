@@ -21,7 +21,19 @@ describe('withDefaults', () => {
       es: 'es_MX-ald-medium',
     });
     expect(settings.speech.deviceVoices).toEqual({ es: 'Paulina|es-MX' });
-    expect(withDefaults({ speech: { engine: 'robot' } }).speech.engine).toBe('device');
+    expect(withDefaults({ speech: { engine: 'robot' } }).speech.engine).toBe('app');
+    expect(withDefaults({ speech: { engine: 'device' } }).speech.engine).toBe('device');
+  });
+
+  it('uses an app voice by default, downloaded automatically', () => {
+    const settings = withDefaults(undefined);
+    expect(settings.speech.engine).toBe('app');
+    expect(settings.speech.autoDownload).toBe(true);
+    expect(withDefaults({ speech: { autoDownload: false } }).speech.autoDownload).toBe(false);
+    // An empty choice ("no app voice") is kept.
+    expect(withDefaults({ speech: { appVoices: { en: '' } } }).speech.appVoices).toEqual({
+      en: '',
+    });
   });
 
   it('carries over the single voices saved by older versions', () => {

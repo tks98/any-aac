@@ -22,6 +22,7 @@ import { phrase } from './phrases';
 import { saveBoards } from './storage';
 import { starterOf, starterPhrases } from './starter';
 import { preferPlaybackAudio, speech } from './speech';
+import { appVoiceIdFor } from './voice/catalog';
 import { appVoice } from './voice/voice.svelte';
 
 class AppState {
@@ -183,7 +184,7 @@ class AppState {
   }
 
   /** The app voice chosen for the language in use. */
-  appVoiceId = $derived(this.settings.speech.appVoices[this.language] ?? null);
+  appVoiceId = $derived(appVoiceIdFor(this.settings.speech.appVoices, this.language));
 
   /**
    * Speaks with the app voice when it's chosen and ready, and with the
@@ -206,7 +207,7 @@ class AppState {
       lang,
     };
     // The loaded app voice is the one for the language in use.
-    const voiceId = options.appVoices[lang] ?? null;
+    const voiceId = appVoiceIdFor(options.appVoices, lang);
     if (options.engine === 'app' && appVoice.isReady(voiceId)) {
       speech.stop();
       appVoice.engine.speak(text, options.rate, options.volume).then(

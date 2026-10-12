@@ -103,15 +103,16 @@
     saveSettings(settings).catch(() => (notSaved = true));
   });
 
-  // Start the chosen app voice from the files on this device. This never
-  // downloads: downloading only happens when someone asks for it in Settings.
+  // Start the app voice for the language in use. If it isn't on this device,
+  // it downloads in the background (unless that's turned off in Settings);
+  // until it's ready, bundled starter words and then the device voice speak.
   $effect(() => {
-    const engine = app.settings.speech.engine;
+    const { engine, autoDownload } = app.settings.speech;
     const id = app.appVoiceId;
     if (!settingsLoaded || engine !== 'app') return;
     const voice = voiceById(id);
     if (!voice || appVoice.voiceId === id) return;
-    void appVoice.use(voice, { download: false });
+    void appVoice.use(voice, { download: autoDownload });
   });
 
   // Once the voice is ready, render every word's audio in the background
@@ -158,7 +159,7 @@
     // Voices withdrawn (e.g. for their licence) give way to the device voice,
     // and their files and prepared audio are deleted.
     for (const [lang, id] of Object.entries(app.settings.speech.appVoices)) {
-      if (!voiceById(id)) delete app.settings.speech.appVoices[lang];
+      if (id !== '' && !voiceById(id)) delete app.settings.speech.appVoices[lang];
     }
     void tidyVoiceFiles().then((ids) =>
       Promise.all(ids.map((id) => deleteAudioForVoice(id).catch(() => undefined))),

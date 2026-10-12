@@ -61,6 +61,25 @@ export const VOICES: VoiceEntry[] = catalog.voices.map((v) => ({
 
 export const voiceById = (id: string | null | undefined) => VOICES.find((v) => v.id === id);
 
+const baseOf = (lang: string) => lang.toLowerCase().replace('_', '-').split('-')[0] ?? '';
+
+/** The voice a language starts with: its recommended voice, or else its first. */
+export function defaultVoiceFor(lang: string): VoiceEntry | undefined {
+  const voices = VOICES.filter((v) => baseOf(v.lang) === baseOf(lang));
+  return voices.find((v) => v.recommended) ?? voices[0];
+}
+
+/**
+ * The app voice for a language: the one chosen in Settings, or the default.
+ * An empty choice means "no app voice" (someone deleted it), so the device
+ * voice speaks and nothing is downloaded again.
+ */
+export function appVoiceIdFor(chosen: Record<string, string>, lang: string): string | null {
+  const id = chosen[baseOf(lang)];
+  if (id === '') return null;
+  return id ?? defaultVoiceFor(lang)?.id ?? null;
+}
+
 /**
  * Tidies the downloaded voice files. Files of a voice still offered but now at
  * a different address (e.g. moved from Hugging Face to this site) are kept

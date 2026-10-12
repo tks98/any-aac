@@ -13,6 +13,8 @@ export default defineConfig(
       '**/coverage/',
       '**/playwright-report/',
       '**/test-results/',
+      // Generated from piper-wasm by scripts/trim-phonemizer.mjs.
+      'apps/web/src/lib/voice/phonemizer/',
     ],
   },
   js.configs.recommended,

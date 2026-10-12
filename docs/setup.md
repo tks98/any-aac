@@ -25,7 +25,7 @@ Devices set to Spanish start with the **Spanish** starter boards, chosen in Span
 
 ## 4. Choose a voice
 
-**Settings → Speech & voice.** The device's own voice works straight away. An **app voice**, which comes with Any AAC, sounds the same on every device and works offline; it's a one-time download of about 80 MB. **Linda** is recommended for English. **On iPhone and iPad, use an app voice:** iOS mutes the device voice when silent mode is on, but app voices still speak. Any AAC only offers voices whose licences are clearly open; for Spanish that's one small, lower-quality voice for now ([decision 0002](research/decisions/0002-only-clearly-licensed-voices.md)).
+**Settings → Speech & voice.** Any AAC speaks with an **app voice**: it sounds the same on every device, works offline, and keeps speaking when an iPhone or iPad is in silent mode (iOS mutes the device's own voice then). The voice for the language in use (**Linda** for English) downloads by itself the first time the app opens, about 70 MB once, so open it on Wi-Fi if you can; the device voice speaks until it's ready. To use less data, turn off **Download app voices automatically** and download a voice when you choose. The device voice is still there if you prefer it. Any AAC only offers voices whose licences are clearly open; for Spanish that's one small, lower-quality voice for now ([decision 0002](research/decisions/0002-only-clearly-licensed-voices.md)).
 
 Firefox on Android can't speak with device voices; use Chrome, or download an app voice.
 

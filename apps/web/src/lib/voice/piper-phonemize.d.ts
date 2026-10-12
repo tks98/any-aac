@@ -1,4 +1,4 @@
-declare module '@diffusionstudio/piper-wasm/build/piper_phonemize.js' {
+declare module '*/phonemizer/piper_phonemize.js' {
   /** Emscripten factory for piper-phonemize (eSpeak NG). */
   const createPiperPhonemize: (options: {
     print?: (line: string) => void;

@@ -31,8 +31,16 @@ export async function closeSettings(page: Page, done = 'Done') {
   await expect(page.getByRole('toolbar')).toBeHidden();
 }
 
-/** Replaces the browser voice with a recorder, so tests can see what would be said. */
+/** App voice model files. Tests don't download them (60 MB each); see VOICE_FILES' use. */
+export const VOICE_FILES = /\.onnx(\.json)?$/;
+
+/**
+ * Replaces the browser voice with a recorder, so tests can see what would be
+ * said. App voices download automatically, so their files are blocked: the
+ * download fails and the device voice speaks, as it does until a voice is ready.
+ */
 export async function recordSpeech(page: Page) {
+  await page.route(VOICE_FILES, (route) => route.abort());
   await page.addInitScript(() => {
     const spoken: string[] = [];
     const spokenIn: string[] = [];

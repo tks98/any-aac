@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { messageBar, openEditor, recordSpeech, spoken, word } from './helpers';
+import { messageBar, openEditor, openSettings, recordSpeech, spoken, word } from './helpers';
 
 async function openSettingsFromEditor(page: Page, section: string) {
   await page.getByRole('toolbar').getByRole('button', { name: 'Settings' }).click();
@@ -274,25 +274,41 @@ test.describe('on an iPhone', () => {
       'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.0 Mobile/15E148 Safari/604.1',
   });
 
-  test('says the device voice is silent in silent mode, and offers an app voice', async ({
+  test('uses an app voice by default, and warns if the device voice is chosen', async ({
     page,
   }) => {
     await openEditor(page);
     const notice = page.getByText("In silent mode, this device can't speak with the device voice.");
-    await expect(notice).toBeVisible();
+    // App voices speak in silent mode, and they're the default.
+    await expect(notice).toBeHidden();
 
-    await page.getByRole('button', { name: 'Choose a voice' }).click();
+    await page.getByRole('toolbar').getByRole('button', { name: 'Settings' }).click();
+    await expect(page.getByRole('button', { name: 'App voice' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    await page.getByRole('button', { name: 'Device voice' }).click();
     await expect(
       page.getByText(/device voice can't be heard when silent mode is on/),
     ).toBeVisible();
+    await page.getByRole('dialog').getByRole('button', { name: 'Done', exact: true }).click();
+
+    await expect(notice).toBeVisible();
+    await page.getByRole('button', { name: 'Choose a voice' }).click();
     await page.getByRole('button', { name: 'Use an app voice' }).click();
     await expect(page.getByRole('button', { name: 'App voice' })).toHaveAttribute(
       'aria-pressed',
       'true',
     );
     await page.getByRole('dialog').getByRole('button', { name: 'Done', exact: true }).click();
+    await expect(notice).toBeHidden();
+  });
 
-    // Until an app voice is downloaded, the notice stays, unless dismissed.
+  test('the silent mode notice can be dismissed', async ({ page }) => {
+    await openSettings(page, 'Speech & voice');
+    await page.getByRole('button', { name: 'Device voice' }).click();
+    await page.getByRole('dialog').getByRole('button', { name: 'Done', exact: true }).click();
+    const notice = page.getByText("In silent mode, this device can't speak with the device voice.");
     await expect(notice).toBeVisible();
     await page.getByRole('button', { name: 'Not now' }).first().click();
     await expect(notice).toBeHidden();

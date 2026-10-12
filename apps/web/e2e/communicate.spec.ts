@@ -9,6 +9,7 @@ import {
   recordSpeech,
   spoken,
   spokenIn,
+  VOICE_FILES,
 } from './helpers';
 
 test.beforeEach(async ({ page }) => {
@@ -441,6 +442,7 @@ test.describe('App voice', () => {
     test.skip(!process.env.ANYAAC_E2E_VOICE, 'Set ANYAAC_E2E_VOICE=1 to run.');
     test.skip(browserName !== 'chromium', 'Offline check needs Chromium.');
     test.setTimeout(300_000);
+    await page.unroute(VOICE_FILES);
     await openSettings(page, 'Speech & voice');
     await page.getByRole('button', { name: 'App voice' }).click();
     const linda = page.locator('.voice.offline').filter({ hasText: 'Linda' });

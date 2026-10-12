@@ -10,7 +10,7 @@
   import { isAppleMobile } from '../platform';
   import { baseLanguage, speech, type VoiceInfo } from '../speech';
   import { starterSet, type StarterId } from '../starter';
-  import { VOICES, type VoiceEntry } from '../voice/catalog';
+  import { appVoiceIdFor, VOICES, type VoiceEntry } from '../voice/catalog';
   import { appVoice } from '../voice/voice.svelte';
   import { app } from '../state.svelte';
   import { saveBoards } from '../storage';
@@ -154,9 +154,11 @@
   async function removeVoice(voice: VoiceEntry) {
     if (!confirm(t.confirmDeleteVoice(voice.name))) return;
     await appVoice.remove(voice);
+    // No app voice for this language until one is chosen, rather than
+    // downloading the default again.
     const voices = app.settings.speech.appVoices;
     const lang = baseLanguage(voice.lang);
-    if (voices[lang] === voice.id) delete voices[lang];
+    if (appVoiceIdFor(voices, lang) === voice.id) voices[lang] = '';
   }
 
   function choosePrimary(lang: string) {
@@ -447,7 +449,7 @@
               {@const busy =
                 appVoice.voiceId === voice.id &&
                 (appVoice.status === 'downloading' || appVoice.status === 'loading')}
-              {@const inUse = s.speech.appVoices[baseLanguage(voice.lang)] === voice.id}
+              {@const inUse = appVoiceIdFor(s.speech.appVoices, voice.lang) === voice.id}
               <div class="voice offline">
                 <div class="voice-text">
                   <span class="voice-name"
@@ -499,6 +501,12 @@
             {#if appVoices.length > 0 && !appVoice.isReady(app.appVoiceId)}
               <p class="help">{t.deviceSpeaksUntilReady}</p>
             {/if}
+            {@render toggle(
+              t.autoDownload,
+              t.autoDownloadHelp,
+              s.speech.autoDownload,
+              (on) => (app.settings.speech.autoDownload = on),
+            )}
           </section>
         {:else}
           <fieldset class="card voices">

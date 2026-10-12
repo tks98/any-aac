@@ -1,15 +1,16 @@
 /**
  * A Piper (VITS) voice running on the device: eSpeak NG turns text into
- * phonemes (piper-phonemize, the same code Piper itself uses, in WebAssembly
- * with data for about 100 languages), and ONNX Runtime turns phonemes into audio.
+ * phonemes (piper-phonemize, the same code Piper itself uses, in WebAssembly,
+ * trimmed to the languages we have voices in; see scripts/trim-phonemizer.mjs),
+ * and ONNX Runtime turns phonemes into audio.
  *
  * Both stay loaded between utterances, so after the first load each phrase
  * costs only the model run. This module is loaded on demand; nothing here is in
  * the main bundle.
  */
-import createPiperPhonemize from '@diffusionstudio/piper-wasm/build/piper_phonemize.js';
-import phonemizeData from '@diffusionstudio/piper-wasm/build/piper_phonemize.data?url';
-import phonemizeWasm from '@diffusionstudio/piper-wasm/build/piper_phonemize.wasm?url';
+import createPiperPhonemize from './phonemizer/piper_phonemize.js';
+import phonemizeData from './phonemizer/piper_phonemize.data?url';
+import phonemizeWasm from './phonemizer/piper_phonemize.wasm?url';
 import type { InferenceSession, Tensor } from 'onnxruntime-web';
 import { VOICE_CACHE } from './catalog';
 

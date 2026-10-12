@@ -5,12 +5,21 @@ import type { ColorStyle, Theme } from './theme';
 import { isAppLanguage, type AppLanguage } from './i18n';
 
 export interface SpeechSettings {
-  /** The device's own voices, or an app voice that runs offline. */
+  /**
+   * An app voice that runs offline (the default: it sounds the same everywhere
+   * and, unlike device voices on iPhone and iPad, speaks in silent mode), or
+   * the device's own voices.
+   */
   engine: 'device' | 'app';
   /** Chosen device voice per language (base code → voiceKey in speech.ts); none = default. */
   deviceVoices: Record<string, string>;
-  /** Chosen app voice per language (base code → id in voice/catalog.ts). */
+  /**
+   * Chosen app voice per language (base code → id in voice/catalog.ts). A
+   * language with no entry uses its default voice; an empty entry, none.
+   */
   appVoices: Record<string, string>;
+  /** Download the app voice for the language in use when it isn't on this device. */
+  autoDownload: boolean;
   rate: number;
   pitch: number;
   /** 0.1–1. */
@@ -90,9 +99,10 @@ export interface Settings {
 export const DEFAULT_SETTINGS: Settings = {
   language: { primary: null, second: null, usingSecond: false, app: 'auto' },
   speech: {
-    engine: 'device',
+    engine: 'app',
     deviceVoices: {},
     appVoices: {},
+    autoDownload: true,
     rate: 1,
     pitch: 1,
     volume: 1,
@@ -198,9 +208,10 @@ export function withDefaults(saved: unknown): Settings {
           : d.language.app,
     },
     speech: {
-      engine: speech.engine === 'app' || speech.engine === 'openaac' ? 'app' : 'device',
+      engine: speech.engine === 'device' ? 'device' : 'app',
       deviceVoices,
       appVoices,
+      autoDownload: bool(speech.autoDownload, d.speech.autoDownload),
       rate: num(speech.rate, d.speech.rate, 0.5, 2),
       pitch: num(speech.pitch, d.speech.pitch, 0.5, 1.5),
       volume: num(speech.volume, d.speech.volume, 0.1, 1),

@@ -22,9 +22,15 @@
   const backupDue = $derived(backups.due(app.set));
   /** No device speech (Firefox on Android) and no app voice: nothing can be said. */
   const mute = $derived(!speech.available && !appVoice.isReady(app.appVoiceId));
-  /** On iPhone and iPad, the device voice is muted in silent mode; app voices aren't. */
+  /**
+   * On iPhone and iPad, the device voice is muted in silent mode; app voices
+   * aren't. Only a concern when the device voice has been chosen, or there's
+   * no app voice for the language in use.
+   */
   const silentModeRisk = $derived(
-    silentMode.mutesDeviceVoice && !silentMode.dismissed && !appVoice.isReady(app.appVoiceId),
+    silentMode.mutesDeviceVoice &&
+      !silentMode.dismissed &&
+      (app.settings.speech.engine === 'device' || app.appVoiceId === null),
   );
 
   function backUpNow() {
