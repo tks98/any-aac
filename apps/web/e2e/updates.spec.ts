@@ -9,6 +9,14 @@ import { messageBar, openEditor, recordSpeech, word } from './helpers';
  */
 test.use({ serviceWorkers: 'allow' });
 
+// The test serves a changed service worker through Playwright, which can't
+// intercept a service worker's own script in Firefox: the "new version" never
+// arrives there. Chromium and WebKit run them.
+test.skip(
+  ({ browserName }) => browserName === 'firefox',
+  "Playwright can't serve Firefox a new service worker",
+);
+
 async function startWithAnUpdateWaiting(page: Page) {
   await recordSpeech(page);
   let version = 1;
