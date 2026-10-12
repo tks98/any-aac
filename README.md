@@ -25,7 +25,7 @@ Any AAC's design follows published AAC research. The [research notes](docs/resea
 
 - **Speaks from a word board.** Core words stay in the same place on every board, coloured by word type, with topic folders (People, Food, Places, Feelings, Body, Things) and quick phrases. Phones get their own smaller layout with the words in the same order.
 - **Works offline.** Once installed, everything works with no connection: boards, symbols and speech.
-- **Voices that work offline.** The device's own voice works straight away. App voices, which come with Any AAC (Piper, running on the device), sound the same everywhere and play each word in about 20–45 ms. We only offer voices whose licences are clearly open. On iPhone and iPad, use an app voice: iOS mutes the device voice in silent mode.
+- **Voices that work offline.** Any AAC speaks with app voices (Piper, running on the device): they sound the same everywhere, play each word in about 20–45 ms, and keep speaking when an iPhone or iPad is in silent mode. Every starter word is bundled as audio, so it speaks from the first tap, while the full voice downloads in the background. We only offer voices whose licences are clearly open, and the device's own voice is there too.
 - **English and Spanish.** Two starter vocabularies: English-first with Spanish translations, and Spanish-first, with words chosen in Spanish. Bilingual communicators switch languages with one tap, and the app's own menus come in both.
 - **Word forms.** A Forms button changes the last word to another form: want → wanted, cansado → cansada.
 - **Editing in place**, behind a press-and-hold on Edit: words, symbols (the whole Mulberry library, or a photo), colours, hidden words, locked positions, new boards, undo.

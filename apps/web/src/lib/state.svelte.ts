@@ -22,6 +22,7 @@ import { phrase } from './phrases';
 import { saveBoards } from './storage';
 import { starterOf, starterPhrases } from './starter';
 import { preferPlaybackAudio, speech } from './speech';
+import { hasBundled } from './voice/bundled';
 import { appVoiceIdFor } from './voice/catalog';
 import { appVoice } from './voice/voice.svelte';
 
@@ -162,6 +163,33 @@ class AppState {
   }
 
   speakMessage() {
+    // Before the app voice is ready, a message made only of starter words is
+    // said from the bundled clips, word by word.
+    const options = this.settings.speech;
+    if (
+      options.engine === 'app' &&
+      !appVoice.isReady(this.appVoiceId) &&
+      atNormalRate(options.rate)
+    ) {
+      const parts = this.message
+        .filter((item) => item.text.trim() !== '')
+        .map((item) => {
+          const lang = item.lang ?? this.language;
+          return { voiceId: appVoiceIdFor(options.appVoices, lang), text: this.spoken(item.text) };
+        });
+      if (parts.length > 0 && parts.every((part) => hasBundled(part.voiceId, part.text))) {
+        const text = parts.map((part) => part.text).join(' ');
+        preferPlaybackAudio();
+        speech.stop();
+        appVoice.engine
+          .speakBundled(parts as { voiceId: string; text: string }[], options.volume)
+          .then(
+            () => announce('app', text),
+            () => this.sayWithDeviceVoice(text, this.language),
+          );
+        return;
+      }
+    }
     this.say(messageText(this.message));
   }
 
@@ -219,11 +247,40 @@ class AppState {
       );
       return;
     }
+    // Until the voice is ready, starter words and phrases come from the
+    // bundled clips, which were rendered at the normal rate.
+    if (options.engine === 'app' && atNormalRate(options.rate) && hasBundled(voiceId, text)) {
+      speech.stop();
+      appVoice.engine.speakBundled([{ voiceId: voiceId!, text }], options.volume).then(
+        () => announce('app', text),
+        () => {
+          speech.speak(text, device);
+          announce('device', text);
+        },
+      );
+      return;
+    }
     appVoice.engine.stop();
     speech.speak(text, device);
     announce('device', text);
   }
+
+  /** Says text with the device voice (when the app voice can't). */
+  private sayWithDeviceVoice(text: string, lang: string) {
+    const options = this.settings.speech;
+    speech.speak(text, {
+      voice: options.deviceVoices[lang] ?? null,
+      rate: options.rate,
+      pitch: options.pitch,
+      volume: options.volume,
+      lang,
+    });
+    announce('device', text);
+  }
 }
+
+/** Bundled clips were rendered at the normal speaking rate. */
+const atNormalRate = (rate: number) => Math.abs(rate - 1) < 0.005;
 
 /** Tells listeners (tests, for now) which voice said what. */
 function announce(engine: 'device' | 'app', text: string) {

@@ -28,6 +28,7 @@
   } from './lib/storage';
   import { phrase } from './lib/phrases';
   import { tidyVoiceFiles, voiceById } from './lib/voice/catalog';
+  import { preloadBundled } from './lib/voice/bundled';
   import { appVoice } from './lib/voice/voice.svelte';
 
   /** Must match the phone breakpoint in the components' CSS. */
@@ -113,6 +114,12 @@
     const voice = voiceById(id);
     if (!voice || appVoice.voiceId === id) return;
     void appVoice.use(voice, { download: autoDownload });
+  });
+
+  // Load the bundled starter clips for the voice in use, so the first tap
+  // speaks at once even before the voice itself is ready.
+  $effect(() => {
+    if (app.settings.speech.engine === 'app') preloadBundled(app.appVoiceId);
   });
 
   // Once the voice is ready, render every word's audio in the background

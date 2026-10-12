@@ -29,13 +29,13 @@ test('find word shows the path one step at a time, and modeled words stay out of
   await nextCell(page).click();
   await expect(nextCell(page)).toHaveAccessibleName('apple');
   await nextCell(page).click();
-  expect((await spoken(page)).at(-1)).toBe('apple');
+  await expect.poll(async () => (await spoken(page)).at(-1)).toBe('apple');
   await expect(path(page)).toContainText('Done');
 
   await path(page).getByRole('button', { name: 'Start over' }).click();
   await expect(nextCell(page)).toHaveAccessibleName('Food, folder');
   await path(page).getByRole('button', { name: 'Say it' }).click();
-  expect((await spoken(page)).at(-1)).toBe('apple');
+  await expect.poll(async () => (await spoken(page)).at(-1)).toBe('apple');
 
   // Words the partner models are said, but never become the person's message.
   await page.getByRole('button', { name: 'Exit' }).click();

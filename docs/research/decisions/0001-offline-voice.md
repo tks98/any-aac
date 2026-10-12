@@ -35,12 +35,13 @@ These used `voice-lab.html` with the Piper `en_US-ljspeech-medium` voice, single
 
 All of these are fetched only when someone turns the voice on. None are in the app's precache.
 
-| Part                                        | Size    | Gzipped |
-| ------------------------------------------- | ------- | ------- |
-| ONNX Runtime WebAssembly                    | 14.2 MB | 3.7 MB  |
-| ONNX Runtime JavaScript                     | 71 KB   | 23 KB   |
-| piper-phonemize (eSpeak NG, ~100 languages) | 18.7 MB | n/a     |
-| One Piper voice (medium)                    | 63 MB   | n/a     |
+| Part                                                                    | Size    | Gzipped |
+| ----------------------------------------------------------------------- | ------- | ------- |
+| ONNX Runtime WebAssembly                                                | 14.2 MB | 3.7 MB  |
+| ONNX Runtime JavaScript                                                 | 71 KB   | 23 KB   |
+| piper-phonemize (eSpeak NG, ~100 languages)                             | 18.7 MB | 9.0 MB  |
+| — trimmed to English and Spanish ([0012](0012-app-voice-by-default.md)) | 1.0 MB  | 0.5 MB  |
+| One Piper voice (medium)                                                | 63 MB   | n/a     |
 
 ## Licences
 

@@ -7,3 +7,4 @@ playwright-report/
 test-results/
 apps/web/public/
 apps/web/src/lib/voice/phonemizer/
+apps/web/src/lib/voice/clips/

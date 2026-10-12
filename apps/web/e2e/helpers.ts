@@ -31,16 +31,20 @@ export async function closeSettings(page: Page, done = 'Done') {
   await expect(page.getByRole('toolbar')).toBeHidden();
 }
 
-/** App voice model files. Tests don't download them (60 MB each); see VOICE_FILES' use. */
+/** App voice model files. Tests don't download them (60 MB each). */
 export const VOICE_FILES = /\.onnx(\.json)?$/;
+/** The bundled starter clips (see src/lib/voice/bundled.ts). */
+export const CLIP_FILES = /\.bin$/;
 
 /**
  * Replaces the browser voice with a recorder, so tests can see what would be
- * said. App voices download automatically, so their files are blocked: the
- * download fails and the device voice speaks, as it does until a voice is ready.
+ * said. App voices download automatically, and starter words have bundled
+ * clips; both are blocked, so the device voice speaks, as it does when neither
+ * is available. Tests of app voices unblock them.
  */
 export async function recordSpeech(page: Page) {
   await page.route(VOICE_FILES, (route) => route.abort());
+  await page.route(CLIP_FILES, (route) => route.abort());
   await page.addInitScript(() => {
     const spoken: string[] = [];
     const spokenIn: string[] = [];

@@ -63,7 +63,8 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,png,ico,woff2}'],
+        // .bin: the bundled starter clips, so starter words speak offline from the start.
+        globPatterns: ['**/*.{js,css,html,svg,png,ico,woff2,bin}'],
         // The offline voice is an optional download: cache its code when first
         // used, rather than making every install fetch it.
         globIgnores: [

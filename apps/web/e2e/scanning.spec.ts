@@ -46,7 +46,7 @@ test('two switches: switch 1 moves through rows, switch 2 goes in and chooses', 
   await expect.poll(() => highlighted(page)).toEqual(['like']);
   await page.keyboard.press('Enter');
   await expect(messageBar(page)).toHaveAccessibleName('Message: like. Tap to speak it.');
-  expect(await spoken(page)).toEqual(['like']);
+  await expect.poll(() => spoken(page)).toEqual(['like']);
 });
 
 test('the message bar and buttons are scanned after the board', async ({ page }) => {
@@ -61,7 +61,7 @@ test('the message bar and buttons are scanned after the board', async ({ page })
   await page.keyboard.press(' ');
   await expect.poll(() => highlighted(page)).toEqual(['Speak']);
   await page.keyboard.press('Enter');
-  expect((await spoken(page)).at(-1)).toBe('i');
+  await expect.poll(async () => (await spoken(page)).at(-1)).toBe('i');
 
   // Then the navigation buttons, without Edit.
   for (let i = 0; i < 8; i++) await page.keyboard.press(' ');

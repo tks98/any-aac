@@ -9,6 +9,7 @@ import {
   recordSpeech,
   spoken,
   spokenIn,
+  CLIP_FILES,
   VOICE_FILES,
 } from './helpers';
 
@@ -182,31 +183,35 @@ test.describe('on a phone', () => {
   });
 });
 
-test('keeps working offline after the first visit', async ({ page, context, browserName }) => {
-  test.skip(
-    browserName !== 'chromium',
-    'Offline emulation with service workers is Chromium-only in Playwright.',
-  );
-  await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
-  await context.setOffline(true);
-  await page.reload();
-  await word(page, 'I').click();
-  await expect(messageBar(page)).toHaveAccessibleName('Message: I. Tap to speak it.');
+test.describe('with the service worker', () => {
+  test.use({ serviceWorkers: 'allow' });
+
+  test('keeps working offline after the first visit', async ({ page, context, browserName }) => {
+    test.skip(
+      browserName !== 'chromium',
+      'Offline emulation with service workers is Chromium-only in Playwright.',
+    );
+    await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
+    await context.setOffline(true);
+    await page.reload();
+    await word(page, 'I').click();
+    await expect(messageBar(page)).toHaveAccessibleName('Message: I. Tap to speak it.');
+  });
 });
 
 test('speaks each word, unless that is turned off', async ({ page }) => {
   await word(page, 'I').click();
   // A lone capital letter goes to the device voice in lower case, or iOS says "capital I".
-  expect(await spoken(page)).toEqual(['i']);
+  await expect.poll(() => spoken(page)).toEqual(['i']);
 
   await openSettings(page, 'Speech & voice');
   await page.getByRole('switch', { name: 'Speak each word when tapped' }).click();
   await closeSettings(page);
 
   await word(page, 'want').click();
-  expect(await spoken(page)).toEqual(['i']);
+  await expect.poll(() => spoken(page)).toEqual(['i']);
   await page.getByRole('button', { name: 'Speak', exact: true }).click();
-  expect(await spoken(page)).toEqual(['i', 'I want']);
+  await expect.poll(() => spoken(page)).toEqual(['i', 'I want']);
 });
 
 test('the message can be shared as text, once the Share button is turned on', async ({ page }) => {
@@ -243,7 +248,7 @@ test('the pronunciation dictionary changes what is said, not what is shown', asy
   await page.getByRole('button', { name: 'People, folder' }).click();
   await word(page, 'Mom').click();
   await page.getByRole('button', { name: 'Speak', exact: true }).click();
-  expect(await spoken(page)).toEqual(['Mommy', 'Mommy']);
+  await expect.poll(() => spoken(page)).toEqual(['Mommy', 'Mommy']);
   await expect(messageBar(page)).toHaveAccessibleName('Message: Mom. Tap to speak it.');
 });
 
@@ -337,14 +342,14 @@ test.describe('languages', () => {
     await word(page, 'quiero').click();
     await word(page, 'más').click();
     await expect(messageBar(page)).toHaveAccessibleName('Mensaje: quiero más. Toca para decirlo.');
-    expect(await spoken(page)).toEqual(['quiero', 'más']);
-    expect(await spokenIn(page)).toEqual(['es', 'es']);
+    await expect.poll(() => spoken(page)).toEqual(['quiero', 'más']);
+    await expect.poll(() => spokenIn(page)).toEqual(['es', 'es']);
 
     await page.getByRole('button', { name: 'Comida, carpeta' }).click();
     await expect(word(page, 'manzana')).toBeVisible();
     await expect(page.getByText('Palabras básicas  ›  Comida')).toBeVisible();
     await page.getByRole('button', { name: 'Ayuda', exact: true }).click();
-    expect((await spoken(page)).at(-1)).toBe('Necesito ayuda');
+    await expect.poll(async () => (await spoken(page)).at(-1)).toBe('Necesito ayuda');
 
     await page.reload();
     await expect(word(page, 'quiero')).toBeVisible();
@@ -366,7 +371,7 @@ test.describe('languages', () => {
     expect(await word(page, 'quiero').boundingBox()).toEqual(wantAt);
     await word(page, 'quiero').click();
     await expect(messageBar(page)).toHaveAccessibleName('Mensaje: I quiero. Toca para decirlo.');
-    expect(await spokenIn(page)).toEqual(['en', 'es']);
+    await expect.poll(() => spokenIn(page)).toEqual(['en', 'es']);
 
     await page.getByRole('button', { name: 'English (cambiar idioma)' }).click();
     await expect(word(page, 'want')).toBeVisible();
@@ -431,50 +436,13 @@ test.describe('App voice', () => {
     await word(page, 'want').click();
     expect(await spokenBy(page)).toEqual([{ engine: 'device', text: 'want' }]);
   });
-
-  // Downloads a real 63 MB voice from Hugging Face, so it only runs when asked:
-  // ANYAAC_E2E_VOICE=1 pnpm test:e2e --project=chromium
-  test('downloads a voice, speaks with it, and starts it again offline', async ({
-    page,
-    context,
-    browserName,
-  }) => {
-    test.skip(!process.env.ANYAAC_E2E_VOICE, 'Set ANYAAC_E2E_VOICE=1 to run.');
-    test.skip(browserName !== 'chromium', 'Offline check needs Chromium.');
-    test.setTimeout(300_000);
-    await page.unroute(VOICE_FILES);
-    await openSettings(page, 'Speech & voice');
-    await page.getByRole('button', { name: 'App voice' }).click();
-    const linda = page.locator('.voice.offline').filter({ hasText: 'Linda' });
-    await linda.getByRole('button', { name: 'Download' }).click();
-    await expect(linda.getByRole('button', { name: 'In use' })).toBeVisible({ timeout: 240_000 });
-    await expect(page.getByText(/Getting words ready|Until an app voice/)).toHaveCount(1);
-    await closeSettings(page);
-
-    await word(page, 'want').click();
-    await expect.poll(() => spokenBy(page)).toEqual([{ engine: 'app', text: 'want' }]);
-
-    await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
-    await context.setOffline(true);
-    await page.reload();
-    await expect(word(page, 'go')).toBeVisible();
-    await expect
-      .poll(
-        async () => {
-          await word(page, 'go').click();
-          return (await spokenBy(page)).at(-1)?.engine;
-        },
-        { timeout: 30_000 },
-      )
-      .toBe('app');
-  });
 });
 
 test('quick phrases are said at once, and new ones start from the message', async ({ page }) => {
   await word(page, 'I').click();
   await page.getByRole('button', { name: 'Phrases', exact: true }).click();
   await word(page, 'I need a break').click();
-  expect((await spoken(page)).at(-1)).toBe('I need a break');
+  await expect.poll(async () => (await spoken(page)).at(-1)).toBe('I need a break');
   // Phrases don't join the message.
   await expect(messageBar(page)).toHaveAccessibleName('Message: I. Tap to speak it.');
 
@@ -492,7 +460,7 @@ test('quick phrases are said at once, and new ones start from the message', asyn
   await page.getByRole('button', { name: 'Add a button' }).click();
   await page.getByRole('button', { name: 'Done', exact: true }).click();
   await word(page, 'I want more').click();
-  expect((await spoken(page)).at(-1)).toBe('I want more');
+  await expect.poll(async () => (await spoken(page)).at(-1)).toBe('I want more');
 });
 
 test.describe('word forms', () => {
@@ -512,7 +480,7 @@ test.describe('word forms', () => {
     await forms.getByRole('button', { name: 'wanted', exact: true }).click();
     await expect(forms).toBeHidden();
     await expect(messageBar(page)).toHaveAccessibleName('Message: I wanted. Tap to speak it.');
-    expect((await spoken(page)).at(-1)).toBe('wanted');
+    await expect.poll(async () => (await spoken(page)).at(-1)).toBe('wanted');
   });
 
   test('in Spanish, describing words change gender: cansado → cansada', async ({ page }) => {
@@ -582,5 +550,107 @@ test.describe('research checks', () => {
       await closeSettings(page);
       await expect(page.locator('button.cell')).toHaveCount(48);
     });
+  });
+});
+
+const voiceLog = (page: Page) =>
+  page.evaluate(
+    () => (window as unknown as { voiceLog: { engine: string; text: string }[] }).voiceLog,
+  );
+
+async function logVoices(page: Page) {
+  await page.addInitScript(() => {
+    const log: { engine: string; text: string }[] = [];
+    Object.assign(window, { voiceLog: log });
+    addEventListener('anyaac:speak', (event) =>
+      log.push((event as CustomEvent<{ engine: string; text: string }>).detail),
+    );
+  });
+}
+
+test.describe('bundled starter words', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.unroute(CLIP_FILES);
+    await logVoices(page);
+    await page.reload();
+    await expect(word(page, 'want')).toBeVisible();
+  });
+
+  test('speak with the app voice before it has downloaded', async ({ page }) => {
+    await word(page, 'want').click();
+    await expect.poll(() => voiceLog(page)).toEqual([{ engine: 'app', text: 'want' }]);
+    await word(page, 'more').click();
+    await page.getByRole('button', { name: 'Speak', exact: true }).click();
+    await expect
+      .poll(async () => (await voiceLog(page)).at(-1))
+      .toEqual({ engine: 'app', text: 'want more' });
+    // Quick phrases are bundled too.
+    await page.getByRole('button', { name: 'Phrases' }).click();
+    await page.getByRole('button', { name: 'I need a break' }).click();
+    await expect
+      .poll(async () => (await voiceLog(page)).at(-1))
+      .toEqual({ engine: 'app', text: 'I need a break' });
+  });
+
+  test('other words use the device voice until the voice is ready', async ({ page }) => {
+    await word(page, 'want').click();
+    await page.getByRole('button', { name: 'Word forms' }).click();
+    await page.getByRole('dialog').getByRole('button', { name: 'wanted', exact: true }).click();
+    await expect
+      .poll(async () => (await voiceLog(page)).at(-1))
+      .toEqual({ engine: 'device', text: 'wanted' });
+    await page.getByRole('button', { name: 'Speak', exact: true }).click();
+    await expect
+      .poll(async () => (await voiceLog(page)).at(-1))
+      .toEqual({ engine: 'device', text: 'wanted' });
+  });
+});
+
+test.describe('a downloaded app voice', () => {
+  test.use({ serviceWorkers: 'allow' });
+
+  test.beforeEach(async ({ page }) => {
+    await logVoices(page);
+    await page.reload();
+    await expect(word(page, 'want')).toBeVisible();
+  });
+
+  const spokenBy = voiceLog;
+
+  // Downloads a real 63 MB voice from Hugging Face, so it only runs when asked:
+  // ANYAAC_E2E_VOICE=1 pnpm test:e2e --project=chromium
+  test('downloads a voice, speaks with it, and starts it again offline', async ({
+    page,
+    context,
+    browserName,
+  }) => {
+    test.skip(!process.env.ANYAAC_E2E_VOICE, 'Set ANYAAC_E2E_VOICE=1 to run.');
+    test.skip(browserName !== 'chromium', 'Offline check needs Chromium.');
+    test.setTimeout(300_000);
+    await page.unroute(VOICE_FILES);
+    await openSettings(page, 'Speech & voice');
+    await page.getByRole('button', { name: 'App voice' }).click();
+    const linda = page.locator('.voice.offline').filter({ hasText: 'Linda' });
+    await linda.getByRole('button', { name: 'Download' }).click();
+    await expect(linda.getByRole('button', { name: 'In use' })).toBeVisible({ timeout: 240_000 });
+    await expect(page.getByText(/Getting words ready|Until an app voice/)).toHaveCount(1);
+    await closeSettings(page);
+
+    await word(page, 'want').click();
+    await expect.poll(() => spokenBy(page)).toEqual([{ engine: 'app', text: 'want' }]);
+
+    await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
+    await context.setOffline(true);
+    await page.reload();
+    await expect(word(page, 'go')).toBeVisible();
+    await expect
+      .poll(
+        async () => {
+          await word(page, 'go').click();
+          return (await spokenBy(page)).at(-1)?.engine;
+        },
+        { timeout: 30_000 },
+      )
+      .toBe('app');
   });
 });

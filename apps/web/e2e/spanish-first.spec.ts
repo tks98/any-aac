@@ -20,7 +20,7 @@ test.describe('on a device set to Spanish', () => {
     await expect(messageBar(page)).toHaveAccessibleName(
       'Mensaje: quiero helado. Toca para decirlo.',
     );
-    expect(await spoken(page)).toEqual(['quiero', 'helado']);
+    await expect.poll(() => spoken(page)).toEqual(['quiero', 'helado']);
   });
 });
 

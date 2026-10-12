@@ -105,39 +105,66 @@ interface PhonemizeModule {
   callMain(args: string[]): void;
 }
 
-/** One eSpeak instance, reused for every phrase in any language. */
-class Espeak {
+/**
+ * piper-phonemize stops working after about 80 calls (in its original build
+ * too: "null function or function signature mismatch"), and a fresh instance
+ * works again. So a new instance takes over well before that, and once more if
+ * a call fails anyway.
+ */
+export const CALLS_PER_INSTANCE = 50;
+
+/** eSpeak, reused for every phrase in any language, and renewed every 50 calls. */
+export class Espeak {
+  private module: PhonemizeModule | null = null;
+  private calls = 0;
   private output: string | null = null;
-  private constructor(private module: PhonemizeModule | null = null) {}
 
   static async start(): Promise<Espeak> {
     const espeak = new Espeak();
-    espeak.module = (await createPiperPhonemize({
-      print: (line: string) => (espeak.output = line),
+    await espeak.renew();
+    return espeak;
+  }
+
+  private async renew() {
+    this.module = (await createPiperPhonemize({
+      print: (line: string) => (this.output = line),
       printErr: () => {},
       locateFile: (file: string) =>
         file.endsWith('.wasm') ? phonemizeWasm : file.endsWith('.data') ? phonemizeData : file,
     })) as PhonemizeModule;
-    return espeak;
+    this.calls = 0;
   }
 
   /** IPA phonemes (one per entry, punctuation kept) for text in an eSpeak voice. */
-  phonemize(text: string, voice: string): string[] {
-    this.output = null;
+  async phonemize(text: string, voice: string): Promise<string[]> {
+    if (this.calls >= CALLS_PER_INSTANCE) await this.renew();
+    let output: string | null;
     try {
-      this.module!.callMain([
-        '-l',
-        voice,
-        '--input',
-        JSON.stringify([{ text }]),
-        '--espeak_data',
-        '/espeak-ng-data',
-      ]);
+      output = this.run(text, voice);
     } catch {
-      throw new Error(`eSpeak can't read text in "${voice}".`);
+      await this.renew();
+      try {
+        output = this.run(text, voice);
+      } catch {
+        throw new Error(`eSpeak can't read text in "${voice}".`);
+      }
     }
-    if (this.output === null) return [];
-    return separateSentences((JSON.parse(this.output) as { phonemes: string[] }).phonemes);
+    if (output === null) return [];
+    return separateSentences((JSON.parse(output) as { phonemes: string[] }).phonemes);
+  }
+
+  private run(text: string, voice: string): string | null {
+    this.calls++;
+    this.output = null;
+    this.module!.callMain([
+      '-l',
+      voice,
+      '--input',
+      JSON.stringify([{ text }]),
+      '--espeak_data',
+      '/espeak-ng-data',
+    ]);
+    return this.output;
   }
 }
 
@@ -175,12 +202,12 @@ export class PiperVoice {
     return this.config.audio.sample_rate;
   }
 
-  phonemes(text: string): string[] {
+  phonemes(text: string): Promise<string[]> {
     return this.espeak.phonemize(text, this.config.espeak.voice);
   }
 
   async synthesize(text: string, options: { rate?: number } = {}): Promise<Synthesized> {
-    const ids = phonemeIds(this.phonemes(text), this.config.phoneme_id_map);
+    const ids = phonemeIds(await this.phonemes(text), this.config.phoneme_id_map);
     const { Tensor } = this.ort;
     const { noise_scale, length_scale, noise_w } = this.config.inference;
     const feeds: Record<string, Tensor> = {

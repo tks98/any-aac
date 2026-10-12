@@ -4,6 +4,7 @@
  * plays audio with Web Audio.
  */
 import { preferPlaybackAudio } from '../speech';
+import { bundledAudio, joinClips } from './bundled';
 import { deleteAudioForVoice, loadAudio, saveAudio } from '../storage';
 import type { VoiceEntry } from './catalog';
 import type { WorkerRequest, WorkerResponse } from './voice.worker';
@@ -156,7 +157,24 @@ export class VoiceEngine {
     this.unlock();
     const turn = ++this.latest;
     const buffer = await this.render(text, rate);
-    if (turn !== this.latest) return;
+    if (turn === this.latest) this.play(buffer, volume);
+  }
+
+  /**
+   * Speaks bundled starter clips (see bundled.ts) as one phrase, word after
+   * word. Works before any voice is loaded. A newer call wins, as with speak().
+   */
+  async speakBundled(parts: { voiceId: string; text: string }[], volume = 1): Promise<void> {
+    this.unlock();
+    const turn = ++this.latest;
+    const context = this.context!;
+    const clips = await Promise.all(
+      parts.map(({ voiceId, text }) => bundledAudio(context, voiceId, text)),
+    );
+    if (turn === this.latest) this.play(joinClips(context, clips), volume);
+  }
+
+  private play(buffer: AudioBuffer, volume: number) {
     this.stop();
     const context = this.context!;
     const source = context.createBufferSource();

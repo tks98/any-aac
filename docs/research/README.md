@@ -35,6 +35,7 @@ Longer documents:
 | [0009](decisions/0009-plain-interface.md)              | A plain, consistent interface, checked against accessibility standards | Accepted    |
 | [0010](decisions/0010-hosting.md)                      | Host on GitHub Pages at any-aac.com, behind Cloudflare                 | Accepted    |
 | [0011](decisions/0011-name.md)                         | Rename Open AAC to Any AAC                                             | Accepted    |
+| [0012](decisions/0012-app-voice-by-default.md)         | An app voice by default, with the starter words bundled                | Accepted    |
 
 Earlier project decisions (licence, framework, building fresh, the approved design) are in [plan.md §10](../plan.md#10-decisions).
 

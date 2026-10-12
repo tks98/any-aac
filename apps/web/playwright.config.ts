@@ -8,7 +8,12 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'list',
-  use: { baseURL: `http://localhost:${PORT}` },
+  use: {
+    baseURL: `http://localhost:${PORT}`,
+    // Without the service worker, tests can block voice and clip files
+    // (see recordSpeech). Tests of offline use turn it back on.
+    serviceWorkers: 'block',
+  },
   // Tests run against the production build so the service worker is real.
   webServer: {
     command: `pnpm build && pnpm preview --port ${PORT} --strictPort`,

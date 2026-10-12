@@ -19,7 +19,7 @@ test('changes a word, and the change is spoken, saved and can be undone', async 
   await openEditor(page);
   // In edit mode a tap selects; it doesn't speak.
   await word(page, 'want').click();
-  expect(await spoken(page)).toEqual([]);
+  await expect.poll(() => spoken(page)).toEqual([]);
   await panel(page).getByLabel('Label in English').fill('need');
   await panel(page).getByLabel('Label in English').press('Enter');
   await expect(word(page, 'need')).toBeVisible();
@@ -31,7 +31,7 @@ test('changes a word, and the change is spoken, saved and can be undone', async 
 
   await word(page, 'need').click();
   await expect(messageBar(page)).toHaveAccessibleName('Message: need. Tap to speak it.');
-  expect(await spoken(page)).toEqual(['need']);
+  await expect.poll(() => spoken(page)).toEqual(['need']);
 
   await page.reload();
   await expect(word(page, 'need')).toBeVisible();
