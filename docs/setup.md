@@ -1,6 +1,6 @@
 # Setting up a device
 
-For families, teachers and speech-language pathologists (SLPs) setting up Any AAC for someone. Any AAC is at **[any-aac.com](https://any-aac.com/)**. The first time it opens, a short getting-started guide covers the basics (**Settings → About** opens it again); this page goes further. This is its first release, and its vocabulary hasn't yet been reviewed by SLPs; see the [README](../README.md).
+For families, teachers and speech-language pathologists (SLPs) setting up Any AAC for someone. Any AAC is at **[any-aac.com](https://any-aac.com/)**. The first time it opens, a short getting-started guide covers the basics (**Settings → About** opens it again); this page goes further. It's an early release (0.2.0), and its vocabulary hasn't yet been reviewed by SLPs; see the [README](../README.md).
 
 ## 1. Install it
 

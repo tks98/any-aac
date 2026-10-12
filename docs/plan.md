@@ -219,7 +219,7 @@ docs/
 
 Phases end when their exit criteria are met, not on a calendar.
 
-**Where things stand (0.1.0, 2026-10-11).** P1 is built, with the starter vocabulary in three sizes as a draft for SLPs to review ([decision 0015](research/decisions/0015-three-sizes.md)). Of P1's exit criteria, Cboard and CoughDrop imports are tested with their own exporters' files ([decision 0014](research/decisions/0014-real-imports.md)); a full day offline on a budget tablet and SLP sign-off are still to come. From later phases, switch scanning (without block scanning), auditory scanning, find word, modeling mode, symbol search, word forms in English and Spanish, and a Spanish-first vocabulary are in. See the [changelog](../CHANGELOG.md).
+**Where things stand (0.2.0, 2026-10-12).** P1 is built, with the starter vocabulary in three sizes as a draft for SLPs to review ([decision 0015](research/decisions/0015-three-sizes.md)). Of P1's exit criteria, Cboard and CoughDrop imports are tested with their own exporters' files ([decision 0014](research/decisions/0014-real-imports.md)); a full day offline on a budget tablet and SLP sign-off are still to come. From later phases, switch scanning (without block scanning), auditory scanning, find word, modeling mode, symbol search, word forms in English and Spanish, and a Spanish-first vocabulary are in. See the [changelog](../CHANGELOG.md).
 
 ### P0: Foundations
 
