@@ -12,21 +12,21 @@ What makes an AAC interface easy to use, and how Any AAC's measures up. The shor
 
 W3C's [Making Content Usable for People with Cognitive and Learning Disabilities](https://www.w3.org/TR/coga-usable/) (COGA) gives design patterns that fit AAC users and their partners closely. How Any AAC meets them:
 
-| Pattern (abridged)                                       | Any AAC                                                                                                   |
-| -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| Use a consistent visual design; familiar hierarchy       | One layout everywhere: message bar on top, navigation at the side (bottom on phones), board in the middle |
-| Ensure controls and content don't move unexpectedly      | Words locked in place; hidden words keep their cell; optional buttons only appear when turned on          |
-| Clearly identify controls; use icons that help the user  | Every button has an icon **and** a word (Delete and Clear gained words in this check)                     |
-| Provide help for non-standard controls                   | Tapping Edit, which needs a hold, now says so                                                             |
-| Provide feedback                                         | The chosen word is outlined for a moment (can be turned off); words are said as they're tapped            |
-| Let users go back; make it easy to undo                  | Back, Delete, Clear; Undo and Redo in edit mode                                                           |
-| Make it easy to find the most important tasks            | Speak and Help are always visible and largest                                                             |
-| Limit interruptions                                      | Reminders (backup, install) only appear in edit mode, never on the communicator's screen                  |
-| Use clear words; keep text succinct                      | Plain wording throughout, in English and Spanish                                                          |
-| Avoid data loss                                          | Changes save immediately; one-file backups                                                                |
-| Provide search                                           | Find word (modeling mode)                                                                                 |
-| Support simplification; personalised, familiar interface | Optional buttons can be hidden; text-only mode; themes, label size, photos                                |
-| Provide human help                                       | **Not yet:** no guide for families or partners inside the app                                             |
+| Pattern (abridged)                                       | Any AAC                                                                                                    |
+| -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Use a consistent visual design; familiar hierarchy       | One layout everywhere: message bar on top, navigation at the side (bottom on phones), board in the middle  |
+| Ensure controls and content don't move unexpectedly      | Words locked in place; hidden words keep their cell; optional buttons only appear when turned on           |
+| Clearly identify controls; use icons that help the user  | Every button has an icon **and** a word (Delete and Clear gained words in this check)                      |
+| Provide help for non-standard controls                   | Tapping Edit, which needs a hold, now says so                                                              |
+| Provide feedback                                         | The chosen word is outlined for a moment (can be turned off); words are said as they're tapped             |
+| Let users go back; make it easy to undo                  | Back, Delete, Clear; Undo and Redo in edit mode                                                            |
+| Make it easy to find the most important tasks            | Speak and Help are always visible and largest                                                              |
+| Limit interruptions                                      | Reminders (backup, install) only appear in edit mode, never on the communicator's screen                   |
+| Use clear words; keep text succinct                      | Plain wording throughout, in English and Spanish                                                           |
+| Avoid data loss                                          | Changes save immediately; one-file backups                                                                 |
+| Provide search                                           | Find word (modeling mode)                                                                                  |
+| Support simplification; personalised, familiar interface | Optional buttons can be hidden; text-only mode; themes, label size, photos                                 |
+| Provide human help                                       | **In part:** a getting-started guide for the adult opens on the first launch; no way yet to reach a person |
 
 ## Legibility, contrast and size
 

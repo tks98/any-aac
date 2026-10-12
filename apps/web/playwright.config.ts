@@ -13,6 +13,17 @@ export default defineConfig({
     // Without the service worker, tests can block voice and clip files
     // (see recordSpeech). Tests of offline use turn it back on.
     serviceWorkers: 'block',
+    // The getting-started guide has been seen, so it doesn't open over every
+    // test's first launch. guide.spec.ts starts without this.
+    storageState: {
+      cookies: [],
+      origins: [
+        {
+          origin: `http://localhost:${PORT}`,
+          localStorage: [{ name: 'any-aac-guide-seen', value: '1' }],
+        },
+      ],
+    },
   },
   // Tests run against the production build so the service worker is real.
   webServer: {

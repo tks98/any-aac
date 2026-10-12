@@ -210,6 +210,28 @@ const en = {
   updateReadyHelp:
     'It installs by itself the next time Any AAC is put away with nothing in the message. Updating now restarts the app on Home.',
   updateNow: 'Update now',
+  guideTitle: 'Getting started',
+  guideStep: (step: number, of: number) => `Step ${step} of ${of}`,
+  guideBoardTitle: 'Talking with the board',
+  guideBoard:
+    'Tap a word to say it and add it to the message; Speak says the whole message. Folders open more words, and Home and Back lead back. Help asks for help aloud.',
+  guideEditTitle: 'Changing words: hold Edit',
+  guideEdit:
+    'Hold Edit for a second to change words, add photos and open Settings. The hold stops a quick tap from changing anything. The starter words stay in their places, so they can be found by where they are.',
+  guideVoiceTitle: 'The voice',
+  guideVoice: (name: string, mb: number) =>
+    `Any AAC is downloading its voice, ${name} (about ${mb} MB), once; after that it speaks offline. The starter words can already be heard.`,
+  guideVoiceChoose: 'Choose a voice in Settings → Speech & voice.',
+  guideVoiceIos:
+    'On iPhone and iPad, keep this voice: it speaks with the ring switch on silent, and the device’s own voice doesn’t.',
+  guideReadyTitle: 'Keeping it ready',
+  guideReady:
+    'Back up the boards after making changes, from Settings → Boards & backup. The setup guide covers locking the device, switches, partner modeling and more.',
+  guideSetupLink: 'Read the setup guide',
+  guideNext: 'Next',
+  guideSkip: 'Skip',
+  guideStart: 'Start',
+  showGuide: 'Show the getting started guide',
   restoreSettings:
     'This backup also has settings. Use them too? (Cancel keeps the settings on this device.)',
   settingsRestored: 'Settings restored.',
@@ -570,6 +592,28 @@ const es: Messages = {
   updateReadyHelp:
     'Se instala sola la próxima vez que se deje Any AAC con el mensaje vacío. Si actualizas ahora, la aplicación se reinicia en Inicio.',
   updateNow: 'Actualizar ahora',
+  guideTitle: 'Primeros pasos',
+  guideStep: (step, of) => `Paso ${step} de ${of}`,
+  guideBoardTitle: 'Hablar con el tablero',
+  guideBoard:
+    'Toca una palabra para decirla y añadirla al mensaje; Hablar dice el mensaje entero. Las carpetas abren más palabras, e Inicio y Atrás llevan de vuelta. Ayuda pide ayuda en voz alta.',
+  guideEditTitle: 'Cambiar palabras: mantén pulsado Editar',
+  guideEdit:
+    'Mantén pulsado Editar un segundo para cambiar palabras, añadir fotos y abrir los Ajustes. Así, un toque rápido no cambia nada. Las palabras iniciales no se mueven de su sitio, para que se encuentren por dónde están.',
+  guideVoiceTitle: 'La voz',
+  guideVoice: (name, mb) =>
+    `Any AAC está descargando su voz, ${name} (unos ${mb} MB), una sola vez; después habla sin internet. Las palabras iniciales ya se oyen.`,
+  guideVoiceChoose: 'Elige una voz en Ajustes → Habla y voz.',
+  guideVoiceIos:
+    'En iPhone y iPad, mantén esta voz: habla aunque el interruptor de silencio esté activado, y la voz del dispositivo no.',
+  guideReadyTitle: 'Tenerlo listo',
+  guideReady:
+    'Haz una copia de los tableros después de hacer cambios, desde Ajustes → Tableros y copias. La guía de configuración (en inglés) explica cómo bloquear el dispositivo, usar pulsadores, modelar y más.',
+  guideSetupLink: 'Leer la guía de configuración',
+  guideNext: 'Siguiente',
+  guideSkip: 'Saltar',
+  guideStart: 'Empezar',
+  showGuide: 'Ver la guía de primeros pasos',
   restoreSettings:
     'Esta copia también tiene ajustes. ¿Usarlos también? (Cancelar mantiene los ajustes de este dispositivo.)',
   settingsRestored: 'Ajustes restaurados.',

@@ -16,4 +16,4 @@ The question was whether Any AAC needs a distinctive, stylised look, or one that
 ## Consequences
 
 - New screens must pass the same checks.
-- Still to do: help inside the app for families and partners (COGA's "provide human help"), and testing with AAC users themselves; automated checks can't tell us whether it's easy for them.
+- Help inside the app for the adult setting it up (COGA's "provide human help"): a getting-started guide opens on the first launch, covering the board, holding Edit, the voice and backups, and links to the setup guide; Settings → About opens it again. Still to do: a way to reach a person for help, and testing with AAC users themselves; automated checks can't tell us whether it's easy for them.

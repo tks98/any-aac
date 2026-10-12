@@ -13,6 +13,8 @@
   import { appVoiceIdFor, VOICES, type VoiceEntry } from '../voice/catalog';
   import { appVoice } from '../voice/voice.svelte';
   import { updates } from '../updates.svelte';
+  import { guide } from '../guide.svelte';
+  import { editor } from '../editor.svelte';
   import { app } from '../state.svelte';
   import { saveBoards } from '../storage';
   import Icon from './Icon.svelte';
@@ -906,6 +908,19 @@
       {:else}
         <h3>{t.sectionAbout}</h3>
         <p class="intro">{t.version(__APP_VERSION__)}</p>
+        <div class="actions">
+          <button
+            class="action"
+            onclick={() => {
+              open = false;
+              editor.close();
+              guide.show();
+            }}
+          >
+            <Icon path={ICONS.help} size={24} />
+            {t.showGuide}
+          </button>
+        </div>
         {#if updates.ready}
           <section class="card prose" aria-labelledby="update-heading">
             <h4 id="update-heading">{t.updateReady}</h4>

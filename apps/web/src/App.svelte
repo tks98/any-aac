@@ -12,6 +12,8 @@
   import { scanning } from './lib/access/scanning.svelte';
   import { listenForSwitches } from './lib/access/switches';
   import SettingsPanel from './lib/components/SettingsPanel.svelte';
+  import SetupGuide from './lib/components/SetupGuide.svelte';
+  import { guide } from './lib/guide.svelte';
   import { editor } from './lib/editor.svelte';
   import { install } from './lib/install.svelte';
   import { updates } from './lib/updates.svelte';
@@ -152,7 +154,12 @@
     // A new version is installed only when it can't interrupt: nothing in the
     // message, and nothing being edited, set up or printed.
     updates.start(
-      () => app.message.length === 0 && !editor.active && !settingsOpen && printing === null,
+      () =>
+        app.message.length === 0 &&
+        !editor.active &&
+        !settingsOpen &&
+        printing === null &&
+        !guide.open,
     );
     void requestPersistentStorage();
     void appVoice.refreshDownloaded();
@@ -187,6 +194,7 @@
         // update keeps the vocabulary the boards came from.
         const starter = await starterSet(saved ? starterOf(saved) : defaultStarter());
         app.load(starter);
+        if (!saved) guide.firstLaunch();
         await saveBoards(starter);
       }
       Object.assign(backups, await loadBackupTimes());
@@ -223,6 +231,7 @@
   {/if}
 
   <SettingsPanel bind:open={settingsOpen} />
+  {#if guide.open}<SetupGuide />{/if}
 </div>
 
 <ScanLayer />
