@@ -11,6 +11,7 @@
 - Every starter word and quick phrase is bundled as audio (0.6 MB), so it speaks from the first tap, offline, before the voice has downloaded.
 - The voice download is about half the size: voices are stored in half precision and sound the same (Linda is 32.5 MB instead of 63.5 MB), and eSpeak's data is trimmed to English and Spanish (0.5 MB instead of 9 MB). Voices already downloaded keep working.
 - Fixed: after the app had prepared about 80 words, sentences and typed text fell back to the device voice. The phonemizer stopped working after that many calls; it's now renewed before then.
+- Links to Any AAC show a preview card when shared.
 
 ## 0.1.0 (2026-10-11)
 

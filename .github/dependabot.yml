@@ -1,0 +1,21 @@
+# Security updates come as soon as an advisory is published (turned on in the
+# repository's settings). Other updates come once a month, grouped, so they're
+# easy to review: CI checks each one, and nothing deploys until it's merged.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      development:
+        dependency-type: development
+      production:
+        dependency-type: production
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      actions:
+        patterns: ['*']

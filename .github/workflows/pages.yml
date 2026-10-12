@@ -43,6 +43,7 @@ jobs:
       - run: pnpm build
         env:
           BASE_PATH: ${{ steps.pages.outputs.base_path }}/
+          SITE_URL: ${{ steps.pages.outputs.base_url }}/
           VITE_SELF_HOST_VOICES: 'true'
       # Voices are served from the site itself, so nothing is fetched from elsewhere.
       - run: node apps/web/scripts/self-host-voices.mjs apps/web/dist

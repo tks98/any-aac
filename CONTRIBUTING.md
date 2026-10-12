@@ -7,6 +7,8 @@ Thanks for helping. An AAC app is someone's voice, so the bar for reliability, p
 - **Private by default.** No telemetry, no third-party scripts, and nothing leaves the device unless the user sets it up.
 - **Every access method counts.** New features must work by touch, by keyboard and by switch scanning (and by dwell, once it exists).
 
+Report security problems privately, as [SECURITY.md](SECURITY.md) explains, not in an issue.
+
 ## Getting set up
 
 See the [README](README.md). Before opening a pull request, run:
@@ -17,7 +19,7 @@ pnpm lint && pnpm typecheck && pnpm test && pnpm test:e2e
 
 ## Releases
 
-Every commit on `main` that passes CI is deployed to [any-aac.com](https://any-aac.com/) ([decision 0010](docs/research/decisions/0010-hosting.md)), so `main` must always be safe to use. People get an update the next time they open the app. Note user-facing changes in [CHANGELOG.md](CHANGELOG.md), and bump the version in the three `package.json` files for a release.
+Every commit on `main` that passes CI is deployed to [any-aac.com](https://any-aac.com/) ([decision 0010](docs/research/decisions/0010-hosting.md)), so `main` must always be safe to use. People get an update the next time they open the app. Note user-facing changes in [CHANGELOG.md](CHANGELOG.md). For a release, bump the version in the three `package.json` files, tag the commit (`v0.2.0`), and publish a [GitHub release](https://github.com/tks98/any-aac/releases) with the changelog's section for it.
 
 ## Content and licensing
 

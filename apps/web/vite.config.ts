@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
-import { defineConfig } from 'vite';
+import { defineConfig, type Plugin } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
 // Lets phones on your tailnet reach the dev and preview servers through
@@ -11,6 +11,37 @@ const allowedHosts = ['.ts.net'];
 const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8')) as {
   version: string;
 };
+
+/**
+ * The link preview's image (public/social-card.jpg). Previews need its full
+ * address, so a build for a known address (SITE_URL, as on GitHub Pages) gives
+ * that and the page's own; otherwise it's relative, which some sites accept.
+ */
+function linkPreview(): Plugin {
+  let base = '/';
+  return {
+    name: 'any-aac-link-preview',
+    configResolved(config) {
+      base = config.base;
+    },
+    transformIndexHtml(_html, { path }) {
+      if (path !== '/index.html') return;
+      const site = process.env.SITE_URL;
+      const meta = (property: string, content: string) => ({
+        tag: 'meta',
+        attrs: { property, content },
+        injectTo: 'head' as const,
+      });
+      return [
+        meta('og:image', site ? new URL('social-card.jpg', site).href : `${base}social-card.jpg`),
+        meta('og:image:width', '1200'),
+        meta('og:image:height', '630'),
+        meta('og:image:alt', 'The Any AAC word board on an iPad'),
+        ...(site ? [meta('og:url', site)] : []),
+      ];
+    },
+  };
+}
 
 export default defineConfig({
   // GitHub Pages serves the app from /<repo>/; elsewhere it's the site root.
@@ -35,6 +66,7 @@ export default defineConfig({
   },
   plugins: [
     svelte(),
+    linkPreview(),
     VitePWA({
       // A new version waits until the app is next opened. It never reloads the
       // page while someone is in the middle of saying something.
