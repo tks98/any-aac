@@ -25,7 +25,7 @@
     "@axe-core/playwright": "^4.13.0",
     "@playwright/test": "^1.64.0",
     "@sveltejs/vite-plugin-svelte": "^7.3.1",
-    "@types/node": "^24.0.0",
+    "@types/node": "^26.6.4",
     "@vite-pwa/assets-generator": "^2.0.0",
     "fflate": "^0.8.3",
     "svelte": "^5.57.2",
