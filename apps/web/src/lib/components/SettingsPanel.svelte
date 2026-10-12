@@ -9,7 +9,7 @@
   import { phrase } from '../phrases';
   import { isAppleMobile } from '../platform';
   import { baseLanguage, speech, type VoiceInfo } from '../speech';
-  import { starterSet, type StarterId } from '../starter';
+  import { BOARD_SIZES, sizeOf, starterSet, type BoardSize, type StarterId } from '../starter';
   import { appVoiceIdFor, VOICES, type VoiceEntry } from '../voice/catalog';
   import { appVoice } from '../voice/voice.svelte';
   import { updates } from '../updates.svelte';
@@ -199,9 +199,13 @@
     form.reset();
   }
 
+  /** The size starting over uses: the boards' own size until another is chosen. */
+  let starterSize = $state<BoardSize | null>(null);
+  const size = $derived(starterSize ?? sizeOf(app.set));
+
   async function reset(starter: StarterId) {
     if (!confirm(t.confirmReset)) return;
-    await replaceBoards(await starterSet(starter), t.restored);
+    await replaceBoards(await starterSet(starter, size), t.restored);
     // Show the new boards in their own language.
     app.settings.language.primary = null;
     app.settings.language.usingSecond = false;
@@ -888,6 +892,15 @@
             <Icon path={ICONS.boards} size={24} />
             {t.exportBoards}
           </button>
+          <div class="card">
+            {@render choice(
+              t.boardSize,
+              t.boardSizeHelp,
+              BOARD_SIZES.map((value) => ({ value, name: t.boardSizes[value] })),
+              size,
+              (value) => (starterSize = value as BoardSize),
+            )}
+          </div>
           <button class="action" onclick={() => reset('en')}>
             <Icon path={ICONS.reset} size={24} />
             {t.resetEnglish}

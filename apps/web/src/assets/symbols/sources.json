@@ -437,6 +437,122 @@
     "crayon": {
       "set": "mulberry",
       "name": "crayon"
+    },
+    "we": {
+      "set": "openmoji",
+      "name": "1F9D1-200D-1F91D-200D-1F9D1"
+    },
+    "they": {
+      "set": "openmoji",
+      "name": "1F465"
+    },
+    "come": {
+      "set": "mulberry",
+      "name": "come_,_to"
+    },
+    "say": {
+      "set": "mulberry",
+      "name": "talk_1_,_to"
+    },
+    "wait": {
+      "set": "mulberry",
+      "name": "wait_,_to"
+    },
+    "think": {
+      "set": "mulberry",
+      "name": "think_,_to"
+    },
+    "see": {
+      "set": "openmoji",
+      "name": "1F441"
+    },
+    "read": {
+      "set": "mulberry",
+      "name": "read_,_to"
+    },
+    "close": {
+      "set": "mulberry",
+      "name": "close_,_to"
+    },
+    "sleep": {
+      "set": "openmoji",
+      "name": "1F634"
+    },
+    "little": {
+      "set": "mulberry",
+      "name": "little"
+    },
+    "hot": {
+      "set": "mulberry",
+      "name": "hot"
+    },
+    "cold": {
+      "set": "openmoji",
+      "name": "1F976"
+    },
+    "bad": {
+      "set": "mulberry",
+      "name": "bad"
+    },
+    "fast": {
+      "set": "mulberry",
+      "name": "fast_2"
+    },
+    "slow": {
+      "set": "openmoji",
+      "name": "1F40C"
+    },
+    "out": {
+      "set": "mulberry",
+      "name": "out"
+    },
+    "how": {
+      "set": "mulberry",
+      "name": "how"
+    },
+    "off": {
+      "set": "mulberry",
+      "name": "off"
+    },
+    "down": {
+      "set": "mulberry",
+      "name": "down"
+    },
+    "now": {
+      "set": "mulberry",
+      "name": "now"
+    },
+    "animals": {
+      "set": "openmoji",
+      "name": "1F43E"
+    },
+    "more-words": {
+      "set": "mulberry",
+      "name": "communication_book"
+    },
+    "dog": {
+      "set": "mulberry",
+      "name": "dog"
+    },
+    "cat": {
+      "set": "mulberry",
+      "name": "cat"
+    },
+    "bird": {
+      "set": "mulberry",
+      "name": "bird"
+    },
+    "fish": {
+      "set": "mulberry",
+      "name": "fish"
+    },
+    "horse": {
+      "set": "mulberry",
+      "name": "horse"
+    },
+    "cow": {
+      "set": "mulberry",
+      "name": "cow"
     }
   }
 }

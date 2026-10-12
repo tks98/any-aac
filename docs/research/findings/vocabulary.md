@@ -14,9 +14,10 @@ What the evidence says about which words to offer and where to put them, and wha
 ## Motor planning and grid size
 
 - **One place per word.** Automatic selection depends on it; grow vocabulary by revealing hidden words, not reflowing ([LAMP](https://www.aacandautism.com/lamp/research)).
+- **Changing grid size means relearning places**; systems that come in several sizes either keep one vocabulary with more behind folders in the smaller sizes (TD Snap Motor Plan) or grow it with the grid (TD Snap Core First) ([Tobii Dynavox](https://www.tobiidynavox.com/pages/td-snap-motor-plan)). This is practitioner guidance; we found no study comparing growing from a small grid with starting large.
 - **Start with the largest grid a person can access** ([Liberator](https://liberator.net.au/support/education/aac/grid-sizes)); small grids mean more presses per message ([AbleNet](https://support.ablenetinc.com/aac-education-and-resources/ableteams/understanding-aac-grid-sizes-and-motor-planning/)); beginners do better with a bigger screen and bigger buttons ([PRC-Saltillo](https://prc-saltillo.com/blog/LAMPWFL-iPhone)).
 
-**What we do:** locked positions, hidden words keep their cell, core words fixed on topic boards, phone layouts that follow the tablet's order and can be turned off ([0005](../decisions/0005-phone-layouts.md)).
+**What we do:** locked positions, hidden words keep their cell, core words fixed on topic boards, phone layouts that follow the tablet's order and can be turned off ([0005](../decisions/0005-phone-layouts.md)), and starter boards in three sizes with each word in the same part of the screen in all of them ([0015](../decisions/0015-three-sizes.md)).
 
 ## Colour
 

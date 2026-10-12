@@ -18,7 +18,7 @@
   import { editor } from './lib/editor.svelte';
   import { install } from './lib/install.svelte';
   import { updates } from './lib/updates.svelte';
-  import { defaultStarter, isOutdatedStarter, starterOf, starterSet } from './lib/starter';
+  import { defaultStarter, isOutdatedStarter, sizeOf, starterOf, starterSet } from './lib/starter';
   import { app } from './lib/state.svelte';
   import { backups } from './lib/backup.svelte';
   import {
@@ -201,7 +201,10 @@
       } else {
         // A first launch gets the vocabulary for the device's language; an
         // update keeps the vocabulary the boards came from.
-        const starter = await starterSet(saved ? starterOf(saved) : defaultStarter());
+        const starter = await starterSet(
+          saved ? starterOf(saved) : defaultStarter(),
+          saved ? sizeOf(saved) : 'medium',
+        );
         app.load(starter);
         if (!saved) guide.firstLaunch();
         await saveBoards(starter);

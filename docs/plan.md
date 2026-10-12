@@ -57,7 +57,7 @@ Phases are defined in §6. **P1** is the MVP.
 
 ### 4.2 Vocabulary content
 
-- [P1] One starter core-vocabulary set (to be designed with SLPs) at **3 sizes that share motor plans**. Sizes around 24, 48, and 84+ cells are placeholders.
+- [P1] One starter core-vocabulary set (to be designed with SLPs) at **3 sizes that share motor plans**. Sizes around 24, 48, and 84+ cells are placeholders. _Done as a draft:_ small (4 × 6), medium (6 × 8) and large (7 × 12), in English and Spanish, with each word in the same part of the screen in every size ([decision 0015](research/decisions/0015-three-sizes.md)).
 - [P1] Mulberry and OpenMoji symbols bundled. Licence and attribution metadata is stored on every image, and an attributions screen is generated from it. _Done:_ Settings → About lists every picture source in the boards.
 - [P1] Custom images from the camera or files, cropped and compressed on the device.
 - [P2] Symbol search across optional packs: ARASAAC as an opt-in download because of its NC licence; Global Symbols and OpenSymbols search when online.
@@ -219,7 +219,7 @@ docs/
 
 Phases end when their exit criteria are met, not on a calendar.
 
-**Where things stand (0.1.0, 2026-10-11).** P1 is built except the starter vocabulary at three sizes: there's one size, plus phone layouts ([decision 0005](research/decisions/0005-phone-layouts.md)). Of P1's exit criteria, Cboard and CoughDrop imports are tested with their own exporters' files ([decision 0014](research/decisions/0014-real-imports.md)); a full day offline on a budget tablet and SLP sign-off are still to come. From later phases, switch scanning (without block scanning), auditory scanning, find word, modeling mode, symbol search, word forms in English and Spanish, and a Spanish-first vocabulary are in. See the [changelog](../CHANGELOG.md).
+**Where things stand (0.1.0, 2026-10-11).** P1 is built, with the starter vocabulary in three sizes as a draft for SLPs to review ([decision 0015](research/decisions/0015-three-sizes.md)). Of P1's exit criteria, Cboard and CoughDrop imports are tested with their own exporters' files ([decision 0014](research/decisions/0014-real-imports.md)); a full day offline on a budget tablet and SLP sign-off are still to come. From later phases, switch scanning (without block scanning), auditory scanning, find word, modeling mode, symbol search, word forms in English and Spanish, and a Spanish-first vocabulary are in. See the [changelog](../CHANGELOG.md).
 
 ### P0: Foundations
 

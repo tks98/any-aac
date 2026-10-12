@@ -8,12 +8,13 @@
 - App voices ask iOS for playback audio before their audio starts, so they speak in silent mode from the first word.
 - Fixed: the device voice on iPhone and iPad said "capital I" for the word "I". A capital letter on its own is now passed to the voice in lower case.
 - App voices are now the default, so speech works in silent mode on iPhone and iPad. The voice for the language in use downloads in the background the first time the app opens (a setting turns this off).
-- Every starter word and quick phrase is bundled as audio (0.6 MB), so it speaks from the first tap, offline, before the voice has downloaded.
+- Every starter word and quick phrase is bundled as audio (0.8 MB), so it speaks from the first tap, offline, before the voice has downloaded.
 - The voice download is about half the size: voices are stored in half precision and sound the same (Linda is 32.5 MB instead of 63.5 MB), and eSpeak's data is trimmed to English and Spanish (0.5 MB instead of 9 MB). Voices already downloaded keep working.
 - Fixed: after the app had prepared about 80 words, sentences and typed text fell back to the device voice. The phonemizer stopped working after that many calls; it's now renewed before then.
 - Updates arrive sooner. The app looks for a new version whenever it comes back on screen, and installs it when it's put away with nothing in the message, instead of waiting until every copy is closed (which an app on the Home Screen rarely is). Edit mode and Settings → About say when one is ready, with **Update now**.
 - A short getting-started guide opens on the first launch, for the adult setting Any AAC up: talking with the board, holding Edit to change words, the voice, and backups. Settings → About opens it again.
 - Imports are tested with files Cboard's and CoughDrop's own exporters made. Pictures that are only links to Mulberry symbols online now come from Any AAC's own library and work offline; pictures linked from other sites aren't loaded (the buttons show their words, and the import says how many). Folder buttons whose board isn't in the file become words instead of doing nothing. Repeated import notices are said once, and an empty file says it has no boards.
+- The starter boards come in three sizes: small (24 places, the biggest buttons, with the other words one tap away under More words), medium (48, as before) and large (84, with 35 more core words and an Animals topic), in English and Spanish. Each word stays in the same part of the screen in every size. Choose one in Settings → Boards & backup when starting over. People gains "who".
 - Links to Any AAC show a preview card when shared.
 - A security policy makes the browser refuse scripts, styles and requests from other sites, so the app can only contact its own site. any-aac.com also sends it as a header, with others that stop it being shown inside other sites.
 

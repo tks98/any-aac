@@ -237,6 +237,10 @@ const en = {
   settingsRestored: 'Settings restored.',
   importBoards: 'Import boards or a backup',
   exportBoards: 'Export boards only (to share)',
+  boardSize: 'Size of the starter boards',
+  boardSizeHelp:
+    'Small has the biggest buttons, with 20 words on the first board and the rest one folder away; large has 77 words and the smallest buttons. Each word stays in the same part of the screen in every size. Starting over uses this size.',
+  boardSizes: { small: 'Small (24)', medium: 'Medium (48)', large: 'Large (84)' },
   resetEnglish: 'Start over with the English starter boards',
   resetSpanish: 'Start over with the Spanish starter boards',
   resetHelp:
@@ -627,6 +631,10 @@ const es: Messages = {
   settingsRestored: 'Ajustes restaurados.',
   importBoards: 'Importar tableros o una copia',
   exportBoards: 'Exportar solo los tableros (para compartir)',
+  boardSize: 'Tamaño de los tableros iniciales',
+  boardSizeHelp:
+    'El pequeño tiene los botones más grandes, con 20 palabras en el primer tablero y el resto en una carpeta; el grande tiene 77 palabras y los botones más pequeños. Cada palabra queda en la misma parte de la pantalla en todos los tamaños. Al empezar de nuevo se usa este tamaño.',
+  boardSizes: { small: 'Pequeño (24)', medium: 'Mediano (48)', large: 'Grande (84)' },
   resetEnglish: 'Empezar de nuevo con los tableros iniciales en inglés',
   resetSpanish: 'Empezar de nuevo con los tableros iniciales en español',
   resetHelp:

@@ -31,6 +31,14 @@ import { starterSymbol } from './symbols';
 export type StarterId = Vocabulary['id'];
 const VOCABULARIES: Record<StarterId, Vocabulary> = { en: ENGLISH, es: SPANISH };
 
+/**
+ * The core board's size: small (4 × 6, the biggest buttons), medium (6 × 8)
+ * or large (7 × 12, the most words). Every word keeps its part of the screen
+ * in each size (see starter/types.ts).
+ */
+export type BoardSize = 'small' | 'medium' | 'large';
+export const BOARD_SIZES: readonly BoardSize[] = ['small', 'medium', 'large'];
+
 /** Spanish-first on devices set to Spanish, English-first otherwise. */
 export function defaultStarter(): StarterId {
   const lang = typeof navigator === 'undefined' ? 'en' : navigator.language;
@@ -55,10 +63,12 @@ const slug = (label: string) =>
  * Bump when the starter boards change. Saved starter boards from an older
  * version are replaced on next launch, as long as nobody has edited them.
  */
-export const STARTER_VERSION = 9;
+export const STARTER_VERSION = 10;
 const EXT_STARTER_VERSION = 'ext_anyaac_starter_version';
 /** Which starter vocabulary a set came from, so an update keeps it. */
 const EXT_STARTER = 'ext_anyaac_starter';
+/** And its size. */
+const EXT_STARTER_SIZE = 'ext_anyaac_starter_size';
 
 /** A label or board name in every other language the vocabulary comes in. */
 function translated(vocab: Vocabulary, label: string): Record<string, string> {
@@ -102,8 +112,11 @@ function addWord(
   images: Images,
 ): ObfBoard {
   const image = w.pic === undefined ? undefined : (images.get(w.pic) ?? placeholderImage(w.pic));
+  // Words that differ only by an accent (tú and tu, él and el) need their own ids.
+  let id = slug(w.label);
+  for (let n = 2; board.buttons.some((b) => b.id === id); n++) id = `${slug(w.label)}-${n}`;
   const button: ObfButton = {
-    id: slug(w.label),
+    id,
     label: w.label,
     ...(image ? { image_id: image.id } : {}),
     translations: Object.fromEntries(
@@ -119,15 +132,33 @@ function addWord(
 /** A layout as rows of words, top to bottom. */
 type Layout = Word[][];
 
-function layouts(vocab: Vocabulary): { tablet: Layout; phone: Layout } {
-  const rows = vocab.columns[0]!.length;
-  const tablet = Array.from({ length: rows }, (_, r) => vocab.columns.map((column) => column[r]!));
-  const coreWord = (label: string): Word => {
-    const found = vocab.columns.flat().find((w) => w.label === label);
+/** A size's core board, its phone layout, and (small) the board of the core words it leaves out. */
+function layouts(
+  vocab: Vocabulary,
+  size: BoardSize,
+): { core: Layout; phone: Layout; more: Layout | null } {
+  const words = [...vocab.columns.flat(), ...vocab.extraWords];
+  const find = (label: string): Word => {
+    const found = words.find((w) => w.label === label);
     if (!found) throw new Error(`"${label}" is not a core word.`);
     return found;
   };
-  return { tablet, phone: vocab.phone.map((row) => row.map(coreWord)) };
+  const rowsOf = (rows: string[][]) => rows.map((row) => row.map(find));
+  const height = vocab.columns[0]!.length;
+  const medium = Array.from({ length: height }, (_, r) =>
+    vocab.columns.map((column) => column[r]!),
+  );
+  return {
+    core:
+      size === 'small'
+        ? rowsOf(vocab.small.rows)
+        : size === 'large'
+          ? rowsOf(vocab.large.rows)
+          : medium,
+    // One phone layout for every size: on a phone, they're all the same.
+    phone: rowsOf(vocab.phone),
+    more: size === 'small' ? rowsOf(vocab.small.more) : null,
+  };
 }
 
 function newBoard(vocab: Vocabulary, id: string, name: string, layout: Layout): ObfBoard {
@@ -211,6 +242,13 @@ export function starterOf(set: BoardSet | null): StarterId {
   return root?.[EXT_STARTER] === 'es' ? 'es' : 'en';
 }
 
+/** The size of the starter boards a set came from (medium if it doesn't say). */
+export function sizeOf(set: BoardSet | null): BoardSize {
+  const root = set?.boards.find((board) => board.id === set.rootId);
+  const size = root?.[EXT_STARTER_SIZE];
+  return size === 'small' || size === 'large' ? size : 'medium';
+}
+
 /** Loads each word's symbol file; words without one (or that fail to load) get a placeholder. */
 async function loadImages(
   keys: string[],
@@ -265,12 +303,21 @@ export function starterPhrases(id: StarterId = 'en'): ObfBoard {
   return board;
 }
 
-export async function starterSet(id: StarterId = 'en'): Promise<BoardSet> {
+export async function starterSet(
+  id: StarterId = 'en',
+  size: BoardSize = 'medium',
+): Promise<BoardSet> {
   const vocab = VOCABULARIES[id];
-  const { tablet, phone } = layouts(vocab);
+  const { core: layout, phone, more } = layouts(vocab, size);
+  const topicList = size === 'large' ? [...vocab.topics, ...vocab.large.topics] : vocab.topics;
   const keys = [
     ...new Set(
-      [...vocab.columns.flat(), ...vocab.topics.flatMap((t) => t.words)]
+      [
+        ...layout.flat(),
+        ...(more?.flat() ?? []),
+        ...phone.flat(),
+        ...topicList.flatMap((t) => t.words),
+      ]
         .map((w) => w.pic)
         .filter((pic) => pic !== undefined),
     ),
@@ -278,7 +325,7 @@ export async function starterSet(id: StarterId = 'en'): Promise<BoardSet> {
   const { images, files } = await loadImages(keys);
 
   const core = {
-    ...coreBoard(vocab, 'core', vocab.names.core, tablet, images),
+    ...coreBoard(vocab, 'core', vocab.names.core, layout, images),
     [EXT_COMPACT_BOARD]: 'core-phone',
   };
   const phoneCore = coreBoard(
@@ -288,9 +335,12 @@ export async function starterSet(id: StarterId = 'en'): Promise<BoardSet> {
     phone,
     images,
   );
+  // The small set's other core words. A phone shows its own layout instead,
+  // which has every topic, so this board has no phone version.
+  const moreWords = more ? [coreBoard(vocab, 'more-words', vocab.names.more, more, images)] : [];
 
-  const topics = vocab.topics.flatMap((topic) => {
-    const board = topicBoard(vocab, topic.id, topic.name, tablet, topic.words, images);
+  const topics = topicList.flatMap((topic) => {
+    const board = topicBoard(vocab, topic.id, topic.name, layout, topic.words, images);
     const phoneId = `${topic.id}-phone`;
     return [
       { ...board, [EXT_COMPACT_BOARD]: phoneId },
@@ -298,5 +348,10 @@ export async function starterSet(id: StarterId = 'en'): Promise<BoardSet> {
     ];
   });
 
-  return { rootId: core.id, boards: [core, phoneCore, ...topics, starterPhrases(id)], files };
+  const boards = [core, phoneCore, ...moreWords, ...topics, starterPhrases(id)];
+  return {
+    rootId: core.id,
+    boards: boards.map((board) => ({ ...board, [EXT_STARTER_SIZE]: size })),
+    files,
+  };
 }

@@ -15,7 +15,7 @@ import { folder, word, type Vocabulary } from './types';
 export const ENGLISH: Vocabulary = {
   id: 'en',
   locale: 'en',
-  names: { core: 'Core words', phone: ' (phone)', phrases: 'Phrases' },
+  names: { core: 'Core words', phone: ' (phone)', phrases: 'Phrases', more: 'More words' },
   // Word types run left to right in sentence order (Modified Fitzgerald).
   columns: [
     [
@@ -83,6 +83,110 @@ export const ENGLISH: Vocabulary = {
       folder('Things', 'things'),
     ],
   ],
+  // The large board's 35 extra words: more pronouns, verbs, describing words
+  // and little words from published core lists, each beside its word type,
+  // and its partner where it has one (in/out, on/off, up/down, hot/cold).
+  extraWords: [
+    word('we', 'pronoun'),
+    word('me', 'pronoun', null),
+    word('your', 'pronoun', null),
+    word('they', 'pronoun'),
+    word('this', 'determiner', null),
+    word('him', 'pronoun', 'he'),
+    word('her', 'pronoun', 'she'),
+    word('mine', 'pronoun', null),
+    word('need', 'verb', null),
+    word('give', 'verb'),
+    word('have', 'verb'),
+    word('play', 'verb'),
+    word('know', 'verb', null),
+    word('come', 'verb'),
+    word('say', 'verb'),
+    word('wait', 'verb'),
+    word('think', 'verb'),
+    word('see', 'verb'),
+    word('again', 'descriptor'),
+    word('big', 'descriptor'),
+    word('little', 'descriptor'),
+    word('hot', 'descriptor'),
+    word('cold', 'descriptor'),
+    word('bad', 'descriptor'),
+    word('fast', 'descriptor'),
+    word('slow', 'descriptor'),
+    word('out', 'preposition'),
+    word('how', 'question'),
+    word('and', 'preposition', null),
+    word('there', 'preposition'),
+    word('with', 'preposition', null),
+    word('to', 'preposition', null),
+    word('off', 'preposition'),
+    word('down', 'preposition'),
+    word('now', 'preposition'),
+    folder('Animals', 'animals'),
+    folder('More words', 'more-words'),
+  ],
+  // Medium columns move to columns 1, 3, 4, 6, 7, 9, 10 and 12, and medium
+  // rows 4–6 to rows 5–7: the cells that cover the same part of the screen.
+  large: {
+    rows: [
+      ['I', 'me', 'want', 'get', 'play', 'is', 'more', 'big', 'that', 'not', 'and', 'People'],
+      [
+        'you',
+        'your',
+        'like',
+        'put',
+        'know',
+        'can',
+        'all',
+        'little',
+        'here',
+        'what',
+        'there',
+        'Food',
+      ],
+      ['it', 'they', 'go', 'make', 'come', 'eat', 'some', 'hot', 'in', 'where', 'with', 'Places'],
+      ['we', 'this', 'need', 'give', 'say', 'have', 'again', 'cold', 'out', 'how', 'to', 'Animals'],
+      ['he', 'him', 'stop', 'open', 'wait', 'drink', 'good', 'bad', 'on', 'who', 'off', 'Feelings'],
+      ['she', 'her', 'help', 'turn', 'think', 'yes', 'same', 'fast', 'up', 'when', 'down', 'Body'],
+      [
+        'my',
+        'mine',
+        'look',
+        'do',
+        'see',
+        'no',
+        'different',
+        'slow',
+        'all done',
+        'why',
+        'now',
+        'Things',
+      ],
+    ],
+    topics: [
+      {
+        id: 'animals',
+        name: 'Animals',
+        words: ['dog', 'cat', 'bird', 'fish', 'horse', 'cow'].map((w) => word(w, 'noun')),
+      },
+    ],
+  },
+  // Twenty of the medium words, each in the cell covering its medium place;
+  // the other 21 are on More words, and "who" is on People.
+  small: {
+    rows: [
+      ['I', 'want', 'is', 'more', 'not', 'People'],
+      ['you', 'go', 'eat', 'all', 'what', 'Food'],
+      ['he', 'stop', 'yes', 'good', 'up', 'Feelings'],
+      ['my', 'help', 'no', 'different', 'all done', 'More words'],
+    ],
+    more: [
+      ['like', 'get', 'put', 'here', 'that', 'Places'],
+      ['it', 'make', 'can', 'some', 'where', 'Body'],
+      ['she', 'open', 'drink', 'same', 'on', 'Things'],
+      ['look', 'do', 'turn', 'in', 'why', 'when'],
+    ],
+  },
   keepOnTopics: ['I', 'want', 'more', 'not', 'eat', 'drink', 'help', 'all done'],
   topics: [
     {
@@ -94,6 +198,7 @@ export const ENGLISH: Vocabulary = {
         word('teacher', 'pronoun'),
         word('friend', 'pronoun'),
         word('baby', 'pronoun'),
+        word('who', 'question'),
       ],
     },
     {

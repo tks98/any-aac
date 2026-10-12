@@ -1,7 +1,7 @@
 /**
  * Bundled starter clips: every word and quick phrase on the starter boards,
  * rendered ahead of time in each language's default app voice (MP3, about
- * 0.6 MB in all; see scripts/render-clips.mjs). They're part of the app, so
+ * 0.8 MB in all; see scripts/render-clips.mjs). They're part of the app, so
  * the starter words speak from the first tap, offline, before any voice has
  * downloaded. Played through Web Audio, they also speak in silent mode on
  * iPhone and iPad, where the device voice doesn't.

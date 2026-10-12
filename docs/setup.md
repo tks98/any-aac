@@ -23,6 +23,14 @@ Each word has one place on the board, and people learn where words are by moving
 
 Devices set to Spanish start with the **Spanish** starter boards, chosen in Spanish for Spanish speakers; others start with the **English** boards, which come with Spanish translations for bilingual communicators. To switch, use **Settings → Boards & backup → Start over with…** (this replaces the boards, so back up first).
 
+The starter boards come in three sizes, chosen there too, under **Size of the starter boards**:
+
+- **Small (24)**: the biggest buttons, for someone who can't yet reach smaller ones. The first board has the 20 most-needed core words; the others are one tap away, under **More words**.
+- **Medium (48)**: the standard board, and where everyone starts.
+- **Large (84)**: 35 more core words and an Animals topic, with the smallest buttons. Best on a tablet held sideways.
+
+Each word stays in the same part of the screen in every size, so moving up a size keeps it where the hand expects it. Even so, moving changes the board, so choose the largest size the person can use reliably, and grow vocabulary within it by hiding words and revealing them as they're learned ([decision 0015](research/decisions/0015-three-sizes.md)).
+
 ## 4. Choose a voice
 
 **Settings → Speech & voice.** Any AAC speaks with an **app voice**: it sounds the same on every device, works offline, and keeps speaking when an iPhone or iPad is in silent mode (iOS mutes the device's own voice then). The starter words speak in it from the first tap. The full voice for the language in use (**Linda** for English) downloads by itself the first time the app opens, about 37 MB once (23 MB for Spanish), so open it on Wi-Fi if you can; until it's ready, words you add speak with the device voice. To use less data, turn off **Download app voices automatically** and download a voice when you choose. The device voice is still there if you prefer it. Any AAC only offers voices whose licences are clearly open; for Spanish that's one small, lower-quality voice for now ([decision 0002](research/decisions/0002-only-clearly-licensed-voices.md)).

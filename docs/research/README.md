@@ -22,22 +22,23 @@ Longer documents:
 
 ## Decisions
 
-| #                                                      | Decision                                                               | Status      |
-| ------------------------------------------------------ | ---------------------------------------------------------------------- | ----------- |
-| [0001](decisions/0001-offline-voice.md)                | Offline voice: Piper in the browser, our own engine                    | Accepted    |
-| [0002](decisions/0002-only-clearly-licensed-voices.md) | Only voices with clearly open licences                                 | Accepted    |
-| [0003](decisions/0003-core-vocabulary.md)              | Core vocabulary from Universal Core                                    | Accepted    |
-| [0004](decisions/0004-spanish-first-vocabulary.md)     | A Spanish-first vocabulary                                             | Accepted    |
-| [0005](decisions/0005-phone-layouts.md)                | Phone layouts follow the tablet's order; can be off                    | Accepted    |
-| [0006](decisions/0006-partner-modeling.md)             | Tools for partner modeling                                             | Accepted    |
-| [0007](decisions/0007-kokoro-for-spanish.md)           | Kokoro for a clearly licensed Spanish voice                            | Not adopted |
-| [0008](decisions/0008-train-a-spanish-voice.md)        | Train a clearly licensed Spanish voice                                 | Deferred    |
-| [0009](decisions/0009-plain-interface.md)              | A plain, consistent interface, checked against accessibility standards | Accepted    |
-| [0010](decisions/0010-hosting.md)                      | Host on GitHub Pages at any-aac.com, behind Cloudflare                 | Accepted    |
-| [0011](decisions/0011-name.md)                         | Rename Open AAC to Any AAC                                             | Accepted    |
-| [0012](decisions/0012-app-voice-by-default.md)         | An app voice by default, with the starter words bundled                | Accepted    |
-| [0013](decisions/0013-half-precision-voices.md)        | Voices stored in half precision                                        | Accepted    |
-| [0014](decisions/0014-real-imports.md)                 | Imports tested with real exports; linked pictures from our library     | Accepted    |
+| #                                                      | Decision                                                                | Status      |
+| ------------------------------------------------------ | ----------------------------------------------------------------------- | ----------- |
+| [0001](decisions/0001-offline-voice.md)                | Offline voice: Piper in the browser, our own engine                     | Accepted    |
+| [0002](decisions/0002-only-clearly-licensed-voices.md) | Only voices with clearly open licences                                  | Accepted    |
+| [0003](decisions/0003-core-vocabulary.md)              | Core vocabulary from Universal Core                                     | Accepted    |
+| [0004](decisions/0004-spanish-first-vocabulary.md)     | A Spanish-first vocabulary                                              | Accepted    |
+| [0005](decisions/0005-phone-layouts.md)                | Phone layouts follow the tablet's order; can be off                     | Accepted    |
+| [0006](decisions/0006-partner-modeling.md)             | Tools for partner modeling                                              | Accepted    |
+| [0007](decisions/0007-kokoro-for-spanish.md)           | Kokoro for a clearly licensed Spanish voice                             | Not adopted |
+| [0008](decisions/0008-train-a-spanish-voice.md)        | Train a clearly licensed Spanish voice                                  | Deferred    |
+| [0009](decisions/0009-plain-interface.md)              | A plain, consistent interface, checked against accessibility standards  | Accepted    |
+| [0010](decisions/0010-hosting.md)                      | Host on GitHub Pages at any-aac.com, behind Cloudflare                  | Accepted    |
+| [0011](decisions/0011-name.md)                         | Rename Open AAC to Any AAC                                              | Accepted    |
+| [0012](decisions/0012-app-voice-by-default.md)         | An app voice by default, with the starter words bundled                 | Accepted    |
+| [0013](decisions/0013-half-precision-voices.md)        | Voices stored in half precision                                         | Accepted    |
+| [0014](decisions/0014-real-imports.md)                 | Imports tested with real exports; linked pictures from our library      | Accepted    |
+| [0015](decisions/0015-three-sizes.md)                  | Starter boards in three sizes, each word in the same part of the screen | Draft       |
 
 Earlier project decisions (licence, framework, building fresh, the approved design) are in [plan.md §10](../plan.md#10-decisions).
 
