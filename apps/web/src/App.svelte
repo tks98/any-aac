@@ -26,8 +26,10 @@
     loadBackupTimes,
     loadBoards,
     loadSettings,
+    onSavedElsewhere,
     requestPersistentStorage,
     saveBoards,
+    SavedElsewhere,
     saveSettings,
   } from './lib/storage';
   import { phrase } from './lib/phrases';
@@ -41,7 +43,11 @@
   let settingsOpen = $state(false);
   let printing = $state.raw<ObfBoard[] | null>(null);
   let notSaved = $state(false);
+  /** Shown in Settings, e.g. when another tab's newer settings replaced a change made here. */
+  let settingsNotice = $state('');
   let settingsLoaded = $state(false);
+  /** The saved settings couldn't be read, so the defaults are in use and nothing is saved. */
+  let settingsUnreadable = false;
 
   $effect(() => {
     const query = matchMedia(PHONE);
@@ -105,7 +111,16 @@
   $effect(() => {
     const settings = $state.snapshot(app.settings);
     if (!settingsLoaded) return;
-    saveSettings(settings).catch(() => (notSaved = true));
+    saveSettings(settings).catch((error: unknown) => {
+      if (!(error instanceof SavedElsewhere)) {
+        notSaved = true;
+        return;
+      }
+      // Settings saved in another tab are read in instead; say so where the
+      // change was made, so it doesn't just quietly undo itself.
+      if (settingsOpen) settingsNotice = app.t.settingsSavedElsewhere;
+      else if (editor.active) editor.notice = app.t.settingsSavedElsewhere;
+    });
   });
 
   // Start the app voice for the language in use. If it isn't on this device,
@@ -175,7 +190,9 @@
     try {
       app.settings = await loadSettings();
     } catch {
-      // Defaults are fine; the save effect will report if storage is unavailable.
+      // Defaults are fine for now. They aren't saved over the real settings
+      // (see storage.ts); reading is tried again with the boards.
+      settingsUnreadable = true;
     }
     // Voices withdrawn (e.g. for their licence) give way to the device voice,
     // and their files and prepared audio are deleted.
@@ -186,42 +203,149 @@
       Promise.all(ids.map((id) => deleteAudioForVoice(id).catch(() => undefined))),
     );
     settingsLoaded = true;
+    onSavedElsewhere((what) => void (what === 'boards' ? readBoardsAgain() : readSettingsAgain()));
+    addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') void tryReadingAgain();
+    });
     try {
-      const saved = await loadBoards();
-      if (saved && !isOutdatedStarter(saved)) {
-        app.load(saved);
-        // Boards imported before linked Mulberry symbols were copied in.
-        if (hasLinkedPictures(saved)) {
-          void localizeLinkedPictures(saved).then(async ({ set, fromLibrary }) => {
-            if (fromLibrary === 0 || app.set !== saved) return;
-            app.replaceSet(set);
-            await saveBoards(set);
-          });
-        }
-      } else {
-        // A first launch gets the vocabulary for the device's language; an
-        // update keeps the vocabulary the boards came from.
-        const starter = await starterSet(
-          saved ? starterOf(saved) : defaultStarter(),
-          saved ? sizeOf(saved) : 'medium',
-        );
-        app.load(starter);
-        if (!saved) guide.firstLaunch();
-        await saveBoards(starter);
-      }
-      Object.assign(backups, await loadBackupTimes());
+      await readBoards();
     } catch {
-      // Storage can be unavailable (private browsing, blocked site data).
-      // Speaking must still work, so carry on with the starter boards in memory.
+      // Storage can be unavailable (private browsing, blocked site data), or
+      // fail for a moment. Speaking must still work, so carry on with the
+      // starter boards in memory. Nothing is saved until the saved boards can
+      // be read, or the starter boards would replace them.
       if (!app.set) app.load(await starterSet(defaultStarter()));
+      app.boardsUnreadable = true;
       notSaved = true;
     }
   });
+
+  /**
+   * Reads the saved boards at startup, or shows the starter boards on a first
+   * launch. Throws only when the saved boards can't be read; a save that fails
+   * afterwards shows "Not saved" instead, as edits do.
+   */
+  async function readBoards({ retry = false } = {}) {
+    const saved = await loadBoards();
+    // Replaced on purpose (an import, say) while this read was under way.
+    if (retry && !app.boardsUnreadable) return;
+    if (saved && !isOutdatedStarter(saved)) {
+      if (app.set) app.reload(saved);
+      else app.load(saved);
+      // Boards imported before linked Mulberry symbols were copied in.
+      if (hasLinkedPictures(saved)) {
+        void localizeLinkedPictures(saved).then(async ({ set, fromLibrary }) => {
+          if (fromLibrary === 0 || app.set !== saved) return;
+          app.replaceSet(set);
+          await saveBoards(set).catch(() => undefined);
+        });
+      }
+    } else {
+      // A first launch gets the vocabulary for the device's language; an
+      // update keeps the vocabulary the boards came from.
+      const starter = await starterSet(
+        saved ? starterOf(saved) : defaultStarter(),
+        saved ? sizeOf(saved) : 'medium',
+      );
+      if (app.set) app.reload(starter);
+      else app.load(starter);
+      if (!saved) guide.firstLaunch();
+      // Not `replacing`: nobody edited these boards, and keeping them as the
+      // previous set would push out boards an adult replaced (by starting
+      // over, say) and may want back.
+      await saveBoards(starter).catch((error: unknown) => {
+        // Boards another tab saved meanwhile are read in instead.
+        if (!(error instanceof SavedElsewhere)) notSaved = true;
+      });
+    }
+    await readBackupTimes();
+  }
+
+  /** When the boards were saved and backed up, for Settings; not knowing isn't a reason to stop. */
+  async function readBackupTimes() {
+    try {
+      Object.assign(backups, await loadBackupTimes());
+    } catch {
+      // Settings shows the boards as never backed up until they can be read.
+    }
+  }
+
+  let retrying = false;
+
+  /** After a failed read: tries again (when the app is shown again, or the adult asks). */
+  async function tryReadingAgain() {
+    if (settingsUnreadable) await readSettingsAgain();
+    // Boards that were read (or replaced on purpose since) are never read over.
+    if (!app.boardsUnreadable || retrying) return;
+    retrying = true;
+    try {
+      await readBoards({ retry: true });
+      app.boardsUnreadable = false;
+      notSaved = false;
+    } catch {
+      // Still unreadable; the message stays up.
+    } finally {
+      retrying = false;
+    }
+  }
+
+  /** The adult replaced the boards that couldn't be read (an import, say), and they saved. */
+  function replacedUnreadable() {
+    app.boardsUnreadable = false;
+    notSaved = false;
+  }
+
+  /** Another tab saved the boards: show its version rather than save over it. */
+  async function readBoardsAgain() {
+    try {
+      const saved = await loadBoards();
+      if (saved) app.reload(saved);
+    } catch {
+      // Saving stays refused until this tab has read the newer boards.
+      return;
+    }
+    await readBackupTimes();
+  }
+
+  async function readSettingsAgain() {
+    try {
+      app.settings = await loadSettings();
+      settingsUnreadable = false;
+    } catch {
+      // Keep the settings in use.
+    }
+  }
 </script>
 
 <div class="screen">
   {#if editor.active}
-    <EditMode onsettings={() => (settingsOpen = true)} onprint={(boards) => (printing = boards)} />
+    <div class="editing">
+      {#if app.boardsUnreadable}
+        <div class="unreadable" role="alert">
+          <p>{app.t.boardsUnreadable}</p>
+          <button onclick={() => void tryReadingAgain()}>{app.t.tryAgain}</button>
+        </div>
+      {/if}
+      <div class="fill">
+        <!-- A board the editor can't show mustn't take Settings with it:
+             Settings is where boards are imported, restored or started over. -->
+        <svelte:boundary
+          onerror={(error) => console.error('The editor could not be shown.', error)}
+        >
+          <EditMode
+            onsettings={() => (settingsOpen = true)}
+            onprint={(boards) => (printing = boards)}
+          />
+          {#snippet failed()}
+            <div class="unreadable" role="alert">
+              <p>{app.t.editorBroken}</p>
+              <button onclick={() => (settingsOpen = true)}>{app.t.settings}</button>
+              <button onclick={() => editor.close()}>{app.t.done}</button>
+            </div>
+          {/snippet}
+        </svelte:boundary>
+      </div>
+    </div>
   {:else if modeling.active}
     <ModelingMode />
   {:else}
@@ -232,7 +356,9 @@
         <main>
           <p class="trail">
             {app.trail.join('  ›  ')}
-            {#if notSaved}<span class="warning">· {app.t.notSaved}</span>{/if}
+            {#if app.boardsUnreadable}
+              <span class="warning">· {app.t.boardsUnreadableShort}</span>
+            {:else if notSaved}<span class="warning">· {app.t.notSaved}</span>{/if}
           </p>
           {#if app.view}
             <BoardGrid board={app.view} />
@@ -242,7 +368,12 @@
     </div>
   {/if}
 
-  <SettingsPanel bind:open={settingsOpen} />
+  <SettingsPanel
+    bind:open={settingsOpen}
+    bind:notice={settingsNotice}
+    onretry={tryReadingAgain}
+    onreplaced={replacedUnreadable}
+  />
   {#if guide.open}<SetupGuide />{/if}
 </div>
 
@@ -297,6 +428,53 @@
 
   .warning {
     color: var(--help);
+  }
+
+  /* Edit mode, with room above it for the message when the boards can't be read. */
+  .editing {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .fill {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .unreadable {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 16px;
+    margin: max(var(--gap), env(safe-area-inset-top)) max(var(--gap), env(safe-area-inset-right)) 0
+      max(var(--gap), env(safe-area-inset-left));
+    padding: 12px 16px;
+    border: 2px solid var(--help);
+    border-radius: var(--radius);
+    background: var(--surface);
+    font-weight: 700;
+  }
+
+  .unreadable p {
+    flex: 1 1 20rem;
+    margin: 0;
+  }
+
+  .unreadable button {
+    min-height: 48px;
+    padding: 0 20px;
+    border: 2px solid var(--accent);
+    border-radius: var(--radius);
+    background: var(--accent);
+    color: var(--accent-ink);
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .unreadable button:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
   }
 
   @media (max-width: 599px) {

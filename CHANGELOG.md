@@ -1,5 +1,40 @@
 # Changelog
 
+## Unreleased
+
+Fixes from a security review. A board file could stop someone communicating, and a failed read could lose their boards.
+
+### Boards and files
+
+- A board file whose words or colours weren't plain text could leave the board blank, or cover it with one button, and lock the adult out of Edit. Words that are numbers are now read as text, other values are left out, and colours must be a plain `#hex` or `rgb()` value; the import lists what it changed. Boards already saved are cleaned up the same way when they're read.
+- If a board, or the editor, can't be shown, a message takes its place and Edit and Settings keep working.
+- Very large files are refused instead of freezing the app: boards are limited to 30 by 30 places, a file to 2,000 boards, and a .obz's contents to 50 MB a file and 300 MB in all.
+- Picture credits only link to web pages (https or http).
+
+### Saving
+
+- If the saved boards couldn't be read when the app started, it spoke from the starter boards, and the next edit saved over the real ones. Now nothing is saved until the boards have been read; the app says so, and tries again when it comes back on screen or when Try again is pressed. Settings get the same protection.
+- Import, Start over and restoring a backup keep the boards they replace. Settings → Boards & backup offers to put them back.
+- If the saved boards can't be read at all, Import, Start over and restoring a backup can still replace them, after a warning that says so. Ordinary edits stay blocked until the boards are read.
+- Two copies of the app open at once (the Home Screen app and a browser tab, say) no longer save over each other's changes. A copy that's behind reads the newer boards and settings instead, and says so if it had a change of its own that wasn't saved.
+- Undo no longer reaches back past an import, Start over or restore.
+
+### Edit lock and scanning
+
+- With switch scanning and a switch that acts as a mouse, a press that opened Word forms could open edit mode three seconds later. Edit mode now only opens from a real hold.
+- Moving keyboard focus off Edit while holding Enter or Space no longer opens edit mode.
+
+### Speech
+
+- Downloaded voice files are checked against their pinned sizes and hashes before they're kept, and a kept file that doesn't match is downloaded again. A voice that fails falls back to the device voice, as before.
+- Old voice engine files from earlier versions are cleared from the cache over time.
+
+### Hosting
+
+- Only pushes to `main` in this repository deploy any-aac.com. Before, a pull request from a fork could trigger a deploy. Only the final deploy step has deploy permissions, and every GitHub Action is pinned to a commit.
+- The build includes a `_headers` file with the security headers, and the README says which headers a self-hosted copy should send. The voice lab test page is no longer in the build.
+- any-aac.com now sends HSTS and no longer sends Cloudflare's network error reports.
+
 ## 0.2.0 (2026-10-12)
 
 Speech that works in silent mode on iPhone and iPad, half the download, updates that arrive sooner, the starter boards in three sizes, and imports tested with real files from other apps. Still not reviewed by speech-language pathologists or tested with AAC users; see the [README](README.md).

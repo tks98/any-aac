@@ -87,3 +87,21 @@ describe('translatedLabel and translatedName', () => {
     );
   });
 });
+
+describe('boards saved before words had to be text', () => {
+  it('still show and say their words instead of throwing', () => {
+    const button = { id: 'a', label: 5, vocalization: { x: 1 } } as unknown as ObfButton;
+    expect(buttonWords(button)).toEqual({ label: '5', text: '5' });
+    expect(buttonWords(button, 'es')).toEqual({ label: '5', text: '5' });
+    const board = { ...createBoard({ id: 'b', name: 'B', rows: 1, columns: 1 }) };
+    expect(boardName({ ...board, name: {} as unknown as string })).toBe('');
+    expect(baseLanguage(7 as unknown as string)).toBe('');
+    expect(
+      setLanguages({
+        rootId: 'b',
+        boards: [{ ...board, locale: 7 as unknown as string }],
+        files: {},
+      }),
+    ).toEqual([]);
+  });
+});

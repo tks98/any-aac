@@ -12,6 +12,8 @@ export const EXT_NAME_TRANSLATIONS = 'ext_anyaac_name_translations';
 
 /** "es-MX" → "es". */
 export function baseLanguage(locale: string): string {
+  // A stored board can have a locale that isn't text (see asText below).
+  if (typeof locale !== 'string') return '';
   return locale.toLowerCase().replace('_', '-').split('-')[0] ?? '';
 }
 
@@ -34,11 +36,24 @@ export interface ButtonWords {
   text: string;
 }
 
+/**
+ * A word as text. Import makes words text (see parseObf), but a board saved
+ * before it did, or a hand-edited one, can still hold a number or an object;
+ * that mustn't stop the board from showing.
+ */
+function asText(value: unknown): string | undefined {
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number' && Number.isFinite(value)) return String(value);
+  return undefined;
+}
+
 /** What a button shows and says, in a language if it has a translation for it. */
 export function buttonWords(button: ObfButton, lang?: string): ButtonWords {
+  const ownLabel = asText(button.label);
+  const ownVocalization = asText(button.vocalization);
   const own = {
-    label: button.label ?? button.vocalization ?? '',
-    text: (button.vocalization ?? button.label ?? '').trim(),
+    label: ownLabel ?? ownVocalization ?? '',
+    text: (ownVocalization ?? ownLabel ?? '').trim(),
   };
   if (lang === undefined) return own;
   const translation = pick<{ label?: unknown; vocalization?: unknown }>(button.translations, lang);
@@ -55,14 +70,14 @@ export function boardName(board: ObfBoard, lang?: string): string {
     const name = pick<unknown>(board[EXT_NAME_TRANSLATIONS], lang);
     if (typeof name === 'string') return name;
   }
-  return board.name ?? '';
+  return asText(board.name) ?? '';
 }
 
 /** Every language a set of boards can be shown in, as base codes, sorted. */
 export function setLanguages(set: BoardSet): string[] {
   const found = new Set<string>();
   for (const board of set.boards) {
-    if (board.locale) found.add(baseLanguage(board.locale));
+    if (typeof board.locale === 'string') found.add(baseLanguage(board.locale));
     for (const button of board.buttons) {
       if (isRecord(button.translations)) {
         for (const key of Object.keys(button.translations)) found.add(baseLanguage(key));

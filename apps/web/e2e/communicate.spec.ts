@@ -654,3 +654,12 @@ test.describe('a downloaded app voice', () => {
       .toBe('app');
   });
 });
+
+test('a key press on Edit that moves focus away is not a hold', async ({ page }) => {
+  await page.getByRole('button', { name: /^Edit boards/ }).focus();
+  await page.keyboard.down('Enter');
+  await page.keyboard.press('Shift+Tab');
+  await page.keyboard.up('Enter');
+  await page.waitForTimeout(1300);
+  await expect(page.getByRole('toolbar')).toBeHidden();
+});

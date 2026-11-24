@@ -133,6 +133,165 @@ function positiveInt(value: unknown): number | undefined {
   return typeof value === 'number' && Number.isInteger(value) && value > 0 ? value : undefined;
 }
 
+/**
+ * The largest grid we read. Real boards are far smaller (the editor goes up to
+ * 12 × 16); a file asking for thousands of rows would build millions of cells.
+ */
+export const MAX_GRID_ROWS = 30;
+export const MAX_GRID_COLUMNS = 30;
+
+const HEX_COLOR = /^#(?:[0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
+const RGB_COLOR = /^rgba?\(\s*[\d.]+%?(?:(?:\s*[,/]\s*|\s+)[\d.]+%?){2,3}\s*\)$/i;
+
+/**
+ * A colour we let a board set: `#rgb`, `#rgba`, `#rrggbb`, `#rrggbbaa`, or
+ * `rgb()`/`rgba()` of numbers. Anything else could carry more CSS than a colour
+ * (`red; position: fixed`), so it isn't used.
+ */
+export function isColor(value: unknown): value is string {
+  return (
+    typeof value === 'string' &&
+    value.length <= 64 &&
+    (HEX_COLOR.test(value) || RGB_COLOR.test(value))
+  );
+}
+
+/** A string as it is, a number as its digits; anything else isn't text. */
+function asText(value: unknown): string | undefined {
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number' && Number.isFinite(value)) return String(value);
+  return undefined;
+}
+
+/** What cleaning a board changed, so it can be reported once. */
+interface Cleaned {
+  /** Words, names and licence fields that weren't text. */
+  text: number;
+  /** Colours that weren't valid. */
+  colors: number;
+  /** Anything changed, including nulls quietly left out. */
+  changed: boolean;
+}
+
+/** Makes `keys` of `record` strings: numbers become their digits, anything else is removed. */
+function textFields(record: Record<string, unknown>, keys: readonly string[], cleaned: Cleaned) {
+  for (const key of keys) {
+    const value = record[key];
+    if (value === undefined || typeof value === 'string') continue;
+    cleaned.changed = true;
+    // Some exporters write null for "none"; that's not worth a notice.
+    if (value !== null) cleaned.text++;
+    const text = asText(value);
+    if (text === undefined) delete record[key];
+    else record[key] = text;
+  }
+}
+
+const LICENSE_FIELDS = [
+  'type',
+  'copyright_notice_url',
+  'source_url',
+  'author_name',
+  'author_url',
+  'author_email',
+] as const;
+
+function cleanLicense<T extends { license?: ObfLicense }>(item: T, cleaned: Cleaned): T {
+  if (item.license === undefined) return item;
+  if (!isRecord(item.license)) {
+    cleaned.changed = true;
+    if (item.license !== null) cleaned.text++;
+    const rest = { ...item };
+    delete rest.license;
+    return rest;
+  }
+  const license = { ...item.license };
+  textFields(license, LICENSE_FIELDS, cleaned);
+  return { ...item, license };
+}
+
+function cleanButton(raw: ObfButton, cleaned: Cleaned): ObfButton {
+  const button: ObfButton = { ...raw };
+  textFields(button, ['label', 'vocalization'], cleaned);
+  for (const key of ['background_color', 'border_color'] as const) {
+    const value = button[key];
+    if (value === undefined || isColor(value)) continue;
+    cleaned.changed = true;
+    if (value !== null && value !== '') cleaned.colors++;
+    delete button[key];
+  }
+  if (button.translations !== undefined) {
+    if (!isRecord(button.translations)) {
+      cleaned.changed = true;
+      if (button.translations !== null) cleaned.text++;
+      delete button.translations;
+    } else {
+      const translations: Record<string, unknown> = {};
+      for (const [lang, value] of Object.entries(button.translations)) {
+        if (!isRecord(value)) {
+          cleaned.changed = true;
+          if (value !== null) cleaned.text++;
+          continue;
+        }
+        const translation = { ...value };
+        textFields(translation, ['label', 'vocalization'], cleaned);
+        translations[lang] = translation;
+      }
+      button.translations = translations;
+    }
+  }
+  return button;
+}
+
+/**
+ * Makes sure what the app shows and says is text and colours are colours, so
+ * one odd value can't stop a board from showing. Returns a copy.
+ */
+function cleanFields(board: ObfBoard, cleaned: Cleaned): ObfBoard {
+  const out = cleanLicense({ ...board }, cleaned);
+  textFields(out, ['name', 'locale'], cleaned);
+  out.buttons = records(board.buttons, cleaned).map((button) => cleanButton(button, cleaned));
+  out.images = records(board.images, cleaned).map((image) => cleanLicense(image, cleaned));
+  out.sounds = records(board.sounds, cleaned).map((sound) => cleanLicense(sound, cleaned));
+  return out;
+}
+
+/** A stored board's buttons, images or sounds: missing lists are empty, and non-objects left out. */
+function records<T>(items: T[] | undefined, cleaned: Cleaned): T[] {
+  if (!Array.isArray(items)) {
+    cleaned.changed = true;
+    return [];
+  }
+  if (items.every((item) => isRecord(item))) return items;
+  cleaned.changed = true;
+  return items.filter((item) => isRecord(item));
+}
+
+function cleanedIssues(cleaned: Cleaned): Issue[] {
+  const issues: Issue[] = [];
+  if (cleaned.text > 0) {
+    issues.push({
+      message:
+        "Some words or names weren't text; numbers were kept as words and anything else was left out.",
+    });
+  }
+  if (cleaned.colors > 0) {
+    issues.push({ message: "Some button colours weren't valid colours and were left out." });
+  }
+  return issues;
+}
+
+/**
+ * Applies parseObf's clean-up of words, names, colours and licences to a board
+ * that is already stored, so boards saved before it existed are repaired.
+ * Returns the same board when nothing needed changing.
+ */
+export function cleanBoard(board: ObfBoard): { board: ObfBoard; issues: Issue[] } {
+  const cleaned: Cleaned = { text: 0, colors: 0, changed: false };
+  const out = cleanFields(board, cleaned);
+  return cleaned.changed ? { board: out, issues: cleanedIssues(cleaned) } : { board, issues: [] };
+}
+
 function randomId(): string {
   // randomUUID only exists in secure contexts; plain http:// on a LAN doesn't have it.
   if (typeof crypto.randomUUID === 'function') return crypto.randomUUID();
@@ -200,7 +359,12 @@ function normalizeGrid(raw: unknown, buttonIds: Set<string>, issues: Issue[]): O
   const rows = positiveInt(grid.rows) ?? (rawOrder.length || 1);
   const columns =
     positiveInt(grid.columns) ??
-    Math.max(1, ...rawOrder.map((row) => (Array.isArray(row) ? row.length : 0)));
+    rawOrder.reduce<number>((most, row) => Math.max(most, Array.isArray(row) ? row.length : 0), 1);
+  if (rows > MAX_GRID_ROWS || columns > MAX_GRID_COLUMNS) {
+    throw new ObfError(
+      `A board has ${rows} rows and ${columns} columns; Any AAC can show at most ${MAX_GRID_ROWS} rows and ${MAX_GRID_COLUMNS} columns.`,
+    );
+  }
 
   const outside = rawOrder.some(
     (row, r) =>
@@ -278,10 +442,13 @@ export function parseObf(
     });
   }
 
-  return {
-    board: { ...json, format: format as string, id, buttons, grid, images, sounds },
-    issues,
-  };
+  const cleaned: Cleaned = { text: 0, colors: 0, changed: false };
+  const board = cleanFields(
+    { ...json, format: format as string, id, buttons, grid, images, sounds },
+    cleaned,
+  );
+  issues.push(...cleanedIssues(cleaned));
+  return { board, issues };
 }
 
 export function serializeObf(board: ObfBoard): string {

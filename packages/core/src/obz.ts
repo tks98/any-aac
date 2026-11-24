@@ -4,6 +4,7 @@
  */
 import { strFromU8, strToU8, unzipSync, zipSync, type Zippable } from 'fflate';
 import {
+  cleanBoard,
   isRecord,
   OBF_FORMAT,
   ObfError,
@@ -71,6 +72,32 @@ function withoutDeadLinks(set: BoardSet, issues: Issue[]): BoardSet {
   return { ...set, boards };
 }
 
+/** The most boards a set can have. The largest real page sets have a few hundred. */
+export const MAX_BOARDS = 2000;
+/** The most files a package can hold. */
+export const MAX_ZIP_ENTRIES = 20_000;
+/** The most one file in a package can unpack to. */
+export const MAX_ZIP_ENTRY_BYTES = 50 * 1024 * 1024;
+/** The most a whole package can unpack to. */
+export const MAX_ZIP_TOTAL_BYTES = 300 * 1024 * 1024;
+
+const megabytes = (bytes: number) => `${Math.round(bytes / (1024 * 1024))} MB`;
+
+/**
+ * Applies the import clean-up (words and names that aren't text, colours that
+ * aren't colours, licence fields) to a set that is already stored, so sets
+ * saved before it are repaired. Returns the same set when nothing changed.
+ */
+export function cleanBoardSet(set: BoardSet): BoardSet {
+  let changed = false;
+  const boards = set.boards.map((board) => {
+    const cleaned = cleanBoard(board).board;
+    if (cleaned !== board) changed = true;
+    return cleaned;
+  });
+  return changed ? { ...set, boards } : set;
+}
+
 /** Files a zip tool adds that aren't part of the boards (macOS's resource forks, Finder's notes). */
 const junk = (path: string) => path.startsWith('__MACOSX/') || /(^|\/)\.DS_Store$/.test(path);
 
@@ -79,9 +106,33 @@ export function readObz(
   options?: ParseOptions,
 ): { set: BoardSet; issues: Issue[] } {
   let entries: Record<string, Uint8Array>;
+  let count = 0;
+  let total = 0;
   try {
-    entries = unzipSync(bytes, { filter: (file) => !junk(file.name) });
-  } catch {
+    // Sizes are checked before anything is unpacked: fflate unpacks an entry
+    // into a buffer of its declared size, so a file can't grow past what it says.
+    entries = unzipSync(bytes, {
+      filter: (file) => {
+        if (++count > MAX_ZIP_ENTRIES) {
+          throw new ObfError(`The package has more than ${MAX_ZIP_ENTRIES} files.`);
+        }
+        if (junk(file.name)) return false;
+        if (file.originalSize > MAX_ZIP_ENTRY_BYTES) {
+          throw new ObfError(
+            `${file.name} in the package is too big (the most is ${megabytes(MAX_ZIP_ENTRY_BYTES)}).`,
+          );
+        }
+        total += file.originalSize;
+        if (total > MAX_ZIP_TOTAL_BYTES) {
+          throw new ObfError(
+            `The package unpacks to more than ${megabytes(MAX_ZIP_TOTAL_BYTES)}, which is too big.`,
+          );
+        }
+        return true;
+      },
+    });
+  } catch (error) {
+    if (error instanceof ObfError) throw error;
     throw new ObfError('This file is not a valid .obz package.');
   }
   const manifestBytes = entries['manifest.json'];
@@ -114,6 +165,9 @@ export function readObz(
       // A board only a button links to is reported with the button.
       if (listed.has(path)) issues.push({ message: `The package is missing ${path}.` });
       continue;
+    }
+    if (byPath.size >= MAX_BOARDS) {
+      throw new ObfError(`The package has more than ${MAX_BOARDS} boards, which is too many.`);
     }
     const parsed = parseObf(parseJson(strFromU8(file), path), options);
     boardIssues.push(...parsed.issues.map((issue) => ({ path, issue })));

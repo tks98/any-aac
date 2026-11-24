@@ -28,7 +28,7 @@ import {
 } from '@any-aac/core';
 import { backups } from './backup.svelte';
 import { app } from './state.svelte';
-import { saveBoards } from './storage';
+import { saveBoards, SavedElsewhere } from './storage';
 
 /** What a button and its copy on the other layout have in common. */
 const SHARED = [
@@ -71,6 +71,19 @@ class Editor {
   );
   /** The board's other layout (phone or full), which shares its words. */
   linked = $derived(app.set && this.board ? linkedLayout(app.set, this.board) : undefined);
+
+  constructor() {
+    // Undo after an import or start over would bring back the old boards.
+    app.onWholeSetReplaced(() => this.forget());
+  }
+
+  /** Forgets Undo, Redo and the selection, for a whole new set of boards. */
+  forget() {
+    this.undoStack = [];
+    this.redoStack = [];
+    this.selected = null;
+    this.swapFrom = null;
+  }
 
   open() {
     this.active = true;
@@ -145,7 +158,11 @@ class Editor {
         this.saveFailed = false;
         backups.savedAt = Date.now();
       },
-      () => (this.saveFailed = true),
+      (error: unknown) => {
+        // The boards saved in another tab are read in instead (see App.svelte).
+        if (error instanceof SavedElsewhere) this.notice = app.t.savedElsewhere;
+        else this.saveFailed = true;
+      },
     );
   }
 

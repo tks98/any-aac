@@ -1,4 +1,4 @@
-import { partOfSpeech, type ObfButton, type PartOfSpeech } from '@any-aac/core';
+import { isColor, partOfSpeech, type ObfButton, type PartOfSpeech } from '@any-aac/core';
 
 export type Theme = 'light' | 'dark' | 'contrast';
 /** How word types show their colour: a pale fill with a coloured edge, the edge alone, or not at all. */
@@ -59,12 +59,11 @@ export function cellColors(
   const color = swatch(button);
   if (!color) {
     // Boards imported from other apps bring their own colours (light themes only).
-    if (theme === 'light' && (button.background_color || button.border_color)) {
-      return {
-        fill: button.background_color ?? plain.surface,
-        edge: button.border_color ?? plain.line,
-        width: 2,
-      };
+    // They go into a style attribute, so anything but a plain colour is ignored.
+    const fill = isColor(button.background_color) ? button.background_color : undefined;
+    const edge = isColor(button.border_color) ? button.border_color : undefined;
+    if (theme === 'light' && (fill || edge)) {
+      return { fill: fill ?? plain.surface, edge: edge ?? plain.line, width: 2 };
     }
     return { fill: plain.surface, edge: plain.line, width: theme === 'contrast' ? 3 : 2 };
   }

@@ -29,6 +29,9 @@ const en = {
   speak: 'Speak',
   folder: (label: string) => `${label}, folder`,
   notSaved: 'Not saved on this device',
+  boardBroken: "This board can't be shown. Hold Edit to fix or replace it.",
+  editorBroken:
+    "These boards can't be edited. Open Settings to restore a backup, put back the previous boards or start over.",
 
   // Settings
   settings: 'Settings',
@@ -253,6 +256,22 @@ const en = {
   confirmReset: 'Replace all boards on this device with the starter boards?',
   restored: 'Starter boards restored.',
   couldNotSave: 'They could not be saved on this device, so they will be gone when the app closes.',
+  restorePrevious: 'Put back the boards from before',
+  restorePreviousHelp: (date: string) =>
+    `The boards as they were before the last import or start over (${date}). The boards on this device now can be put back the same way.`,
+  confirmRestorePrevious:
+    'Replace all boards on this device with the ones from before the last import or start over?',
+  previousRestored: 'The boards from before are back.',
+  boardsUnreadableShort: "Saved boards couldn't be read",
+  boardsUnreadable:
+    "The boards saved on this device couldn't be read, so the starter boards are showing. Nothing is saved until they can be read, so the saved boards aren't replaced. Closing and opening the app again may help.",
+  tryAgain: 'Try again',
+  savedElsewhere:
+    "The boards were changed in another tab or window, so they're showing now. The last change here wasn't saved.",
+  settingsSavedElsewhere:
+    "The settings were changed in another tab or window, so they're showing now. The last change here wasn't saved.",
+  replacesUnreadable:
+    "The boards saved on this device couldn't be read. They will be replaced, and can't be put back.",
   unreadable: 'That file could not be read.',
   picturesFromLibrary: (count: number) =>
     count === 1
@@ -418,6 +437,10 @@ const es: Messages = {
   speak: 'Hablar',
   folder: (label) => `${label}, carpeta`,
   notSaved: 'No se guardó en este dispositivo',
+  boardBroken:
+    'Este tablero no se puede mostrar. Mantén pulsado Editar para arreglarlo o reemplazarlo.',
+  editorBroken:
+    'Estos tableros no se pueden editar. Abre Ajustes para restaurar una copia de seguridad, recuperar los tableros anteriores o empezar de nuevo.',
 
   settings: 'Ajustes',
   done: 'Listo',
@@ -648,6 +671,22 @@ const es: Messages = {
   restored: 'Se restauraron los tableros iniciales.',
   couldNotSave:
     'No se pudieron guardar en este dispositivo, así que desaparecerán al cerrar la aplicación.',
+  restorePrevious: 'Recuperar los tableros de antes',
+  restorePreviousHelp: (date) =>
+    `Los tableros como estaban antes de la última importación o de empezar de nuevo (${date}). Los tableros que hay ahora en este dispositivo se pueden recuperar de la misma manera.`,
+  confirmRestorePrevious:
+    '¿Reemplazar todos los tableros de este dispositivo por los de antes de la última importación o de empezar de nuevo?',
+  previousRestored: 'Se recuperaron los tableros de antes.',
+  boardsUnreadableShort: 'No se pudieron leer los tableros guardados',
+  boardsUnreadable:
+    'No se pudieron leer los tableros guardados en este dispositivo, así que se muestran los tableros iniciales. No se guarda nada hasta que se puedan leer, así que los tableros guardados no se reemplazan. Cerrar y volver a abrir la aplicación puede ayudar.',
+  tryAgain: 'Intentar de nuevo',
+  savedElsewhere:
+    'Los tableros se cambiaron en otra pestaña o ventana, y ahora se muestran esos cambios. El último cambio de aquí no se guardó.',
+  settingsSavedElsewhere:
+    'Los ajustes se cambiaron en otra pestaña o ventana, y ahora se muestran esos cambios. El último cambio de aquí no se guardó.',
+  replacesUnreadable:
+    'No se pudieron leer los tableros guardados en este dispositivo. Se reemplazarán y no se podrán recuperar.',
   unreadable: 'No se pudo leer ese archivo.',
   picturesFromLibrary: (count) =>
     count === 1

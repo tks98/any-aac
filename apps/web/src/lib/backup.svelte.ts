@@ -20,6 +20,8 @@ class Backups {
   /** When the boards were last saved on this device, and last backed up. */
   savedAt = $state<number | null>(null);
   backedUpAt = $state<number | null>(null);
+  /** When the boards kept from before the last import or start over were replaced, if any are kept. */
+  previousAt = $state<number | null>(null);
 
   /** True when someone has changed the boards and hasn't backed them up for a while. */
   due(set: BoardSet | null, now = Date.now()): boolean {

@@ -62,6 +62,25 @@
     selector.cancel();
   }
 
+  /**
+   * A board that throws while it's drawn shows a notice instead (see the
+   * boundary below), so it can't take the Edit button and Settings with it.
+   * Going to another board tries again.
+   */
+  let brokenOn: { id: string; reset: () => void } | null = null;
+  function onerror(error: unknown, reset: () => void) {
+    console.error('The board could not be shown.', error);
+    brokenOn = { id: board.id, reset };
+  }
+  $effect(() => {
+    const id = board.id;
+    if (brokenOn && brokenOn.id !== id) {
+      const { reset } = brokenOn;
+      brokenOn = null;
+      reset();
+    }
+  });
+
   /** Keyboard, screen readers and system switch access arrive as plain clicks. */
   function onclick(index: number) {
     if (performance.now() - lastPointerUp > 500) selector.activate(index);
@@ -69,38 +88,44 @@
 </script>
 
 <!-- Pointer handling is delegated here; each cell is a real <button> for keyboards and screen readers. -->
-<!-- svelte-ignore a11y_no_static_element_interactions -->
-<div
-  class="grid"
-  data-scan-board
-  lang={app.language}
-  style:--rows={board.grid.rows}
-  style:--columns={board.grid.columns}
-  style:--cell-gap="{app.settings.display.buttonGap}px"
-  {onpointerdown}
-  {onpointermove}
-  {onpointerup}
-  {onpointercancel}
->
-  {#each grid as cell, index (`${cell.row}:${cell.column}`)}
-    {@const button = cell.button}
-    {#if button && !button.hidden}
-      <Cell
-        {button}
-        {index}
-        src={app.set ? imageSrc(app.set, board, button.image_id) : undefined}
-        holdMs={holding?.index === index ? holding.ms : 0}
-        labelAbove={app.settings.display.labelPosition === 'above'}
-        showSymbol={app.settings.display.showSymbols}
-        lang={app.language}
-        chosen={chosen === index}
-        onactivate={() => onclick(index)}
-      />
-    {:else}
-      <div aria-hidden="true"></div>
-    {/if}
-  {/each}
-</div>
+<svelte:boundary {onerror}>
+  <!-- svelte-ignore a11y_no_static_element_interactions -->
+  <div
+    class="grid"
+    data-scan-board
+    lang={app.language}
+    style:--rows={board.grid.rows}
+    style:--columns={board.grid.columns}
+    style:--cell-gap="{app.settings.display.buttonGap}px"
+    {onpointerdown}
+    {onpointermove}
+    {onpointerup}
+    {onpointercancel}
+  >
+    {#each grid as cell, index (`${cell.row}:${cell.column}`)}
+      {@const button = cell.button}
+      {#if button && !button.hidden}
+        <Cell
+          {button}
+          {index}
+          src={app.set ? imageSrc(app.set, board, button.image_id) : undefined}
+          holdMs={holding?.index === index ? holding.ms : 0}
+          labelAbove={app.settings.display.labelPosition === 'above'}
+          showSymbol={app.settings.display.showSymbols}
+          lang={app.language}
+          chosen={chosen === index}
+          onactivate={() => onclick(index)}
+        />
+      {:else}
+        <div aria-hidden="true"></div>
+      {/if}
+    {/each}
+  </div>
+
+  {#snippet failed()}
+    <p class="broken" role="alert">{app.t.boardBroken}</p>
+  {/snippet}
+</svelte:boundary>
 
 <style>
   .grid {
@@ -113,5 +138,15 @@
     padding-top: 8px;
     /* No browser gestures (scroll, zoom) on the board: they would cancel holds. */
     touch-action: none;
+  }
+
+  .broken {
+    flex: 1;
+    display: grid;
+    place-items: center;
+    margin: 0;
+    padding: 24px;
+    text-align: center;
+    font-size: 1.25rem;
   }
 </style>
