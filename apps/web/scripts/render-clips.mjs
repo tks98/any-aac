@@ -13,14 +13,16 @@
  *   node scripts/render-clips.mjs
  *
  * Voice files come from .cache/voices when there (see self-host-voices.mjs),
- * otherwise from the Piper release.
+ * otherwise from the Piper release, and are checked against the sizes and
+ * hashes in voices.json either way. Files voices.json doesn't pin aren't served.
  */
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from '@playwright/test';
 import { createServer } from 'vite';
+import { voiceFile, voicePin } from './fetch-checked.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const out = join(root, 'src/lib/voice/clips');
@@ -77,11 +79,17 @@ async function main() {
   const browser = await chromium.launch();
   try {
     const page = await browser.newPage();
-    // Voice files from the local cache when they're there.
-    await page.route(/\/resolve\/v1\.0\.0\/(.+\.onnx(\.json)?)$/, (route) => {
+    // Voice files only as pinned in voices.json, from the local cache when they're there.
+    await page.route(/\/resolve\/v1\.0\.0\/(.+\.onnx(\.json)?)$/, async (route) => {
       const path = route.request().url().split('/resolve/v1.0.0/')[1];
-      const local = join(root, '.cache/voices', path);
-      return existsSync(local) ? route.fulfill({ path: local }) : route.continue();
+      const pin = voicePin(path);
+      if (!pin) return route.abort();
+      try {
+        return await route.fulfill({ path: await voiceFile(path, pin) });
+      } catch (error) {
+        console.error(error.message);
+        return route.abort();
+      }
     });
     await page.goto('http://localhost:5199/render-clips.html');
     await page.waitForFunction(() => 'renderVoice' in window);

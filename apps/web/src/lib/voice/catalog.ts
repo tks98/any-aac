@@ -42,9 +42,17 @@ const SELF_HOSTED = import.meta.env.VITE_SELF_HOST_VOICES === 'true';
  */
 const VOICE_BASE = SELF_HOSTED ? `${import.meta.env.BASE_URL}voices/fp16` : catalog.piper;
 
-const sourceOf = (dir: string): VoiceSource => {
-  const base = `${VOICE_BASE}/${dir}/${dir.split('/').slice(1).join('-')}`;
-  return { model: `${base}.onnx`, config: `${base}.onnx.json` };
+/**
+ * A model may be either pinned copy: the half-precision one this site serves,
+ * or a full-size one kept from Hugging Face (see tidyVoiceFiles).
+ */
+const sourceOf = (v: (typeof catalog.voices)[number]): VoiceSource => {
+  const base = `${VOICE_BASE}/${v.dir}/${v.dir.split('/').slice(1).join('-')}`;
+  return {
+    model: `${base}.onnx`,
+    config: `${base}.onnx.json`,
+    pins: { model: [v.fp16, v.model], config: [v.config] },
+  };
 };
 
 export const VOICES: VoiceEntry[] = catalog.voices.map((v) => ({
@@ -56,7 +64,7 @@ export const VOICES: VoiceEntry[] = catalog.voices.map((v) => ({
   ...('recommended' in v && v.recommended ? { recommended: true } : {}),
   license: v.license,
   sizeMB: (SELF_HOSTED ? v.fp16.size : v.model.size) / 1e6,
-  source: sourceOf(v.dir),
+  source: sourceOf(v),
 }));
 
 export const voiceById = (id: string | null | undefined) => VOICES.find((v) => v.id === id);

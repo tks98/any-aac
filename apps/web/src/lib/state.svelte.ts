@@ -36,6 +36,13 @@ class AppState {
   settings = $state<Settings>(structuredClone(DEFAULT_SETTINGS));
   /** Phone-sized screen: show boards' compact layouts where they have one. */
   compact = $state(false);
+  /**
+   * The saved boards couldn't be read, so the starter boards are showing and
+   * nothing is saved (it would replace the real ones) until a read works.
+   */
+  boardsUnreadable = $state(false);
+  /** Told when the whole set is replaced, so Edit forgets its Undo. */
+  private replaced = new Set<() => void>();
 
   board = $derived(this.set?.boards.find((b) => b.id === this.boardId) ?? null);
   /** The layout actually on screen. */
@@ -77,11 +84,31 @@ class AppState {
       .filter((name) => name !== ''),
   );
 
+  /** Shows a whole new set of boards (an import, start over or restore), from its first board. */
   load(set: BoardSet) {
     this.set = set;
     this.boardId = set.rootId;
     this.history = [];
     this.message = [];
+    this.wholeSetReplaced();
+  }
+
+  /**
+   * Shows boards read again from storage (saved in another tab, or readable
+   * at last), keeping the message and staying on the same board where it
+   * still exists.
+   */
+  reload(set: BoardSet) {
+    this.replaceSet(set);
+    this.wholeSetReplaced();
+  }
+
+  onWholeSetReplaced(listener: () => void) {
+    this.replaced.add(listener);
+  }
+
+  private wholeSetReplaced() {
+    for (const listener of this.replaced) listener();
   }
 
   /** Swaps in an edited version of the boards, staying on the same board where it still exists. */

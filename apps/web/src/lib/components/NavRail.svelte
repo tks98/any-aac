@@ -11,6 +11,8 @@
   let { onunlock }: { onunlock: () => void } = $props();
 
   let holding = $state(false);
+  /** The hold was started by Enter or Space, so it ends if focus leaves Edit. */
+  let keyHold = false;
   /** Shown after a tap on Edit that was too short: it needs a hold. */
   let hint = $state(false);
   let hintTimer: ReturnType<typeof setTimeout> | undefined;
@@ -29,6 +31,7 @@
     holding = true;
     timer = setTimeout(() => {
       holding = false;
+      keyHold = false;
       onunlock();
     }, HOLD_MS);
   }
@@ -41,14 +44,22 @@
       hintTimer = setTimeout(() => (hint = false), 2500);
     }
     holding = false;
+    keyHold = false;
     clearTimeout(timer);
   }
 
   function onkeydown(event: KeyboardEvent) {
     if ((event.key === 'Enter' || event.key === ' ') && !event.repeat) {
       event.preventDefault();
+      if (holding) return;
       startHold();
+      keyHold = true;
     }
+  }
+
+  /** Tab or Shift+Tab mid-press moves focus, and the keyup lands elsewhere: that's no hold. */
+  function onblur() {
+    if (keyHold) cancelHold();
   }
 </script>
 
@@ -104,6 +115,7 @@
     onpointercancel={cancelHold}
     {onkeydown}
     onkeyup={cancelHold}
+    {onblur}
     oncontextmenu={(event) => event.preventDefault()}
   >
     <span class="progress" aria-hidden="true"></span>

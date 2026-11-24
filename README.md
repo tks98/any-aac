@@ -71,6 +71,14 @@ node apps/web/scripts/self-host-voices.mjs apps/web/dist
 
 Then serve `apps/web/dist` over HTTPS (offline mode and installing need HTTPS, or `localhost`). To serve it from a sub-path, set `BASE_PATH`, for example `BASE_PATH=/aac/`. The voices add about 150 MB: the script stores each in half precision, half the size and sounding the same ([decision 0013](docs/research/decisions/0013-half-precision-voices.md)), and checks every file against the hashes pinned in [voices.json](apps/web/src/lib/voice/voices.json). Without `VITE_SELF_HOST_VOICES`, the app downloads voices from the pinned Piper release on Hugging Face instead.
 
+Have your server send the app's security headers with every file. The pages carry the Content-Security-Policy themselves, but only a header can stop other sites showing the app in a frame (`frame-ancestors`) and cover the voice's workers. To print them:
+
+```bash
+node apps/web/security-headers.ts
+```
+
+The build also writes them to `apps/web/dist/_headers`, which Netlify, Cloudflare Pages and similar hosts send automatically. On nginx, Caddy or Apache, add them to the site's configuration (with `add_header ... always` on nginx).
+
 The hosted version is built the same way by [pages.yml](.github/workflows/pages.yml), which deploys `main` after CI passes ([decision 0010](docs/research/decisions/0010-hosting.md)).
 
 ## Development

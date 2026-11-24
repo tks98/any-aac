@@ -11,6 +11,9 @@
  *
  *     node apps/web/security-headers.ts
  *
+ * - Every build also writes them to `_headers` (headersFile below), which
+ *   Netlify, Cloudflare Pages and similar hosts send with every file. Other
+ *   self-hosted copies need them set on the server; see the README.
  * - `pnpm preview`, which the browser tests run against, sends the headers
  *   too, so the tests catch anything they would block.
  */
@@ -49,6 +52,14 @@ export function securityHeaders({ selfHostedVoices }: { selfHostedVoices: boolea
     'Permissions-Policy':
       'camera=(), microphone=(), geolocation=(), payment=(), usb=(), serial=(), hid=(), bluetooth=()',
   };
+}
+
+/** The headers in the `_headers` format of Netlify and Cloudflare Pages, for every path. */
+export function headersFile(options: { selfHostedVoices: boolean }) {
+  const lines = Object.entries(securityHeaders(options)).map(
+    ([name, value]) => `  ${name}: ${value}`,
+  );
+  return `# Generated from security-headers.ts by the build. Hosts that read this file\n# send these headers; on others, set them on the server (see the README).\n/*\n${lines.join('\n')}\n`;
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {

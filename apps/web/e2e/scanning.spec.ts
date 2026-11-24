@@ -115,3 +115,66 @@ test('tap anywhere: a tap is a switch press, and holding the screen opens edit m
   await page.mouse.up();
   await expect(page.getByRole('toolbar')).toBeVisible();
 });
+
+test('mouse switch: a quick press that opens a dialog does not open edit mode, and the dialog takes switch presses', async ({
+  page,
+}) => {
+  await word(page, 'want').click();
+  await turnOnScanning(page, 'Two switches', async (page) => {
+    await page.getByRole('switch', { name: 'Tap anywhere' }).click();
+  });
+  // Get the highlight to Word forms with the keyboard switches.
+  await page.keyboard.press(' ');
+  for (let i = 0; i < 20 && !(await highlighted(page)).includes('Word forms'); i++)
+    await page.keyboard.press(' ');
+  await page.keyboard.press('Enter');
+  for (let i = 0; i < 20 && (await highlighted(page)).join() !== 'Word forms'; i++)
+    await page.keyboard.press(' ');
+  expect(await highlighted(page)).toEqual(['Word forms']);
+
+  // A quick right click (switch 2) chooses it, and the dialog opens over the layer.
+  await page.mouse.move(600, 400);
+  await page.mouse.down({ button: 'right' });
+  await page.mouse.up({ button: 'right' });
+  const dialog = page.getByRole('dialog');
+  await expect(dialog).toBeVisible();
+  await page.waitForTimeout(3300);
+  await expect(page.getByRole('toolbar')).toBeHidden();
+
+  // Clicks on the dialog are switch presses too, not a direct choice of what's under them.
+  // Choosing in the dialog starts the highlight on its first button.
+  await expect.poll(() => highlighted(page)).toEqual(['Cancel']);
+  const cancel = (await dialog.getByRole('button', { name: 'Cancel' }).boundingBox())!;
+  // A left click right on Cancel moves the highlight on instead of closing the dialog.
+  await page.mouse.click(cancel.x + cancel.width / 2, cancel.y + cancel.height / 2);
+  await expect.poll(() => highlighted(page)).toEqual(['want']);
+  await page.mouse.click(cancel.x + cancel.width / 2, cancel.y + cancel.height / 2);
+  await expect.poll(() => highlighted(page)).toEqual(['wants']);
+  await expect(dialog).toBeVisible();
+  const chosen = 'wants';
+  await page.mouse.click(600, 400, { button: 'right' });
+  await expect(dialog).toBeHidden();
+  await expect(messageBar(page)).toHaveAccessibleName(`Message: ${chosen}. Tap to speak it.`);
+});
+
+test('while held: leaving the app lets go of a held tap, so the highlight stops moving', async ({
+  page,
+}) => {
+  await turnOnScanning(page, 'While held', async (page) => {
+    await page.getByRole('switch', { name: 'Tap anywhere' }).click();
+    await page.getByRole('slider', { name: 'Time on each item' }).fill('600');
+  });
+  await page.mouse.move(600, 400);
+  await page.mouse.down();
+  await expect.poll(() => highlighted(page)).not.toEqual([]);
+  // The window loses focus (another app, a notification) before the finger lifts,
+  // so no pointerup arrives: that's a let-go, which chooses the row highlighted.
+  await page.evaluate(() => window.dispatchEvent(new Event('blur')));
+  await expect.poll(async () => (await highlighted(page)).length).toBe(1);
+  const chosen = await highlighted(page);
+  await page.waitForTimeout(1500);
+  // Not still held: the highlight stays where it was let go.
+  expect(await highlighted(page)).toEqual(chosen);
+  await page.mouse.up();
+  await expect(page.getByRole('toolbar')).toBeHidden();
+});

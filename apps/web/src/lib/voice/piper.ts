@@ -23,11 +23,28 @@ export interface PiperConfig {
   phoneme_id_map: Record<string, number[]>;
 }
 
+/**
+ * A voice file's pinned size and hash, as in voices.json: its sha256, or for
+ * small files Hugging Face doesn't store with LFS, only git's blob hash (SHA-1).
+ */
+export interface FilePin {
+  size: number;
+  sha256?: string;
+  gitOid?: string;
+}
+
 export interface VoiceSource {
   /** URL of the .onnx model. */
   model: string;
   /** URL of the .onnx.json config. */
   config: string;
+  /**
+   * The pinned files each URL may hold. A download that matches none is
+   * refused and never cached, and a cached copy that matches none is deleted
+   * and downloaded again. The app's voices always have them (catalog.ts); only
+   * the developer tools that compare their own model files leave them out.
+   */
+  pins?: { model: FilePin[]; config: FilePin[] };
 }
 
 export interface Progress {
@@ -40,11 +57,60 @@ export interface Synthesized {
   sampleRate: number;
 }
 
-/** Fetches a file, from the voice cache when it's there, reporting download progress. */
-async function fetchCached(url: string, onProgress?: (p: Progress) => void): Promise<ArrayBuffer> {
+const hex = (digest: ArrayBuffer) =>
+  Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, '0')).join('');
+
+/**
+ * True when the bytes are one of the pinned files: the same size, and the
+ * same sha256 (or git blob hash). Without Web Crypto (only on plain http, where
+ * there's no Cache Storage either, so nothing is kept) only the size is checked.
+ */
+export async function matchesPin(
+  bytes: Uint8Array<ArrayBuffer>,
+  pins: FilePin[],
+): Promise<boolean> {
+  const sized = pins.filter((pin) => pin.size === bytes.length);
+  if (sized.length === 0) return false;
+  const subtle = globalThis.crypto?.subtle;
+  if (!subtle) return true;
+  let sha256: string | undefined;
+  let gitOid: string | undefined;
+  for (const pin of sized) {
+    if (pin.sha256) {
+      sha256 ??= hex(await subtle.digest('SHA-256', bytes));
+      if (sha256 === pin.sha256) return true;
+    } else if (pin.gitOid) {
+      if (gitOid === undefined) {
+        const header = new TextEncoder().encode(`blob ${bytes.length}\0`);
+        const blob = new Uint8Array(header.length + bytes.length);
+        blob.set(header);
+        blob.set(bytes, header.length);
+        gitOid = hex(await subtle.digest('SHA-1', blob));
+      }
+      if (gitOid === pin.gitOid) return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Fetches a file, from the voice cache when it's there, reporting download
+ * progress. With pins, only a file that matches one is used or cached.
+ */
+export async function fetchCached(
+  url: string,
+  pins?: FilePin[],
+  onProgress?: (p: Progress) => void,
+): Promise<ArrayBuffer> {
   const cache = 'caches' in globalThis ? await caches.open(VOICE_CACHE) : undefined;
   const hit = await cache?.match(url);
-  if (hit) return hit.arrayBuffer();
+  if (hit) {
+    const bytes = new Uint8Array(await hit.arrayBuffer());
+    if (!pins || (await matchesPin(bytes, pins))) return bytes.buffer;
+    // Damaged or not the pinned file: download it again. The copy stays until
+    // a download that matches replaces it (put, below), so offline, or while
+    // a new release's file can't be fetched, nothing more is lost.
+  }
 
   const response = await fetch(url);
   if (!response.ok || !response.body)
@@ -66,6 +132,10 @@ async function fetchCached(url: string, onProgress?: (p: Progress) => void): Pro
     bytes.set(chunk, offset);
     offset += chunk.length;
   }
+  if (pins && !(await matchesPin(bytes, pins)))
+    throw new Error(
+      `${url} isn't the expected voice file (wrong size or hash), so it wasn't kept.`,
+    );
   await cache?.put(
     url,
     new Response(bytes, { headers: { 'Content-Type': 'application/octet-stream' } }),
@@ -184,8 +254,8 @@ export class PiperVoice {
     const [ort, phonemizer, configBytes, modelBytes] = await Promise.all([
       import('onnxruntime-web/wasm'),
       espeak,
-      fetchCached(source.config),
-      fetchCached(source.model, onProgress),
+      fetchCached(source.config, source.pins?.config),
+      fetchCached(source.model, source.pins?.model, onProgress),
     ]);
     // Threads need cross-origin isolation (SharedArrayBuffer); otherwise run on one.
     ort.env.wasm.numThreads = globalThis.crossOriginIsolated

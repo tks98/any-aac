@@ -1,9 +1,8 @@
 import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { defineConfig, type Plugin } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
-import { contentSecurityPolicy, securityHeaders } from './security-headers';
+import { contentSecurityPolicy, headersFile, securityHeaders } from './security-headers';
 
 // Lets phones on your tailnet reach the dev and preview servers through
 // `tailscale serve` (https://<machine>.<tailnet>.ts.net).
@@ -34,6 +33,25 @@ function securityPolicy(): Plugin {
       },
       { tag: 'meta', attrs: { name: 'referrer', content: 'no-referrer' }, injectTo: 'head' },
     ],
+  };
+}
+
+/**
+ * Writes the security headers to `_headers` in the build, for hosts that read
+ * it (Netlify, Cloudflare Pages). Only headers can stop framing and cover the
+ * voice's workers, which the page's own policy can't.
+ */
+function hostHeaders(): Plugin {
+  return {
+    name: 'any-aac-host-headers',
+    apply: 'build',
+    generateBundle() {
+      this.emitFile({
+        type: 'asset',
+        fileName: '_headers',
+        source: headersFile({ selfHostedVoices }),
+      });
+    },
   };
 }
 
@@ -79,13 +97,9 @@ export default defineConfig({
   optimizeDeps: { exclude: ['onnxruntime-web'] },
   // The voice worker loads ONNX Runtime and the phonemizer on demand.
   worker: { format: 'es' },
+  // Only the app is built. The developer pages (voice-lab.html, render-clips.html)
+  // are served by `pnpm dev` and never ship or get precached.
   build: {
-    rollupOptions: {
-      input: {
-        main: fileURLToPath(new URL('./index.html', import.meta.url)),
-        voiceLab: fileURLToPath(new URL('./voice-lab.html', import.meta.url)),
-      },
-    },
     // Keep symbols as separate files (cached by the service worker) rather than
     // inlining the small ones into the JavaScript bundle.
     assetsInlineLimit: (file) => (file.includes('/assets/symbols/') ? false : undefined),
@@ -93,6 +107,7 @@ export default defineConfig({
   plugins: [
     svelte(),
     securityPolicy(),
+    hostHeaders(),
     linkPreview(),
     VitePWA({
       // A new version waits until it can't interrupt anyone: it never reloads
@@ -142,7 +157,17 @@ export default defineConfig({
           {
             urlPattern: /\/assets\/(ort|piper|voice\.worker)[^/]*\.(m?js|wasm|data)$/,
             handler: 'CacheFirst',
-            options: { cacheName: 'open-aac-voice-runtime' },
+            options: {
+              cacheName: 'open-aac-voice-runtime',
+              // Each release that changes the engine adds about 16 MB of new
+              // files. Keeping the 10 most recently used drops old releases'
+              // and never the current build's, as long as it has fewer (it has
+              // 5: ONNX Runtime's .js and .wasm, the phonemizer's .wasm and
+              // .data, and the worker), since all of them are used each time
+              // the voice starts. Entries cached before this was added aren't
+              // tracked, so they stay.
+              expiration: { maxEntries: 10 },
+            },
           },
           {
             urlPattern: /\/symbol-library\/index\.json$/,

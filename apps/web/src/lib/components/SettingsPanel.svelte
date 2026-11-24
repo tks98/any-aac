@@ -17,10 +17,23 @@
   import { localizeLinkedPictures } from '../linked-pictures';
   import { editor } from '../editor.svelte';
   import { app } from '../state.svelte';
-  import { saveBoards } from '../storage';
+  import { loadPreviousBoards, saveBoards, SavedElsewhere } from '../storage';
   import Icon from './Icon.svelte';
 
-  let { open = $bindable(false) }: { open?: boolean } = $props();
+  let {
+    open = $bindable(false),
+    notice = $bindable(''),
+    onretry,
+    onreplaced,
+  }: {
+    open?: boolean;
+    /** Shown above every section, e.g. when another tab saved newer settings. */
+    notice?: string;
+    /** Tries reading the saved boards again, after they couldn't be read. */
+    onretry?: () => Promise<void>;
+    /** The saved boards, unread until now, were replaced on purpose. */
+    onreplaced?: () => void;
+  } = $props();
 
   const t = $derived(app.t);
   const SECTIONS = $derived([
@@ -60,6 +73,7 @@
   $effect(() => {
     if (open && !dialog.open) {
       status = '';
+      notice = '';
       fixes = [];
       dialog.showModal();
     } else if (!open && dialog.open) {
@@ -75,15 +89,47 @@
     return speech.onVoicesChanged(() => (voices = speech.voices(lang)));
   });
 
+  /**
+   * Asks before replacing every board. When the saved boards couldn't be read,
+   * it says so: they are replaced too, and can't be put back.
+   */
+  const confirmReplacing = (question: string) =>
+    confirm(app.boardsUnreadable ? `${t.replacesUnreadable} ${question}` : question);
+
+  /**
+   * Replaces the whole set, keeping the boards it replaces so they can be put
+   * back. Asked for after the saved boards couldn't be read (see
+   * confirmReplacing), it saves over them; edits never do.
+   */
   async function replaceBoards(set: BoardSet, done: string) {
+    const unread = app.boardsUnreadable;
     app.load(set);
     try {
-      await saveBoards(set);
+      await saveBoards(set, { replacing: true, unread });
       backups.savedAt = Date.now();
+      // Boards that couldn't be read aren't kept to be put back.
+      if (!unread) backups.previousAt = Date.now();
       status = done;
-    } catch {
-      status = `${done} ${t.couldNotSave}`;
+      if (unread) onreplaced?.();
+    } catch (error) {
+      // Another tab's newer boards are read in instead of being replaced.
+      status = error instanceof SavedElsewhere ? t.savedElsewhere : `${done} ${t.couldNotSave}`;
     }
+  }
+
+  async function restorePrevious() {
+    if (!confirmReplacing(t.confirmRestorePrevious)) return;
+    let set: BoardSet | undefined;
+    try {
+      set = await loadPreviousBoards();
+    } catch {
+      set = undefined;
+    }
+    if (!set) {
+      status = t.unreadable;
+      return;
+    }
+    await replaceBoards(set, t.previousRestored);
   }
 
   async function importFile(event: Event) {
@@ -95,7 +141,7 @@
     try {
       const { set: read, issues, settings } = await readBackup(file);
       const count = t.boardCount(read.boards.length);
-      if (!confirm(t.confirmImport(count, file.name))) return;
+      if (!confirmReplacing(t.confirmImport(count, file.name))) return;
       const { set, fromLibrary, elsewhere } = await localizeLinkedPictures(read);
       await replaceBoards(set, t.imported(count));
       if (elsewhere > 0) status = `${status} ${t.picturesElsewhere(elsewhere)}`;
@@ -204,7 +250,7 @@
   const size = $derived(starterSize ?? sizeOf(app.set));
 
   async function reset(starter: StarterId) {
-    if (!confirm(t.confirmReset)) return;
+    if (!confirmReplacing(t.confirmReset)) return;
     await replaceBoards(await starterSet(starter, size), t.restored);
     // Show the new boards in their own language.
     app.settings.language.primary = null;
@@ -328,6 +374,9 @@
     </nav>
 
     <main>
+      {#if notice}
+        <p class="card unreadable" role="alert">{notice}</p>
+      {/if}
       {#if section === 'speech'}
         <h3>{t.sectionSpeech}</h3>
         <div class="card">
@@ -867,6 +916,12 @@
       {:else if section === 'boards'}
         <h3>{t.sectionBoards}</h3>
         <p class="intro">{t.boardsIntro}</p>
+        {#if app.boardsUnreadable}
+          <div class="card unreadable" role="alert">
+            <p>{t.boardsUnreadable}</p>
+            <button class="action primary" onclick={() => void onretry?.()}>{t.tryAgain}</button>
+          </div>
+        {/if}
         <div class="actions">
           <button class="action primary" onclick={backUp}>
             <Icon path={ICONS.export} size={24} />
@@ -910,6 +965,15 @@
             {t.resetSpanish}
           </button>
           <p class="help">{t.resetHelp}</p>
+          {#if backups.previousAt !== null}
+            <button class="action" onclick={restorePrevious}>
+              <Icon path={ICONS.undo} size={24} />
+              {t.restorePrevious}
+            </button>
+            <p class="help">
+              {t.restorePreviousHelp(new Date(backups.previousAt).toLocaleString(app.appLanguage))}
+            </p>
+          {/if}
         </div>
         {#if status}
           <p class="status" role="status">{status}</p>
@@ -1502,6 +1566,13 @@
 
   .actions .help {
     margin: -2px 0 8px;
+  }
+
+  .unreadable {
+    margin-bottom: 16px;
+    padding: 4px 16px 16px;
+    border: 2px solid var(--help);
+    font-weight: 700;
   }
 
   .status {

@@ -1,7 +1,12 @@
 import { strToU8, zipSync } from 'fflate';
 import { describe, expect, it } from 'vitest';
 import {
+  cleanBoardSet,
   createBoard,
+  MAX_BOARDS,
+  MAX_ZIP_ENTRIES,
+  MAX_ZIP_ENTRY_BYTES,
+  MAX_ZIP_TOTAL_BYTES,
   OBF_FORMAT,
   ObfError,
   placeButton,
@@ -174,5 +179,106 @@ describe('extra files', () => {
     const bytes = writeObz(set, { 'app/settings.json': new TextEncoder().encode('{"a":1}') });
     const { set: read } = readObz(bytes);
     expect(new TextDecoder().decode(read.files['app/settings.json'])).toBe('{"a":1}');
+  });
+});
+
+/** Says in the zip's directory that each file unpacks to `size` bytes, as a zip bomb would. */
+function claimSize(zip: Uint8Array, size: number): Uint8Array {
+  const out = zip.slice();
+  const view = new DataView(out.buffer);
+  for (let i = 0; i + 46 <= out.length; i++) {
+    if (view.getUint32(i, true) === 0x02014b50) view.setUint32(i + 24, size, true);
+  }
+  return out;
+}
+
+describe('size limits', () => {
+  const MB = 1024 * 1024;
+
+  it('refuses a file in a package that unpacks to too much, before unpacking it', () => {
+    const zip = zipSync({ 'manifest.json': strToU8('{}'), 'images/big.png': png });
+    expect(() => readObz(claimSize(zip, MAX_ZIP_ENTRY_BYTES + 1))).toThrow(ObfError);
+    expect(() => readObz(claimSize(zip, MAX_ZIP_ENTRY_BYTES + 1))).toThrow('too big');
+  });
+
+  it('refuses a package whose files add up to too much', () => {
+    const files = Object.fromEntries(
+      Array.from({ length: 8 }, (_, n) => [`images/${n}.png`, png] as const),
+    );
+    const zip = claimSize(zipSync(files), 40 * MB);
+    expect(8 * 40 * MB).toBeGreaterThan(MAX_ZIP_TOTAL_BYTES);
+    expect(() => readObz(zip)).toThrow(/unpacks to more than 300 MB/);
+  });
+
+  it('refuses a package with too many files', () => {
+    const files = Object.fromEntries(
+      Array.from({ length: MAX_ZIP_ENTRIES + 1 }, (_, n) => [`f/${n}`, new Uint8Array(0)] as const),
+    );
+    expect(() => readObz(zipSync(files))).toThrow(`more than ${MAX_ZIP_ENTRIES} files`);
+  });
+
+  it('still says plainly when a file is not a zip', () => {
+    expect(() => readObz(strToU8('hello'))).toThrow('This file is not a valid .obz package.');
+  });
+
+  it('refuses a package with too many boards', () => {
+    const boards: Record<string, string> = {};
+    const zip: Record<string, Uint8Array> = {};
+    for (let n = 0; n <= MAX_BOARDS; n++) {
+      const path = `boards/${n}.obf`;
+      boards[String(n)] = path;
+      zip[path] = strToU8(
+        JSON.stringify({
+          format: OBF_FORMAT,
+          id: String(n),
+          buttons: [],
+          grid: { rows: 1, columns: 1 },
+        }),
+      );
+    }
+    zip['manifest.json'] = strToU8(
+      JSON.stringify({ format: OBF_FORMAT, root: 'boards/0.obf', paths: { boards } }),
+    );
+    expect(() => readObz(zipSync(zip))).toThrow(`more than ${MAX_BOARDS} boards`);
+  });
+
+  it('reads a package just inside the limits', () => {
+    const { set } = readObz(writeObz(sampleSet()));
+    expect(set.boards).toHaveLength(2);
+  });
+});
+
+describe('cleanBoardSet', () => {
+  it('repairs words, names and colours saved before import checked them', () => {
+    const set = sampleSet();
+    const stored = {
+      ...set,
+      boards: [
+        {
+          ...set.boards[0]!,
+          name: 42 as unknown as string,
+          locale: { en: true } as unknown as string,
+          buttons: [
+            { id: 'i', label: 5 as unknown as string, background_color: 'red; inset: 0' },
+            { id: 'food', label: 'Food', translations: { es: { label: 7 }, fr: 'x' } },
+          ],
+        },
+        set.boards[1]!,
+      ],
+    };
+    const cleaned = cleanBoardSet(stored);
+    const [home, food] = cleaned.boards;
+    expect(home?.name).toBe('42');
+    expect(home?.locale).toBeUndefined();
+    expect(home?.buttons[0]).toEqual({ id: 'i', label: '5' });
+    expect(home?.buttons[1]?.translations).toEqual({ es: { label: '7' } });
+    // Boards that needed nothing are the same objects.
+    expect(food).toBe(stored.boards[1]);
+    expect(cleaned.files).toBe(stored.files);
+  });
+
+  it('returns the same set when nothing needs repairing', () => {
+    const set = sampleSet();
+    expect(cleanBoardSet(set)).toBe(set);
   });
 });
